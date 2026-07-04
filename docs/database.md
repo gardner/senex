@@ -169,6 +169,15 @@ excludes submissions with a non-`none` `deletion_request_status`, and writes
 hashed study-filter and subject/submission keys instead of raw anonymous study
 IDs or idempotency keys.
 
+Research exclusion tooling reuses `anonymous_research_submissions` and
+`anonymous_research_submission_audit` rather than adding a separate table. An
+admin exclusion updates matching accepted submissions to
+`deletion_request_status = 'excluded'` and appends
+`research_exclusion_changed` audit rows. The audit event JSON records the acting
+admin user id, reason, previous status, next status, hashed study key, hashed
+submission key, timestamp, and the limitation that already generated or shared
+research output is not changed by the exclusion.
+
 `GET /api/account/export` returns an `account-export-v1` JSON document for the
 signed-in account. It includes account profile fields, sync state, sync batches,
 account-linked sessions/task runs/trial events/scores, account-linked consent

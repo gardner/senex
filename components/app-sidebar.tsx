@@ -82,6 +82,10 @@ const adminNav = {
       title: "Research export",
       url: "/admin/research-export",
     },
+    {
+      title: "Research exclusions",
+      url: "/admin/research-exclusions",
+    },
   ],
 };
 

@@ -179,7 +179,7 @@ Notes:
 
 ## E10-T06 Add withdrawal and exclusion tooling
 
-Status: Todo
+Status: Done
 
 Scope:
 
@@ -197,3 +197,21 @@ Validation:
 - Integration test for export exclusion.
 
 Dependencies: `E10-T05`.
+
+Notes:
+
+- Added admin-only `/admin/research-exclusions` and
+  `/api/admin/research-exclusions`.
+- Exclusion requests require an anonymous study ID and audit reason.
+- Matching accepted submissions are marked
+  `deletion_request_status = 'excluded'`, which future research exports already
+  skip.
+- Each changed submission writes a `research_exclusion_changed` audit event with
+  acting admin user id, reason, previous status, next status, hashed study key,
+  hashed submission key, timestamp, and limitation notice.
+- The UI and API state that already generated exports, aggregate dashboards, and
+  datasets already shared outside Senex are not changed by the exclusion.
+- Covered admin authorization, audit attribution, future export exclusion,
+  redaction, and desktop/mobile workflow in
+  `tests/admin-research-exclusions-api.test.ts` and
+  `tests/browser/admin-research-exclusions.spec.ts`.

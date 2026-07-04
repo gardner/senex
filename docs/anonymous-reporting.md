@@ -94,12 +94,25 @@ purpose, approval reference, explicit data categories, and optional date or
 anonymous study filters. It applies the stored consent snapshot and skips
 submissions whose `deletion_request_status` is no longer `none`.
 
+Future research exclusion is managed from `/admin/research-exclusions` or
+`POST /api/admin/research-exclusions`. The admin supplies the anonymous study ID
+from the user's request plus an audit reason. The service updates accepted
+submissions for that study to `deletion_request_status = 'excluded'` and writes
+`research_exclusion_changed` audit events with the acting admin user id, reason,
+previous status, next status, and limitation notice. The API response and audit
+event JSON use hashed study/submission keys rather than raw anonymous study IDs
+or raw idempotency keys.
+
 Each completed export returns the dataset once and stores a manifest in
 `research_exports`. The manifest records the approval reference, filters,
 schema versions, consent versions, category counts, exported counts, and
 exclusion counts. Raw anonymous study IDs and idempotency keys are not returned
 or stored in the manifest; subject and submission keys are deterministic export
 keys. Trial-contact profile data is not read by this export path.
+
+Exclusion affects future export jobs only. Already generated export files,
+aggregate dashboards, and datasets already shared outside Senex are not mutated
+by this admin action.
 
 The D1 migration is additive:
 

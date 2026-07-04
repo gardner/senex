@@ -100,6 +100,11 @@ filtering, date filtering, withdrawal exclusion, study filtering, manifest
 storage, and redaction for research exports.
 `tests/browser/admin-research-export.spec.ts` covers the admin research export
 workflow on desktop and mobile Chromium.
+`tests/admin-research-exclusions-api.test.ts` covers admin authorization,
+future-export exclusion, audit attribution/reason storage, export exclusion
+behavior, and redaction for research exclusions.
+`tests/browser/admin-research-exclusions.spec.ts` covers the admin exclusion
+workflow on desktop and mobile Chromium.
 
 `tests/quality-coverage.test.ts` tracks E11 hardening coverage for conservative
 baseline/trend edges, duplicate trial-quality exclusions, even-count task
