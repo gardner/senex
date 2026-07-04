@@ -138,3 +138,10 @@ idempotency key returns the existing batch without duplicating records.
 The `/account` page is the first client entry point for this endpoint. It shows
 local IndexedDB counts, requires a confirmation checkbox before upload, keeps
 the local browser copy, and keeps research sharing separate from account sync.
+
+Anonymous reporting history has an additional explicit linking gate. The
+browser records accepted or declined linking decisions as local
+`anonymous_account_link` consent events before the account sync payload builder
+will include anonymous reporting history. Those events are stored in
+`account_sync_consent_events` with the rest of the consent history when the user
+later confirms import.

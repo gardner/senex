@@ -94,6 +94,9 @@ are documented in [questionnaires.md](questionnaires.md).
 Signed-in users can copy ordinary local history to their account from
 `/account`. The account sync panel reads IndexedDB, shows record counts,
 requires explicit confirmation, and keeps the local copy on the device.
-Anonymous reporting history is blocked until the separate account-linking flow
-exists. Research sharing remains a separate consent-gated flow; account import
-does not submit records for research.
+Anonymous reporting history stays blocked until the user records an explicit
+account-specific `anonymous_account_link` consent decision. Declining that link
+keeps the signed-in account usable without uploading anonymous history; granting
+it allows a later account import and preserves the prior anonymous reporting
+consent history. Research sharing remains a separate consent-gated flow; account
+import does not submit records for research.

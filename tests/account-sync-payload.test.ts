@@ -1,10 +1,15 @@
 import { describe, expect, it } from "vitest";
 
+import {
+  ANONYMOUS_ACCOUNT_LINK_CONSENT_TYPE,
+  createAnonymousAccountLinkConsentRecord,
+} from "@/lib/account-sync/anonymous-link";
 import { buildAccountSyncPayload } from "@/lib/account-sync/payload";
 import {
   LOCAL_APP_VERSION,
   LOCAL_SCHEMA_VERSION,
   type AnonymousIdentityRecord,
+  type ConsentRecord,
   type LocalProfile,
   type LocalSession,
 } from "@/lib/local/schema";
@@ -52,12 +57,61 @@ describe("account sync payload builder", () => {
       }),
     ).toThrow("Anonymous reporting history requires explicit account linking");
   });
+
+  it("requires account-specific consent before linking anonymous history", () => {
+    const anonymousIdentity = fixtureAnonymousIdentity();
+    const declinedLink = createAnonymousAccountLinkConsentRecord({
+      profileId: "local_profile_1",
+      accountId: "account_1",
+      decision: "denied",
+      decidedAt: now,
+      consentRecordId: "consent_link_denied",
+    });
+    const otherAccountLink = createAnonymousAccountLinkConsentRecord({
+      profileId: "local_profile_1",
+      accountId: "account_2",
+      decision: "granted",
+      decidedAt: "2026-07-04T00:01:00.000Z",
+      consentRecordId: "consent_link_other_account",
+    });
+
+    expect(() =>
+      buildAccountSyncPayload({
+        accountId: "account_1",
+        records: fixtureRecords({
+          anonymousIdentity,
+          consentRecords: [declinedLink, otherAccountLink],
+        }),
+      }),
+    ).toThrow("Anonymous reporting history requires explicit account linking");
+
+    const grantedLink = createAnonymousAccountLinkConsentRecord({
+      profileId: "local_profile_1",
+      accountId: "account_1",
+      decision: "granted",
+      decidedAt: "2026-07-04T00:02:00.000Z",
+      consentRecordId: "consent_link_granted",
+    });
+    const payload = buildAccountSyncPayload({
+      accountId: "account_1",
+      records: fixtureRecords({
+        anonymousIdentity,
+        consentRecords: [declinedLink, grantedLink],
+      }),
+    });
+
+    expect(payload.records.consentEvents).toEqual([declinedLink, grantedLink]);
+    expect(payload.records.consentEvents.at(-1)?.consentType).toBe(
+      ANONYMOUS_ACCOUNT_LINK_CONSENT_TYPE,
+    );
+  });
 });
 
 function fixtureRecords(
   options: {
     profileMode?: LocalProfile["mode"];
     anonymousIdentity?: AnonymousIdentityRecord;
+    consentRecords?: ConsentRecord[];
   } = {},
 ): ExportableLocalRecords {
   const profile: LocalProfile = {
@@ -86,11 +140,27 @@ function fixtureRecords(
     trialEvents: [],
     scores: [],
     questionnaireAnswers: [],
-    consentRecords: [],
+    consentRecords: options.consentRecords ?? [],
     anonymousIdentities: options.anonymousIdentity
       ? [options.anonymousIdentity]
       : [],
     reportingUploads: [],
     importAudits: [],
+  };
+}
+
+function fixtureAnonymousIdentity(): AnonymousIdentityRecord {
+  return {
+    anonymousIdentityId: "anon_identity_1",
+    profileId: "local_profile_1",
+    anonymousStudyId: "study_1",
+    previousAnonymousStudyId: null,
+    status: "active",
+    createdAt: now,
+    updatedAt: now,
+    pausedAt: null,
+    stoppedAt: null,
+    schemaVersion: LOCAL_SCHEMA_VERSION,
+    appVersion: LOCAL_APP_VERSION,
   };
 }

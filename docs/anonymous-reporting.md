@@ -37,6 +37,19 @@ ID is shown in the reporting dashboard and remains stable across local sessions.
 Users can pause reporting, resume it, or stop future sharing. Stopping reporting
 withdraws every reporting category but leaves Offline Mode available.
 
+## Account Linking
+
+Anonymous reporting history is not copied into a signed-in account by the normal
+account import flow until the user explicitly links it. The `/account` import
+panel records that choice as an append-only local consent event with
+`consentType: "anonymous_account_link"` and the account-specific category
+`account:<accountId>`.
+
+A declined link decision keeps the signed-in account usable and keeps account
+sync blocked for anonymous reporting history. A later granted decision for the
+same account allows import, and both the declined and granted link events are
+copied with the consent history.
+
 ## Payloads And Queue
 
 `buildAnonymousReportingPayload()` derives the active consent snapshot and only

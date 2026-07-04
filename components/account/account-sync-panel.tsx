@@ -1,11 +1,24 @@
 "use client";
 
-import { useEffect, useMemo, useState, type ChangeEvent } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  type ChangeEvent,
+} from "react";
 
 import { Button } from "@/components/ui/button";
+import { getAnonymousAccountLinkState } from "@/lib/account-sync/anonymous-link";
 import { buildAccountSyncPayload } from "@/lib/account-sync/payload";
 import { readAllLocalRecords, readLocalStorageSummary } from "@/lib/local";
 import type { ExportableLocalRecords } from "@/lib/local/export-schema";
+
+import { AnonymousAccountLinkPanel } from "./anonymous-account-link-panel";
+import {
+  AccountSyncRecordCounts,
+  countAccountSyncRecords,
+} from "./account-sync-record-counts";
 
 type AccountSyncPanelProps = {
   accountId: string;
@@ -14,15 +27,26 @@ type AccountSyncPanelProps = {
 type SyncMessage = { tone: "neutral" | "error"; text: string } | null;
 
 export function AccountSyncPanel({ accountId }: AccountSyncPanelProps) {
-  const { records, loading, loadError } = useLocalRecords();
-  const counts = useMemo(() => countRecords(records), [records]);
+  const { records, loading, loadError, reload } = useLocalRecords();
+  const counts = useMemo(() => countAccountSyncRecords(records), [records]);
   const hasLocalHistory = counts.sessions > 0;
   const hasAnonymousReportingHistory = containsAnonymousReporting(records);
+  const sourceProfileId = sourceProfileIdFor(records);
+  const anonymousLinkState = useMemo(
+    () =>
+      getAnonymousAccountLinkState({
+        accountId,
+        profileId: sourceProfileId ?? undefined,
+        consentRecords: records?.consentRecords ?? [],
+      }),
+    [accountId, records?.consentRecords, sourceProfileId],
+  );
   const sync = useAccountSyncImport({
     accountId,
     records,
     hasLocalHistory,
-    hasAnonymousReportingHistory,
+    anonymousLinkRequired:
+      hasAnonymousReportingHistory && !anonymousLinkState.granted,
   });
   const displayedMessage = sync.message ?? loadError;
 
@@ -36,13 +60,7 @@ export function AccountSyncPanel({ accountId }: AccountSyncPanelProps) {
         </p>
       </div>
 
-      <div className="border-input grid gap-3 rounded-md border p-4 md:grid-cols-5">
-        <HistoryCount label="local session" count={counts.sessions} />
-        <HistoryCount label="task run" count={counts.taskRuns} />
-        <HistoryCount label="trial event" count={counts.trialEvents} />
-        <HistoryCount label="score" count={counts.scores} />
-        <HistoryCount label="consent event" count={counts.consentEvents} />
-      </div>
+      <AccountSyncRecordCounts counts={counts} />
 
       <div className="border-input space-y-3 rounded-md border p-4">
         <h3 className="font-medium">Research sharing</h3>
@@ -66,6 +84,16 @@ export function AccountSyncPanel({ accountId }: AccountSyncPanelProps) {
           Share synced history for research
         </label>
       </div>
+
+      {hasAnonymousReportingHistory && (
+        <AnonymousAccountLinkPanel
+          accountId={accountId}
+          profileId={sourceProfileId}
+          linkState={anonymousLinkState}
+          disabled={loading || sync.pending}
+          onSaved={reload}
+        />
+      )}
 
       <label className="flex gap-2 text-sm">
         <input
@@ -106,13 +134,13 @@ function useAccountSyncImport(input: {
   accountId: string;
   records: ExportableLocalRecords | null;
   hasLocalHistory: boolean;
-  hasAnonymousReportingHistory: boolean;
+  anonymousLinkRequired: boolean;
 }) {
   const [confirmed, setConfirmed] = useState(false);
   const [pending, setPending] = useState(false);
   const [message, setMessage] = useState<SyncMessage>(null);
   const confirmationDisabled =
-    !input.hasLocalHistory || input.hasAnonymousReportingHistory || pending;
+    !input.hasLocalHistory || input.anonymousLinkRequired || pending;
   const canImport = !confirmationDisabled && confirmed;
 
   function handleConfirmChange(event: ChangeEvent<HTMLInputElement>) {
@@ -157,12 +185,23 @@ function useLocalRecords() {
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState<SyncMessage>(null);
 
+  const reload = useCallback(async () => {
+    setLoading(true);
+    setLoadError(null);
+    try {
+      setRecords(await loadLocalRecordSnapshot());
+    } catch (error) {
+      setLoadError(formatLoadError(error));
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   useEffect(() => {
     let active = true;
     async function loadLocalRecords() {
       try {
-        await readLocalStorageSummary();
-        const nextRecords = await readAllLocalRecords(true);
+        const nextRecords = await loadLocalRecordSnapshot();
         if (active) setRecords(nextRecords);
       } catch (error) {
         if (active) setLoadError(formatLoadError(error));
@@ -176,29 +215,7 @@ function useLocalRecords() {
     };
   }, []);
 
-  return { records, loading, loadError };
-}
-
-function HistoryCount({ count, label }: { count: number; label: string }) {
-  const plural = count === 1 ? label : `${label}s`;
-  return (
-    <div>
-      <p className="text-2xl font-semibold">{count}</p>
-      <p className="text-muted-foreground text-sm">
-        {count} {plural}
-      </p>
-    </div>
-  );
-}
-
-function countRecords(records: ExportableLocalRecords | null) {
-  return {
-    sessions: records?.sessions.length ?? 0,
-    taskRuns: records?.taskRuns.length ?? 0,
-    trialEvents: records?.trialEvents.length ?? 0,
-    scores: records?.scores.length ?? 0,
-    consentEvents: records?.consentRecords.length ?? 0,
-  };
+  return { records, loading, loadError, reload };
 }
 
 function containsAnonymousReporting(records: ExportableLocalRecords | null) {
@@ -207,6 +224,19 @@ function containsAnonymousReporting(records: ExportableLocalRecords | null) {
       (profile) => profile.mode === "anonymous_reporting",
     ) || records?.anonymousIdentities.length,
   );
+}
+
+function sourceProfileIdFor(records: ExportableLocalRecords | null) {
+  return (
+    records?.profiles[0]?.profileId ??
+    records?.anonymousIdentities[0]?.profileId ??
+    null
+  );
+}
+
+async function loadLocalRecordSnapshot() {
+  await readLocalStorageSummary();
+  return readAllLocalRecords(true);
 }
 
 async function postSyncPayload(

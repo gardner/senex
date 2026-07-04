@@ -152,7 +152,7 @@ Dependencies: `E09-T03`, `E07-T03`.
 
 ## E09-T05 Implement anonymous-to-account linking
 
-Status: Todo
+Status: Done
 
 Scope:
 
@@ -169,6 +169,19 @@ Acceptance criteria:
 Validation:
 
 - Integration test for accepted and declined linking.
+
+Implementation notes:
+
+- Added account-specific `anonymous_account_link` local consent events for
+  accepted and declined anonymous-history linking decisions.
+- Account sync payloads still block anonymous reporting history unless the
+  latest link decision for the current account is granted.
+- Added `/account` UI that explains re-identification implications, lets users
+  decline without uploading, and requires a separate confirmation before
+  accepting the link.
+- Preserved anonymous reporting consent history by including declined and
+  granted link decisions in the later account sync consent payload.
+- Added desktop/mobile Playwright coverage for decline, accept, and import.
 
 Dependencies: `E09-T04`, `E07-T04`.
 
