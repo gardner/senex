@@ -99,6 +99,10 @@ Release-gate coverage is guarded by `tests/release-gates.test.ts`, which checks
 the committed [release-gates.md](release-gates.md) checklists for Release 0.1
 through 1.0, must-pass gate categories, and Release 1.0 privacy and
 clinical-claim review requirements.
+Release-notes process coverage is guarded by
+`tests/release-notes-process.test.ts`, which checks the committed
+[release-notes.md](release-notes.md) process, `docs/releases/TEMPLATE.md`, the
+ticket definition of done, and the PR-template release-notes prompt.
 
 `tests/admin-data-quality-api.test.ts` covers aggregate anonymous reporting
 quality metrics and redaction for the admin data-quality API.

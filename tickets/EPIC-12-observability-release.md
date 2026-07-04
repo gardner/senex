@@ -149,7 +149,7 @@ Notes:
 
 ## E12-T05 Create release notes process
 
-Status: Todo
+Status: Done
 
 Scope:
 
@@ -168,3 +168,16 @@ Validation:
 - Template committed and linked from README or docs.
 
 Dependencies: `E12-T04`.
+
+Notes:
+
+- Added [docs/release-notes.md](../docs/release-notes.md) and
+  [docs/releases/TEMPLATE.md](../docs/releases/TEMPLATE.md).
+- The template includes product behavior changes, migration notes, consent and
+  data-sharing changes, known limitations, verification evidence, and
+  unsupported medical-claim review.
+- Updated the ticket definition of done in [README.md](README.md), the PR
+  template, and top-level README links so user-visible behavior changes point to
+  release notes.
+- Added `tests/release-notes-process.test.ts` to keep the process, template,
+  ticket DoD, and PR prompt committed.

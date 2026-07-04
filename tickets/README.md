@@ -61,3 +61,6 @@ At minimum:
 - Accessibility is considered for user-facing work.
 - Export/import and consent behavior are defined when data leaves the device.
 - Documentation is updated when product or operational behavior changes.
+- The release notes are updated from [docs/release-notes.md](../docs/release-notes.md)
+  when user-visible behavior, data movement, consent/data-sharing, migrations,
+  known limitations, or claim-safety boundaries change.

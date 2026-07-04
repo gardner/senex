@@ -69,6 +69,7 @@ pnpm dev                  # http://localhost:3000
 | [environment-variables.md](docs/environment-variables.md) | Local and production configuration     |
 | [deployment.md](docs/deployment.md)                       | Cloudflare Workers deployment          |
 | [release-gates.md](docs/release-gates.md)                 | Release checklist gates                |
+| [release-notes.md](docs/release-notes.md)                 | Release notes process and template     |
 | [email-sending.md](docs/email-sending.md)                 | Transactional email through Cloudflare |
 | [testing.md](docs/testing.md)                             | Test runtime and quality gates         |
 | [code-review.md](docs/code-review.md)                     | Automated review workflow              |
