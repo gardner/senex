@@ -138,6 +138,27 @@ export function OfflineModePanel() {
     };
   }, []);
 
+  useEffect(() => {
+    let cancelled = false;
+    const listener = () =>
+      void readDashboardSnapshot()
+        .then((snapshot) => {
+          if (cancelled) return;
+          setSummary(snapshot.summary);
+          setDashboard(snapshot.dashboard);
+        })
+        .catch((caught: unknown) => {
+          if (cancelled) return;
+          setStatus("error");
+          setMessage(caught instanceof Error ? caught.message : String(caught));
+        });
+    window.addEventListener("senex-local-data-updated", listener);
+    return () => {
+      cancelled = true;
+      window.removeEventListener("senex-local-data-updated", listener);
+    };
+  }, []);
+
   const hasLocalHistory = summary?.hasLocalHistory ?? false;
   const controlsDisabled = summary === null || status === "working";
 

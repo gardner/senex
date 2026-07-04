@@ -59,6 +59,49 @@ describe("offline dashboard summary", () => {
       lastTestedAt: "2026-07-04T09:00:00.000Z",
     });
   });
+
+  it("fills non-reaction domain cards from task scores", () => {
+    const sessions = [session("session_1", "2026-07-04T09:00:00.000Z")];
+    const scores = [
+      score(
+        "symbol",
+        "session_1",
+        18,
+        0.95,
+        "processing_speed",
+        "correct_count",
+      ),
+      score("arrow", "session_1", 0.9, 0.9, "attention_control", "accuracy"),
+      score("sequence", "session_1", 5, 0.9, "working_memory", "span"),
+      score("learning", "session_1", 0.8, 0.9, "learning_memory", "retention"),
+    ];
+
+    const summary = buildOfflineDashboardSummary({
+      now: "2026-07-04T12:00:00.000Z",
+      sessions,
+      scores,
+    });
+
+    expect(
+      summary.domainCards.find((card) => card.domain === "processing"),
+    ).toMatchObject({
+      status: "Task data recorded",
+      trend: "Symbol Match correct count: 18",
+      lastTestedAt: "2026-07-04T09:00:00.000Z",
+    });
+    expect(
+      summary.domainCards.find((card) => card.domain === "working_memory"),
+    ).toMatchObject({
+      status: "Task data recorded",
+      trend: "Sequence Tap span: 5",
+    });
+    expect(
+      summary.domainCards.find((card) => card.domain === "learning"),
+    ).toMatchObject({
+      status: "Task data recorded",
+      trend: "Seven-Day Learning retention: 0.8",
+    });
+  });
 });
 
 function session(sessionId: string, completedAt: string): LocalSession {
@@ -80,13 +123,15 @@ function score(
   sessionId: string,
   rawValue: number,
   confidence: number,
+  domain = "reaction_speed",
+  metricName = "median_rt_ms",
 ): ScoreRecord {
   return {
     scoreId,
     sessionId,
     taskRunId: `task_run_${scoreId}`,
-    domain: "reaction_speed",
-    metricName: "median_rt_ms",
+    domain,
+    metricName,
     rawValue,
     normalizedValue: null,
     confidence,

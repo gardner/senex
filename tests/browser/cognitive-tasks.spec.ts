@@ -47,4 +47,59 @@ test.describe("cognitive tasks", () => {
       fullPage: true,
     });
   });
+
+  test("runs the full demo battery and updates local domain cards", async ({
+    page,
+  }, testInfo) => {
+    await page.getByRole("button", { name: "Run full demo battery" }).click();
+    await expect(
+      page.getByText("Full task battery saved locally."),
+    ).toBeVisible();
+    await expect(
+      page.getByText("Symbol Match correct count:").first(),
+    ).toBeVisible();
+    await expect(page.getByText("Sequence Tap span:").first()).toBeVisible();
+    await expect(
+      page.getByText("Seven-Day Learning retention:").first(),
+    ).toBeVisible();
+
+    const persisted = await page.evaluate(async () => {
+      const localPath = "/lib/local/index.ts";
+      const local = await import(/* @vite-ignore */ localPath);
+      const sessions = await local.listAllLocalSessionsForTests();
+      const taskRuns = await Promise.all(
+        sessions.map((session: { sessionId: string }) =>
+          local.listTaskRunsForSession(session.sessionId),
+        ),
+      );
+      const scores = await local.listScores({});
+      return {
+        taskIds: taskRuns.flat().map((run: { taskId: string }) => run.taskId),
+        scoreDomains: scores.map((score: { domain: string }) => score.domain),
+      };
+    });
+
+    expect(persisted.taskIds).toEqual(
+      expect.arrayContaining([
+        "symbol_match",
+        "arrow_focus",
+        "sequence_tap",
+        "pair_learning",
+        "seven_day_learning_week",
+      ]),
+    );
+    expect(persisted.scoreDomains).toEqual(
+      expect.arrayContaining([
+        "processing_speed",
+        "attention_control",
+        "working_memory",
+        "learning_memory",
+      ]),
+    );
+
+    await page.screenshot({
+      path: testInfo.outputPath("cognitive-full-battery.png"),
+      fullPage: true,
+    });
+  });
 });

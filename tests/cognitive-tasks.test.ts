@@ -7,6 +7,7 @@ import {
   SEQUENCE_TAP_TASK,
   SEVEN_DAY_LEARNING_TASK,
   SYMBOL_MATCH_TASK,
+  buildFullDemoBattery,
   generateArrowFocusTrials,
   generatePairLearningPack,
   generateReactionTimeTrials,
@@ -34,6 +35,29 @@ describe("cognitive task definitions", () => {
     ]) {
       expect(() => assertTaskDefinition(task)).not.toThrow();
       expect(task.taskVersion).toBe("1.0.0");
+    }
+  });
+});
+
+describe("full demo battery", () => {
+  it("builds one JSON-safe local result for every P0 task", () => {
+    const results = buildFullDemoBattery("seed");
+    expect(results.map((result) => result.task.taskId)).toEqual([
+      "reaction_time_sprint",
+      "symbol_match",
+      "arrow_focus",
+      "sequence_tap",
+      "pair_learning",
+      "seven_day_learning_week",
+    ]);
+    for (const result of results) {
+      expect(result.events.length).toBeGreaterThan(0);
+      expect(() => JSON.stringify(result.summaryScore)).not.toThrow();
+      expect(
+        Object.values(result.summaryScore).every(
+          (value) => typeof value !== "number" || Number.isFinite(value),
+        ),
+      ).toBe(true);
     }
   });
 });

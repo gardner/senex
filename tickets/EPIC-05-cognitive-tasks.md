@@ -71,7 +71,8 @@ Implementation notes:
 
 - Deterministic v1 definition, stimulus generation, and scoring are implemented
   in `lib/cognitive-tasks/symbol-match.ts`.
-- Full interactive runner capture and dashboard presentation remain.
+- Full demo-battery local persistence and dashboard presentation are
+  implemented. Full timed interactive runner capture remains.
 
 ## E05-T03 Implement Arrow Focus
 
@@ -102,7 +103,8 @@ Implementation notes:
 - Deterministic v1 definition, balanced congruent/incongruent generation, and
   conflict-cost scoring are implemented in
   `lib/cognitive-tasks/arrow-focus.ts`.
-- Full interactive runner capture and dashboard presentation remain.
+- Full demo-battery local persistence and dashboard presentation are
+  implemented. Full timed keyboard/touch runner capture remains.
 
 ## E05-T04 Implement Sequence Tap
 
@@ -133,7 +135,9 @@ Implementation notes:
 
 - Deterministic v1 definition, sequence generation, and span/error/missed
   scoring are implemented in `lib/cognitive-tasks/sequence-tap.ts`.
-- Full interactive runner capture and accessibility smoke coverage remain.
+- Full demo-battery local persistence and dashboard presentation are
+  implemented. Full interactive keyboard/touch runner capture and accessibility
+  smoke coverage remain.
 
 ## E05-T05 Implement Pair Learning
 
@@ -164,8 +168,8 @@ Implementation notes:
 
 - Versioned deterministic pair packs and immediate/delayed/recognition scoring
   are implemented in `lib/cognitive-tasks/pair-learning.ts`.
-- Full learning screen, delayed recall timing UI, and dashboard presentation
-  remain.
+- Full demo-battery local persistence and dashboard presentation are
+  implemented. Full learning screen and delayed recall timing UI remain.
 
 ## E05-T06 Implement Seven-Day Learning Week
 
@@ -197,4 +201,5 @@ Implementation notes:
 - Deterministic repeated-pack schedule generation, missed-day handling, and
   learning/retention scoring are implemented in
   `lib/cognitive-tasks/seven-day-learning.ts`.
-- Monthly summary UI and export/import continuity coverage remain.
+- Full demo-battery local persistence and dashboard presentation are
+  implemented. Monthly summary UI and export/import continuity coverage remain.

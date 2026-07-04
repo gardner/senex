@@ -53,7 +53,7 @@ const DOMAIN_FALLBACKS: Array<Omit<DomainCardSummary, "lastTestedAt">> = [
     detail: "Complete repeated local sessions to form a personal baseline.",
   },
   {
-    domain: "attention_processing",
+    domain: "processing",
     label: "Attention and processing",
     description: "Focus, filtering, and speeded visual matching.",
     status: "Not started",
@@ -62,7 +62,7 @@ const DOMAIN_FALLBACKS: Array<Omit<DomainCardSummary, "lastTestedAt">> = [
     detail: "Symbol Match and Arrow Focus will fill this card.",
   },
   {
-    domain: "memory",
+    domain: "working_memory",
     label: "Working memory",
     description: "Short sequence recall and replay accuracy.",
     status: "Not started",
@@ -113,10 +113,22 @@ export function buildOfflineDashboardSummary(input: {
     },
     domainCards: [
       reactionSpeedCard(baseline, trends.sevenDay, reactionSamples),
-      ...DOMAIN_FALLBACKS.slice(1).map((card) => ({
-        ...card,
-        lastTestedAt: null,
-      })),
+      groupedDomainCard(input.sessions, input.scores, DOMAIN_FALLBACKS[1], [
+        ["processing_speed", "correct_count", "Symbol Match correct count"],
+        ["attention_control", "accuracy", "Arrow Focus accuracy"],
+        ["attention_control", "conflict_cost_ms", "Arrow Focus conflict cost"],
+      ]),
+      groupedDomainCard(input.sessions, input.scores, DOMAIN_FALLBACKS[2], [
+        ["working_memory", "span", "Sequence Tap span"],
+      ]),
+      groupedDomainCard(input.sessions, input.scores, DOMAIN_FALLBACKS[3], [
+        ["learning_memory", "retention", "Seven-Day Learning retention"],
+        [
+          "learning_memory",
+          "immediate_accuracy",
+          "Pair Learning immediate accuracy",
+        ],
+      ]),
     ],
   };
 }
@@ -170,6 +182,58 @@ function reactionSpeedCard(
   };
 }
 
+function groupedDomainCard(
+  sessions: LocalSession[],
+  scores: ScoreRecord[],
+  fallback: Omit<DomainCardSummary, "lastTestedAt">,
+  priorities: Array<[domain: string, metricName: string, label: string]>,
+): DomainCardSummary {
+  const match = firstPrioritizedScore(sessions, scores, priorities);
+  if (!match) return { ...fallback, lastTestedAt: null };
+  return {
+    ...fallback,
+    status: "Task data recorded",
+    trend: `${match.label}: ${formatScoreValue(match.score.rawValue)}`,
+    confidenceLabel: confidenceFromValue(match.score.confidence),
+    lastTestedAt: match.completedAt,
+    detail: "Compared only with your own local task history.",
+  };
+}
+
+function firstPrioritizedScore(
+  sessions: LocalSession[],
+  scores: ScoreRecord[],
+  priorities: Array<[domain: string, metricName: string, label: string]>,
+) {
+  const completedAtBySession = new Map(
+    sessions
+      .filter((session) => session.completedAt)
+      .map((session) => [session.sessionId, session.completedAt!]),
+  );
+  for (const [domain, metricName, label] of priorities) {
+    const score = scores
+      .filter(
+        (item) =>
+          item.domain === domain &&
+          item.metricName === metricName &&
+          completedAtBySession.has(item.sessionId),
+      )
+      .toSorted((a, b) =>
+        completedAtBySession
+          .get(a.sessionId)!
+          .localeCompare(completedAtBySession.get(b.sessionId)!),
+      )
+      .at(-1);
+    if (score)
+      return {
+        score,
+        completedAt: completedAtBySession.get(score.sessionId)!,
+        label,
+      };
+  }
+  return null;
+}
+
 function hasCompletedOnDate(sessions: LocalSession[], now: string) {
   const today = dateKey(now);
   return sessions.some((session) => dateKey(session.completedAt) === today);
@@ -200,6 +264,17 @@ function confidenceLabel(window: TrendWindow) {
   if (window.state === "usable") return "Usable";
   if (window.state === "low_confidence") return "Low confidence";
   return "Insufficient data";
+}
+
+function confidenceFromValue(value: number) {
+  if (value >= 0.8) return "Usable";
+  if (value > 0) return "Low confidence";
+  return "Insufficient data";
+}
+
+function formatScoreValue(value: number) {
+  if (Number.isInteger(value)) return String(value);
+  return String(Number(value.toFixed(2)));
 }
 
 function dateKey(value: string | null | undefined) {

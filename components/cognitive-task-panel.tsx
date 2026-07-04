@@ -12,8 +12,10 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import {
+  buildFullDemoBattery,
   REACTION_TIME_TASK,
   scoreReactionTimeSprint,
+  type DemoTaskResult,
 } from "@/lib/cognitive-tasks";
 import {
   completeLocalSession,
@@ -23,6 +25,8 @@ import {
   startLocalSession,
 } from "@/lib/local";
 
+import { persistDemoTaskResult } from "./cognitive-tasks/persist-demo-result";
+
 const DEMO_SEED = "demo-reaction-seed";
 const DEMO_RESPONSES = [
   300, 350, 390, 400, 405, 410, 410, 410, 410, 410, 415, 420, 430, 440, 450,
@@ -30,11 +34,14 @@ const DEMO_RESPONSES = [
 ];
 
 type SaveState = "idle" | "saving" | "saved" | "error";
+type LastResult = "reaction" | "full_battery" | null;
 
 export function CognitiveTaskPanel() {
   const [isReady, setIsReady] = useState(false);
   const [state, setState] = useState<SaveState>("idle");
+  const [lastResult, setLastResult] = useState<LastResult>(null);
   const [medianRt, setMedianRt] = useState<number | null>(null);
+  const [batterySummary, setBatterySummary] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -98,7 +105,27 @@ export function CognitiveTaskPanel() {
         qualityFlags: score.qualityFlags,
       });
       setMedianRt(score.metrics.median_rt_ms);
+      setBatterySummary([]);
+      setLastResult("reaction");
       setState("saved");
+      notifyLocalDataUpdated();
+    } catch (caught) {
+      setState("error");
+      setError(caught instanceof Error ? caught.message : String(caught));
+    }
+  }
+
+  async function handleFullBatteryRun() {
+    try {
+      setState("saving");
+      setError(null);
+      const results = buildFullDemoBattery();
+      for (const result of results) await persistDemoTaskResult(result);
+      setBatterySummary(results.map(summaryLine));
+      setMedianRt(null);
+      setLastResult("full_battery");
+      setState("saved");
+      notifyLocalDataUpdated();
     } catch (caught) {
       setState("error");
       setError(caught instanceof Error ? caught.message : String(caught));
@@ -110,8 +137,8 @@ export function CognitiveTaskPanel() {
       <CardHeader>
         <CardTitle as="h2">Task battery</CardTitle>
         <CardDescription>
-          Start with Reaction Time Sprint; additional task definitions are ready
-          for the full battery.
+          Run the demo task slices locally; these scaffolds are not diagnostic
+          instruments.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-3 text-sm">
@@ -123,21 +150,39 @@ export function CognitiveTaskPanel() {
           <TaskBadge label="Pair Learning" />
           <TaskBadge label="Seven-Day Learning" />
         </div>
-        {state === "saved" && (
+        {state === "saved" && lastResult === "reaction" && (
           <div className="space-y-1">
             <p>Reaction Time Sprint saved locally.</p>
             <p>Median RT: {medianRt} ms</p>
           </div>
         )}
+        {state === "saved" && lastResult === "full_battery" && (
+          <div className="space-y-1">
+            <p>Full task battery saved locally.</p>
+            <ul className="list-disc space-y-1 pl-5">
+              {batterySummary.map((line) => (
+                <li key={line}>{line}</li>
+              ))}
+            </ul>
+          </div>
+        )}
         {error && <p className="text-destructive">{error}</p>}
       </CardContent>
-      <CardFooter className="mt-4">
+      <CardFooter className="mt-4 flex flex-wrap gap-2">
         <Button
           type="button"
           onClick={handleDemoRun}
           disabled={!isReady || state === "saving"}
         >
           Run demo reaction sprint
+        </Button>
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() => void handleFullBatteryRun()}
+          disabled={!isReady || state === "saving"}
+        >
+          Run full demo battery
         </Button>
       </CardFooter>
     </Card>
@@ -150,4 +195,28 @@ function TaskBadge({ label }: { label: string }) {
       {label}
     </div>
   );
+}
+
+function notifyLocalDataUpdated() {
+  window.dispatchEvent(new Event("senex-local-data-updated"));
+}
+
+function summaryLine(result: DemoTaskResult) {
+  const metrics = result.summaryScore;
+  if (result.task.taskId === "symbol_match") {
+    return `Symbol Match correct count: ${metrics.correct_count}`;
+  }
+  if (result.task.taskId === "arrow_focus") {
+    return `Arrow Focus accuracy: ${metrics.accuracy}`;
+  }
+  if (result.task.taskId === "sequence_tap") {
+    return `Sequence Tap span: ${metrics.span}`;
+  }
+  if (result.task.taskId === "pair_learning") {
+    return `Pair Learning immediate accuracy: ${metrics.immediate_accuracy}`;
+  }
+  if (result.task.taskId === "seven_day_learning_week") {
+    return `Seven-Day Learning retention: ${metrics.retention}`;
+  }
+  return `Reaction Time Sprint median RT: ${metrics.median_rt_ms} ms`;
 }

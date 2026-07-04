@@ -1,4 +1,5 @@
 export * from "./definitions";
+export * from "./demo-battery";
 export * from "./reaction-time";
 export * from "./symbol-match";
 export * from "./arrow-focus";

@@ -22,7 +22,8 @@ The first implemented vertical slice is **Reaction Time Sprint**:
 - browser happy-path coverage through the public task battery panel
 
 The remaining task modules currently provide deterministic definitions,
-stimulus generation, and scoring foundations:
+stimulus generation, scoring foundations, local demo persistence, and dashboard
+presentation:
 
 - **Symbol Match**: seeded symbol choices, speed/accuracy scoring
 - **Arrow Focus**: balanced congruent/incongruent trials, conflict-cost scoring
@@ -31,8 +32,15 @@ stimulus generation, and scoring foundations:
 - **Seven-Day Learning Week**: repeated pack schedule, missed-day handling, and
   learning/retention metrics
 
-Future work should add full interactive runners for those tasks before marking
-their UI capture tickets complete.
+The task battery panel can save a deterministic full demo battery covering all
+P0 modules. This writes normal `LocalSession`, `TaskRunRecord`,
+`TrialEventRecord`, and `ScoreRecord` rows for every task, then refreshes the
+offline dashboard so processing, working-memory, and learning cards are filled
+from local score history.
+
+Future work should replace the compact demo capture with full timed interactive
+runners for each non-reaction task before making research claims from those
+modules.
 
 ## Research Anchors
 
@@ -71,8 +79,10 @@ or result states so JSON backup/export remains valid.
 ## Tests
 
 - `tests/cognitive-tasks.test.ts` covers task definitions, deterministic
-  stimulus generation, scoring, and JSON-safe edge cases.
-- `tests/browser/cognitive-tasks.spec.ts` covers the Reaction Time Sprint demo
-  and verifies persisted local task data in real browser IndexedDB.
+  stimulus generation, scoring, full demo battery construction, and JSON-safe
+  edge cases.
+- `tests/browser/cognitive-tasks.spec.ts` covers the Reaction Time Sprint demo,
+  full demo battery persistence, dashboard-card refresh, and real browser
+  IndexedDB records.
 - `tests/test-engine-runner-scoring.test.ts` covers the reusable engine scorer,
   including insufficient-data JSON safety.
