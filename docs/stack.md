@@ -36,6 +36,9 @@ sync when framework, runtime, or infrastructure behavior changes.
 - **Cognitive tasks:** task-specific definitions, stimulus generation, and
   scorers live in `lib/cognitive-tasks/`; see
   [cognitive-tasks.md](cognitive-tasks.md).
+- **Telemetry:** Cloudflare Worker logs are operational service telemetry.
+  Product analytics and cognitive test data stay separate; see
+  [telemetry.md](telemetry.md).
 - **Deploys:** GitHub-connected Cloudflare Workers Builds are the intended
   production path. Production deploys run `pnpm run deploy:prod`, which checks
   migrations, applies D1 migrations to `senex-db`, then runs Wrangler deploy.

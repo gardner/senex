@@ -82,6 +82,11 @@ checks the committed [copy-safety.md](copy-safety.md) review checklist, scans
 routine user-facing result/dashboard copy for forbidden claim language, and
 asserts personal-baseline wording in dashboard summaries.
 
+Telemetry boundaries are covered by `tests/telemetry-boundaries.test.ts`, which
+checks the committed [telemetry.md](telemetry.md) boundary, verifies Cloudflare
+Worker observability is treated as operational logging, and guards Offline Mode
+against browser analytics transports by default.
+
 `tests/quality-coverage.test.ts` tracks E11 hardening coverage for conservative
 baseline/trend edges, duplicate trial-quality exclusions, even-count task
 medians, anonymous reporting category declarations, and backup stimulus

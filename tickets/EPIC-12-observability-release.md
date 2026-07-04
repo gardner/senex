@@ -8,7 +8,7 @@ Source: [PLAN observability](../docs/PLAN.md#18-observability-and-product-teleme
 
 ## E12-T01 Define telemetry boundaries
 
-Status: Todo
+Status: Done
 
 Scope:
 
@@ -27,6 +27,19 @@ Validation:
 - Docs reviewed against PRD privacy principles.
 
 Dependencies: `E07-T01`.
+
+Notes:
+
+- Added [docs/telemetry.md](../docs/telemetry.md) with the split between
+  product analytics and cognitive test data, per-mode rules, allowed
+  engineering event categories, forbidden payloads, destinations, and review
+  checklist.
+- Added `tests/telemetry-boundaries.test.ts` to keep the boundary committed,
+  verify Worker observability is documented as operational service telemetry,
+  and guard Offline Mode against browser analytics transports by default.
+- Reviewed the boundary against the PRD privacy principles, Anonymous Reporting
+  consent model, local-data docs, and current Cloudflare Workers observability
+  docs.
 
 ## E12-T02 Implement engineering telemetry
 
