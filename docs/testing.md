@@ -70,8 +70,8 @@ on sessions, task runs, and scores.
 
 Security-focused integration and browser tests cover Offline Mode no-upload
 behavior, anonymous reporting consent-scope rejection, account API
-authentication, admin-only ingestion status access, separated trial-contact
-profile data, and append-only account export audit records.
+authentication, admin-only ingestion status and data-quality access, separated
+trial-contact profile data, and append-only account export audit records.
 
 Accessibility browser tests run axe WCAG A/AA checks on public/auth routes and
 cover visible focus, reduced motion, and keyboard-only task-runner completion.
@@ -89,6 +89,11 @@ against browser analytics transports by default.
 `tests/telemetry-events.test.ts` covers the engineering telemetry event
 allowlist, coarse failure classification, sensitive-field rejection, and
 non-blocking sink failures.
+
+`tests/admin-data-quality-api.test.ts` covers aggregate anonymous reporting
+quality metrics and redaction for the admin data-quality API.
+`tests/browser/admin-data-quality.spec.ts` covers the admin dashboard on desktop
+and mobile Chromium.
 
 `tests/quality-coverage.test.ts` tracks E11 hardening coverage for conservative
 baseline/trend edges, duplicate trial-quality exclusions, even-count task

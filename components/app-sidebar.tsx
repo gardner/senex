@@ -74,6 +74,10 @@ const adminNav = {
       title: "Ingestion status",
       url: "/admin/ingestion/status",
     },
+    {
+      title: "Data quality",
+      url: "/admin/data-quality",
+    },
   ],
 };
 

@@ -108,6 +108,17 @@ Current capture points:
 All current events exclude raw payloads, identifiers, questionnaire answers,
 trial data, scores, and free-text notes.
 
+The current admin data-quality dashboard at `/admin/data-quality` reads
+accepted anonymous reporting payloads from D1 and returns only aggregate
+operational metrics: completion rates, invalid trial rates, quality flag
+frequency, median task duration, drop-off by test, device/input distribution,
+missing questionnaire fields, and failed-upload retry states. The API response
+does not include anonymous study IDs, session IDs, task-run IDs, upload
+idempotency keys, questionnaire answer IDs, raw answers, raw trial payloads, or
+free-text notes.
+Unsafe or unknown quality flag labels are grouped as `unknown_quality_flag`
+rather than displayed verbatim.
+
 ## References
 
 - [Cloudflare Workers observability](https://developers.cloudflare.com/workers/observability/)

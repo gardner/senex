@@ -78,9 +78,15 @@ operator action. The failure table does not store raw payload JSON, anonymous
 study IDs, or raw idempotency keys.
 
 Admins can review ingestion health at `/admin/ingestion/status` or through
-`GET /api/admin/ingestion/status`. Both surfaces require `user.role = 'admin'`
-and expose aggregate counts, schema-version distribution, recent accepted
-submissions, and actionable failures without direct anonymous identifiers.
+`GET /api/admin/ingestion/status`. They can review aggregate data quality at
+`/admin/data-quality` or through `GET /api/admin/data-quality`. These surfaces
+require `user.role = 'admin'` and expose aggregate counts, schema-version
+distribution, recent accepted submissions, actionable failures, completion
+rates, invalid trial rates, quality flag frequency, task duration, drop-off,
+device/input distribution, and missing questionnaire fields without direct
+anonymous identifiers or raw questionnaire answers.
+Unsafe or unknown quality flag labels are grouped as `unknown_quality_flag`
+rather than displayed verbatim.
 
 The D1 migration is additive:
 

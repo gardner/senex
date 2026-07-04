@@ -104,7 +104,7 @@ Notes:
 
 ## E10-T04 Build data quality dashboard
 
-Status: Todo
+Status: Done
 
 Scope:
 
@@ -122,6 +122,19 @@ Validation:
 - Integration tests for aggregate queries.
 
 Dependencies: `E10-T03`, `E12-T02`.
+
+Notes:
+
+- Added admin-only `/admin/data-quality` and `/api/admin/data-quality`.
+- Aggregates accepted anonymous reporting payloads into completion rates,
+  invalid trial rates, quality flag frequency, median task duration, drop-off
+  by test, device/input distribution, missing questionnaire fields, and
+  failed-upload retry state.
+- Kept direct study/session/task-run/upload/questionnaire-answer identifiers,
+  raw trial payloads, raw answers, and free-text notes out of the API response.
+- Covered admin authz, aggregate query behavior, redaction, and desktop/mobile
+  dashboard rendering in `tests/admin-data-quality-api.test.ts` and
+  `tests/browser/admin-data-quality.spec.ts`.
 
 ## E10-T05 Implement research export job and manifest
 
