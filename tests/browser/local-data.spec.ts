@@ -143,11 +143,9 @@ test.describe("local data platform", () => {
     page,
   }, testInfo) => {
     await expect(
-      page.getByRole("heading", { name: "Private local history" }),
+      page.getByRole("heading", { name: "Choose how to use Senex" }),
     ).toBeVisible();
-    await expect(
-      page.getByText("No local history saved in this browser yet."),
-    ).toBeVisible();
+    await expect(page.getByText("No local history yet.")).toBeVisible();
 
     await page
       .getByRole("button", { name: "Use privately on this device" })

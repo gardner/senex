@@ -25,6 +25,9 @@ sync when framework, runtime, or infrastructure behavior changes.
   Playwright against the local vinext dev server.
 - **Local data:** Offline Mode records use browser IndexedDB through
   `lib/local/`; see [local-data.md](local-data.md).
+- **Offline Mode:** private onboarding, baseline context, local dashboard, and
+  local data controls live in `components/offline-mode-panel.tsx` and
+  `lib/offline-dashboard.ts`; see [offline-mode.md](offline-mode.md).
 - **Backup/restore:** JSON export/import uses the versioned
   `senex.local-backup` envelope; see [export-import.md](export-import.md).
 - **Test engine:** cognitive task contracts, runner states, quality flags,

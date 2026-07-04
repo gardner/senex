@@ -24,7 +24,10 @@ import {
 } from "@/lib/local";
 
 const DEMO_SEED = "demo-reaction-seed";
-const DEMO_RESPONSES = [300, 350, 410, 900, 1100, 80, null, 450];
+const DEMO_RESPONSES = [
+  300, 350, 390, 400, 405, 410, 410, 410, 410, 410, 415, 420, 430, 440, 450,
+  470,
+];
 
 type SaveState = "idle" | "saving" | "saved" | "error";
 

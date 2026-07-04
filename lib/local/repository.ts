@@ -180,6 +180,10 @@ export async function saveLocalSessionForTests(
 }
 
 export async function listAllLocalSessionsForTests(): Promise<LocalSession[]> {
+  return listLocalSessions();
+}
+
+export async function listLocalSessions(): Promise<LocalSession[]> {
   const records = await getAllRecords<LocalSession>(LOCAL_STORES.sessions);
   return records.toSorted((a, b) => a.sessionId.localeCompare(b.sessionId));
 }
@@ -251,6 +255,38 @@ export async function saveQuestionnaireAnswer(
   assertQuestionnaireAnswerRecord(record);
   await putRecord(LOCAL_STORES.questionnaireAnswers, record);
   return record;
+}
+
+export async function listQuestionnaireAnswers(filters: {
+  profileId?: string;
+  sessionId?: string | null;
+  questionnaireId?: string;
+  questionId?: string;
+}): Promise<QuestionnaireAnswerRecord[]> {
+  const records = await getAllRecords<QuestionnaireAnswerRecord>(
+    LOCAL_STORES.questionnaireAnswers,
+  );
+  return records
+    .filter((record) => {
+      if (filters.profileId && record.profileId !== filters.profileId)
+        return false;
+      if (
+        filters.sessionId !== undefined &&
+        record.sessionId !== filters.sessionId
+      ) {
+        return false;
+      }
+      if (
+        filters.questionnaireId &&
+        record.questionnaireId !== filters.questionnaireId
+      ) {
+        return false;
+      }
+      if (filters.questionId && record.questionId !== filters.questionId)
+        return false;
+      return true;
+    })
+    .toSorted((a, b) => a.answeredAt.localeCompare(b.answeredAt));
 }
 
 export async function saveConsentRecord(

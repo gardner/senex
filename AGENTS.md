@@ -25,6 +25,7 @@ The current product direction and platform documentation are:
 | [docs/framework-patterns.md](docs/framework-patterns.md)       | Approved vinext/App Router patterns    |
 | [docs/adr/](docs/adr/)                                         | Architecture decision records          |
 | [docs/local-data.md](docs/local-data.md)                       | Browser local storage platform         |
+| [docs/offline-mode.md](docs/offline-mode.md)                   | Private onboarding and dashboard       |
 | [docs/export-import.md](docs/export-import.md)                 | JSON backup and restore                |
 | [docs/test-engine.md](docs/test-engine.md)                     | Cognitive task runner and scoring      |
 | [docs/cognitive-tasks.md](docs/cognitive-tasks.md)             | Task battery modules and status        |

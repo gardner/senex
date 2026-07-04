@@ -2,7 +2,7 @@ import Link from "next/link";
 
 import { BackupRestorePanel } from "@/components/backup-restore-panel";
 import { CognitiveTaskPanel } from "@/components/cognitive-task-panel";
-import { LocalStorageStatus } from "@/components/local-storage-status";
+import { OfflineModePanel } from "@/components/offline-mode-panel";
 import { buttonVariants } from "@/components/ui/button";
 import {
   Card,
@@ -39,7 +39,7 @@ export default function HomePage() {
       </section>
 
       <section className="py-4">
-        <LocalStorageStatus />
+        <OfflineModePanel />
       </section>
 
       <section className="py-4">

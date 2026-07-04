@@ -61,9 +61,11 @@ Git.
 
 ## UI
 
-`components/local-storage-status.tsx` shows whether local history exists, the
-last local save time, and the current browser persistence state. Persistent
-storage requests are non-blocking because browsers may deny or ignore them.
+`components/offline-mode-panel.tsx` shows whether local history exists, the
+last local save time, first-run private mode, optional baseline context,
+dashboard status, persistent-storage request state, and delete-local-history
+controls. Persistent storage requests are non-blocking because browsers may
+deny or ignore them.
 
 `components/backup-restore-panel.tsx` provides JSON backup generation, import
 preview, merge restore, and replace restore. See
@@ -73,3 +75,6 @@ preview, merge restore, and replace restore. See
 Sprint demo path. It creates a local session, stores a versioned task run,
 stores trial events, stores the median-RT score, and then completes the
 session. See [cognitive-tasks.md](cognitive-tasks.md).
+
+The first-run Offline Mode flow and dashboard are documented in
+[offline-mode.md](offline-mode.md).

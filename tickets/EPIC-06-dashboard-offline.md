@@ -8,7 +8,7 @@ Source: [PLAN offline dashboard](../docs/PLAN.md#44-offline-dashboard),
 
 ## E06-T01 Build mode chooser and offline explanation
 
-Status: Todo
+Status: Done
 
 Scope:
 
@@ -26,11 +26,18 @@ Validation:
 
 - Browser test for first-run Offline Mode path.
 
+Implementation notes:
+
+- `components/offline-mode-panel.tsx` provides the mode chooser and local-only
+  explanation.
+- `tests/browser/offline-mode.spec.ts` verifies the first-run private path does
+  not POST to app APIs.
+
 Dependencies: `E02-T04`.
 
 ## E06-T02 Build baseline setup and context questions
 
-Status: Todo
+Status: Done
 
 Scope:
 
@@ -48,11 +55,18 @@ Validation:
 
 - Integration test for saving context.
 
+Implementation notes:
+
+- Optional baseline context is stored as local questionnaire answers with
+  `questionnaireId: "baseline_setup_v1"`.
+- `listQuestionnaireAnswers()` exposes local answer verification without using
+  test-only repository helpers.
+
 Dependencies: `E06-T01`, `E02-T05`.
 
 ## E06-T03 Build dashboard baseline status
 
-Status: Todo
+Status: Done
 
 Scope:
 
@@ -70,11 +84,17 @@ Validation:
 
 - Component tests or browser tests for dashboard states.
 
+Implementation notes:
+
+- `lib/offline-dashboard.ts` computes today status, baseline state, and 7/30
+  day completion from local sessions and scores.
+- `tests/offline-dashboard.test.ts` covers empty and usable baseline states.
+
 Dependencies: `E04-T06`.
 
 ## E06-T04 Build domain cards and trend views
 
-Status: Todo
+Status: Done
 
 Scope:
 
@@ -92,11 +112,18 @@ Validation:
 
 - Tests for insufficient-data and low-quality states.
 
+Implementation notes:
+
+- The offline dashboard renders conservative domain cards without population
+  norms.
+- Reaction speed uses local `median_rt_ms` scores; other cards wait for their
+  interactive task runners.
+
 Dependencies: `E06-T03`, `E05-T01`.
 
 ## E06-T05 Add local data controls
 
-Status: Todo
+Status: Done
 
 Scope:
 
@@ -114,5 +141,12 @@ Acceptance criteria:
 Validation:
 
 - Browser test for delete confirmation and cancellation.
+
+Implementation notes:
+
+- The offline panel links to the JSON backup card, preserves the persistent
+  storage request path, and implements delete cancel/confirm behavior.
+- `tests/browser/offline-mode.spec.ts` covers delete cancellation and confirmed
+  deletion.
 
 Dependencies: `E03-T04`, `E02-T06`.

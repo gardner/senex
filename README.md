@@ -60,6 +60,7 @@ pnpm dev                  # http://localhost:3000
 | [framework-patterns.md](docs/framework-patterns.md)       | Approved vinext/App Router patterns    |
 | [adr/](docs/adr/)                                         | Architecture decision records          |
 | [local-data.md](docs/local-data.md)                       | Browser local storage platform         |
+| [offline-mode.md](docs/offline-mode.md)                   | Private onboarding and dashboard       |
 | [export-import.md](docs/export-import.md)                 | JSON backup and restore                |
 | [test-engine.md](docs/test-engine.md)                     | Cognitive task runner and scoring      |
 | [cognitive-tasks.md](docs/cognitive-tasks.md)             | Task battery modules and status        |

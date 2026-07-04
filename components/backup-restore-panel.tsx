@@ -91,7 +91,7 @@ export function BackupRestorePanel() {
   }
 
   return (
-    <Card>
+    <Card id="json-backup">
       <CardHeader>
         <CardTitle as="h2">JSON backup</CardTitle>
         <CardDescription>
@@ -126,6 +126,7 @@ export function BackupRestorePanel() {
               className="sr-only"
               onChange={handleFileInput}
               onInput={handleFileInput}
+              suppressHydrationWarning
             />
           </label>
         </div>
@@ -137,6 +138,7 @@ export function BackupRestorePanel() {
           <textarea
             id="backup-json"
             ref={manualJsonRef}
+            suppressHydrationWarning
             className="border-input bg-background min-h-24 w-full rounded-md border px-3 py-2 font-mono text-xs"
           />
           <Button

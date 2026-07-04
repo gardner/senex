@@ -84,6 +84,7 @@ unexpected content.
 For the cognitive-monitoring product, prefer tests around:
 
 - local-first storage contracts
+- offline onboarding and local dashboard states
 - export/import schema validation
 - consent gating
 - deterministic scoring and baseline calculations
