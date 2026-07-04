@@ -14,10 +14,12 @@
     "check:migrations": "bash scripts/check-migrations-safe.sh",
     "typecheck": "vinext typegen && tsc --noEmit",
     "test": "vitest run",
+    "test:browser": "pnpm db:local:migrate && playwright test",
     "test:watch": "vitest",
     "lint": "eslint",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
+    "smoke:deploy": "node scripts/smoke-deploy.mjs",
     "db:local:migrate": "wrangler d1 migrations apply DB --local",
     "db:remote:migrate": "wrangler d1 migrations apply senex-db --remote",
     "cf:whoami": "wrangler whoami",
@@ -41,6 +43,7 @@
   "devDependencies": {
     "@cloudflare/vite-plugin": "^1.40.0",
     "@cloudflare/vitest-pool-workers": "^0.16.13",
+    "@playwright/test": "^1.61.1",
     "@tailwindcss/vite": "^4.3.0",
     "@types/node": "^20",
     "@types/react": "^19",
@@ -62,11 +65,6 @@
   },
   "packageManager": "pnpm@10.31.0+sha512.e3927388bfaa8078ceb79b748ffc1e8274e84d75163e67bc22e06c0d3aed43dd153151cbf11d7f8301ff4acb98c68bdc5cadf6989532801ffafe3b3e4a63c268",
   "type": "module",
-  "pnpm": {
-    "overrides": {
-      "kysely": "^0.28.17"
-    }
-  },
   "lint-staged": {
     "*.{ts,tsx,js,jsx,mjs}": [
       "eslint --fix",

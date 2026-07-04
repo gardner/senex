@@ -10,6 +10,7 @@ pnpm dev
 pnpm typecheck
 pnpm lint
 pnpm test
+pnpm test:browser
 pnpm build
 ```
 
@@ -37,6 +38,7 @@ Normal production migrations run through the GitHub to Cloudflare deploy path.
 
 ```bash
 pnpm run check:migrations
+SMOKE_BASE_URL=http://localhost:3000 pnpm smoke:deploy
 pnpm run deploy:preview
 pnpm run deploy:prod
 ```

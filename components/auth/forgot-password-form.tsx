@@ -41,7 +41,7 @@ export function ForgotPasswordForm() {
     return (
       <Card className="w-full max-w-sm">
         <CardHeader>
-          <CardTitle>Check your email</CardTitle>
+          <CardTitle as="h1">Check your email</CardTitle>
           <CardDescription>
             If an account exists for {email}, a reset link is on its way. The
             link expires in an hour.
@@ -54,7 +54,7 @@ export function ForgotPasswordForm() {
   return (
     <Card className="w-full max-w-sm">
       <CardHeader>
-        <CardTitle>Forgot your password?</CardTitle>
+        <CardTitle as="h1">Forgot your password?</CardTitle>
         <CardDescription>
           Enter your email and we&apos;ll send you a reset link.
         </CardDescription>

@@ -1,6 +1,10 @@
 ignoredBuiltDependencies:
   - sharp
   - unrs-resolver
+# AIDEV-NOTE: keep Kysely on 0.28.x until better-auth/kysely-d1 no longer
+# import DEFAULT_MIGRATION_LOCK_TABLE, which Kysely 0.29 removed.
+overrides:
+  kysely: 0.28.17
 # AIDEV-NOTE: esbuild + workerd ship platform binaries via postinstall;
 # without these approvals `wrangler dev` and the Cloudflare vite plugin break.
 onlyBuiltDependencies:

@@ -41,7 +41,7 @@ export function ResetPasswordForm({ token }: { token: string }) {
   return (
     <Card className="w-full max-w-sm">
       <CardHeader>
-        <CardTitle>Choose a new password</CardTitle>
+        <CardTitle as="h1">Choose a new password</CardTitle>
         <CardDescription>
           Then sign in with it on the next screen.
         </CardDescription>

@@ -16,7 +16,11 @@ export default defineConfig({
   // "createContext is not a function". vinext propagates this exclude into
   // its rsc/ssr/client environments.
   optimizeDeps: {
-    exclude: ["@base-ui/react"],
+    exclude: [
+      "@base-ui/react",
+      "lucide-react",
+      "lucide-react/dist/esm/Icon.mjs",
+    ],
   },
   plugins: [
     vinext(),

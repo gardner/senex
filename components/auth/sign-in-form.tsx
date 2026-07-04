@@ -54,7 +54,7 @@ export function SignInForm({ googleEnabled }: { googleEnabled: boolean }) {
   return (
     <Card className="w-full max-w-sm">
       <CardHeader>
-        <CardTitle>Sign in</CardTitle>
+        <CardTitle as="h1">Sign in</CardTitle>
         <CardDescription>Welcome back</CardDescription>
       </CardHeader>
       <form onSubmit={handleSubmit}>

@@ -8,6 +8,7 @@ CI-oriented checks:
 pnpm typecheck
 pnpm lint
 pnpm test
+pnpm test:browser
 pnpm build
 ```
 
@@ -33,6 +34,40 @@ tests declare the required bindings directly.
 
 Storage is isolated per test file. Keep tests deterministic and explicit about
 data setup.
+
+## Browser Smoke Tests
+
+`pnpm test:browser` applies local D1 migrations, starts `pnpm dev` through
+Playwright's `webServer` config, and runs desktop plus mobile Chromium smoke
+tests from `tests/browser/`.
+
+To test an already running server or preview URL:
+
+```bash
+PLAYWRIGHT_BASE_URL=http://localhost:3000 pnpm test:browser
+PLAYWRIGHT_BASE_URL=https://preview.example.workers.dev pnpm test:browser
+```
+
+CI installs Chromium and runs `pnpm test:browser` after the Vitest suite.
+
+Generated browser artifacts are ignored by Git:
+
+- `playwright-report/`
+- `test-results/`
+
+## Deployment Smoke
+
+`pnpm smoke:deploy` checks that a deployed or local URL serves the home page and
+auth entry pages. It is intended for preview URLs, production verification, or a
+local server you started separately.
+
+```bash
+SMOKE_BASE_URL=http://localhost:3000 pnpm smoke:deploy
+SMOKE_BASE_URL=https://senex.nz pnpm smoke:deploy
+```
+
+The script exits non-zero if any checked route is unavailable or returns
+unexpected content.
 
 ## Product Testing Direction
 

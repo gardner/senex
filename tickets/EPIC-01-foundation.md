@@ -7,7 +7,7 @@ Source: [PLAN Phase 0](../docs/PLAN.md#3-milestone-roadmap),
 
 ## E01-T01 Validate vinext Workers deployment
 
-Status: Todo
+Status: Done
 
 Scope:
 
@@ -35,7 +35,7 @@ Dependencies: none.
 
 ## E01-T02 Add browser test harness
 
-Status: Todo
+Status: Done
 
 Scope:
 
@@ -58,7 +58,7 @@ Dependencies: `E01-T01`.
 
 ## E01-T03 Create architecture decision log
 
-Status: Todo
+Status: Done
 
 Scope:
 
@@ -80,7 +80,7 @@ Dependencies: none.
 
 ## E01-T04 Document approved framework patterns
 
-Status: Todo
+Status: Done
 
 Scope:
 
@@ -102,7 +102,7 @@ Dependencies: `E01-T01`.
 
 ## E01-T05 Add deployment smoke check
 
-Status: Todo
+Status: Done
 
 Scope:
 

@@ -55,7 +55,7 @@ export function SignUpForm({ googleEnabled }: { googleEnabled: boolean }) {
   return (
     <Card className="w-full max-w-sm">
       <CardHeader>
-        <CardTitle>Create an account</CardTitle>
+        <CardTitle as="h1">Create an account</CardTitle>
         <CardDescription>Get started</CardDescription>
       </CardHeader>
       <form onSubmit={handleSubmit}>

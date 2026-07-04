@@ -22,6 +22,8 @@ The current product direction and platform documentation are:
 | [docs/PRD.md](docs/PRD.md)                                     | Browser-based cognitive monitoring PRD |
 | [docs/PLAN.md](docs/PLAN.md)                                   | Engineering implementation plan        |
 | [docs/stack.md](docs/stack.md)                                 | Runtime, framework, and sharp edges    |
+| [docs/framework-patterns.md](docs/framework-patterns.md)       | Approved vinext/App Router patterns    |
+| [docs/adr/](docs/adr/)                                         | Architecture decision records          |
 | [docs/common-commands.md](docs/common-commands.md)             | Day-to-day commands                    |
 | [docs/database.md](docs/database.md)                           | D1 setup and migrations                |
 | [docs/environment-variables.md](docs/environment-variables.md) | Local and Cloudflare env vars          |
@@ -51,11 +53,13 @@ Pre-commit hooks format/lint staged files. CI-oriented scripts are:
 pnpm typecheck
 pnpm lint
 pnpm test
+pnpm test:browser
 pnpm build
 ```
 
-Tests run in real workerd + real D1. Prefer focused tests for behavior changes.
-See [docs/testing.md](docs/testing.md).
+Vitest runs in real workerd + real D1. Browser smoke tests run through
+Playwright against the local vinext dev server. Prefer focused tests for
+behavior changes. See [docs/testing.md](docs/testing.md).
 
 ## Workflow and Safety Rules
 

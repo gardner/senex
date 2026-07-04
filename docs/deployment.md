@@ -144,3 +144,21 @@ pnpm deploy
 ```
 
 Prefer reviewed PRs and the GitHub-connected deploy path for production.
+
+## Smoke Checks
+
+After a preview or production deploy, verify the public and auth entry routes:
+
+```bash
+SMOKE_BASE_URL=https://senex.nz pnpm smoke:deploy
+```
+
+For a local check, start the app separately and point the smoke script at it:
+
+```bash
+pnpm dev
+SMOKE_BASE_URL=http://localhost:3000 pnpm smoke:deploy
+```
+
+The script follows redirects and fails loudly on non-2xx responses or missing
+expected page content.

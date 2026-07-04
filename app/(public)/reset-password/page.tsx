@@ -25,7 +25,7 @@ export default async function ResetPasswordPage({
       <div className="flex justify-center px-4 py-16">
         <Card className="w-full max-w-sm">
           <CardHeader>
-            <CardTitle>This reset link isn&apos;t valid</CardTitle>
+            <CardTitle as="h1">This reset link isn&apos;t valid</CardTitle>
             <CardDescription>
               The link is missing its token — it may have been cut short in your
               email client. Request a fresh one.

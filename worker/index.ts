@@ -14,7 +14,6 @@ import {
   DEFAULT_IMAGE_SIZES,
   isImageOptimizationPath,
 } from "vinext/server/image-optimization";
-import type { ImageConfig } from "vinext/server/image-optimization";
 import handler from "vinext/server/app-router-entry";
 
 interface Env {
@@ -40,9 +39,10 @@ interface ExecutionContext {
 // optimization endpoint on the client side (served directly, no proxy).
 // To route SVGs through the optimizer (with security headers), set
 // dangerouslyAllowSVG: true in next.config.js and uncomment below:
+// import type { ImageConfig } from "vinext/server/image-optimization";
 // const imageConfig: ImageConfig = { dangerouslyAllowSVG: true };
 
-export default {
+const worker = {
   async fetch(
     request: Request,
     env: Env,
@@ -77,3 +77,5 @@ export default {
     return handler.fetch(request, env, ctx);
   },
 };
+
+export default worker;
