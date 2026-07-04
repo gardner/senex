@@ -1,3 +1,5 @@
+import { env } from "cloudflare:workers";
+
 import { readDeletionRequests } from "./deletion-requests";
 import { readAccountRecords, readSyncBatches, readSyncState } from "./records";
 import { readTrialContact } from "@/lib/trial-contact/server";
@@ -40,6 +42,34 @@ export async function buildAccountExport(
   };
 }
 
+export async function recordAccountExportAudit(
+  userId: string,
+  exportBody: AccountExportBody,
+  exportedAt: string,
+) {
+  await env.DB.prepare(
+    `INSERT INTO account_export_audit (
+       audit_id,
+       user_id,
+       event_type,
+       exported_at,
+       export_version,
+       record_counts_json,
+       source
+     ) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+  )
+    .bind(
+      `account_export_audit_${crypto.randomUUID()}`,
+      userId,
+      "account_export_generated",
+      exportedAt,
+      exportBody.exportVersion,
+      JSON.stringify(recordCounts(exportBody)),
+      "account_export_api",
+    )
+    .run();
+}
+
 function retentionNotes() {
   return [
     {
@@ -60,3 +90,18 @@ function retentionNotes() {
     },
   ];
 }
+
+function recordCounts(exportBody: AccountExportBody) {
+  return {
+    sessions: exportBody.records.sessions.length,
+    taskRuns: exportBody.records.taskRuns.length,
+    trialEvents: exportBody.records.trialEvents.length,
+    scores: exportBody.records.scores.length,
+    consentEvents: exportBody.records.consentEvents.length,
+    deletionRequests: exportBody.deletionRequests.length,
+    trialContactProfile:
+      exportBody.trialContact.profile.lastReviewedAt === null ? 0 : 1,
+  };
+}
+
+export type AccountExportBody = Awaited<ReturnType<typeof buildAccountExport>>;

@@ -128,6 +128,9 @@ The core tables are:
 - `account_deletion_requests`: one auditable account deletion review request per
   open user request, including the server-side scope and limitations shown to
   the user.
+- `account_export_audit`: append-only account export audit metadata. It records
+  export generation events, export version, timestamp, source, and per-section
+  record counts without duplicating the exported personal data.
 
 Do not treat local deletion as server deletion in these tables. Account data
 removal belongs in the explicit export/deletion-request flow.
@@ -162,6 +165,9 @@ signed-in account. It includes account profile fields, sync state, sync batches,
 account-linked sessions/task runs/trial events/scores, account-linked consent
 events, trial-contact settings/profile data in a separate `trialContact` block,
 deletion requests, and retention notes.
+
+Each successful account export also writes one `account_export_audit` row.
+Unauthenticated export requests are rejected before audit records are written.
 
 `POST /api/account/deletion-requests` creates or returns the current open
 account deletion request. It does not immediately delete records. The request

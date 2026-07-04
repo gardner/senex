@@ -4,6 +4,7 @@ import { describe, expect, it } from "vitest";
 import { POST as POST_SYNC } from "@/app/api/account/sessions/sync/route";
 import { GET as GET_EXPORT } from "@/app/api/account/export/route";
 import { POST as POST_DELETION_REQUEST } from "@/app/api/account/deletion-requests/route";
+import type { AccountExportBody } from "@/lib/account-data/export";
 import { auth } from "@/lib/auth";
 import {
   LOCAL_APP_VERSION,
@@ -38,7 +39,7 @@ describe("account export and deletion request API", () => {
     expect(response.status).toBe(200);
     expect(response.headers.get("content-type")).toContain("application/json");
 
-    const body = (await response.json()) as AccountExportResponse;
+    const body = (await response.json()) as AccountExportBody;
     expect(body.exportVersion).toBe("account-export-v1");
     expect(body.account.email).toBe("export-owner@example.com");
     expect(body.records.sessions).toHaveLength(1);
@@ -59,6 +60,37 @@ describe("account export and deletion request API", () => {
     expect(body.retentionNotes.some((note) => note.scope === "research")).toBe(
       true,
     );
+
+    const auditRows = await env.DB.prepare(
+      `SELECT event_type, record_counts_json, source
+       FROM account_export_audit
+       WHERE user_id = ?
+       ORDER BY exported_at`,
+    )
+      .bind(owner.userId)
+      .all<{
+        event_type: string;
+        record_counts_json: string;
+        source: string;
+      }>();
+    expect(auditRows.results).toEqual([
+      {
+        event_type: "account_export_generated",
+        record_counts_json: JSON.stringify({
+          sessions: 1,
+          taskRuns: 1,
+          trialEvents: 1,
+          scores: 1,
+          consentEvents: 1,
+          deletionRequests: 0,
+          trialContactProfile: 0,
+        }),
+        source: "account_export_api",
+      },
+    ]);
+    expect(
+      await exportAuditCount("export-other@example.com", other.userId),
+    ).toBe(0);
   });
 
   it("creates an auditable idempotent account deletion request", async () => {
@@ -102,34 +134,12 @@ describe("account export and deletion request API", () => {
   });
 });
 
-type SignedInUser = {
-  userId: string;
-  headers: Headers;
-};
-
-type AccountExportResponse = {
-  exportVersion: string;
-  account: { email: string };
-  retentionNotes: Array<{ scope: string; text: string }>;
-  records: {
-    sessions: Array<{ localSessionId: string }>;
-    taskRuns: Array<{ localTaskRunId: string }>;
-    trialEvents: Array<{ localTrialEventId: string }>;
-    scores: Array<{ localScoreId: string }>;
-    consentEvents: Array<{ localConsentRecordId: string }>;
-  };
-};
-
 type DeletionRequestResponse = {
   status: "accepted" | "existing";
-  deletionRequest: {
-    requestId: string;
-    status: string;
-    limitations: string[];
-  };
+  deletionRequest: { requestId: string; status: string; limitations: string[] };
 };
 
-async function signUp(email: string): Promise<SignedInUser> {
+async function signUp(email: string) {
   const { response, headers } = await auth.api.signUpEmail({
     body: { name: "Account Data Owner", email, password: PASSWORD },
     returnHeaders: true,
@@ -142,7 +152,10 @@ async function signUp(email: string): Promise<SignedInUser> {
   };
 }
 
-async function syncAccount(user: SignedInUser, prefix: string) {
+async function syncAccount(
+  user: Awaited<ReturnType<typeof signUp>>,
+  prefix: string,
+) {
   const response = await POST_SYNC(
     syncRequest(fixturePayload(user.userId, prefix), user.headers),
   );
@@ -154,6 +167,18 @@ function accountRequest(headers = new Headers()) {
     method: "GET",
     headers,
   });
+}
+
+async function exportAuditCount(email: string, userId: string) {
+  const row = await env.DB.prepare(
+    `SELECT COUNT(*) AS count
+     FROM account_export_audit audit
+     JOIN "user" owner ON owner.id = audit.user_id
+     WHERE owner.email = ? AND audit.user_id = ?`,
+  )
+    .bind(email, userId)
+    .first<{ count: number }>();
+  return row?.count ?? 0;
 }
 
 function syncRequest(payload: unknown, headers: Headers) {

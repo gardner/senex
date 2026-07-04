@@ -68,6 +68,11 @@ Critical browser-flow tests cover browser-network-off private task completion,
 anonymous-reporting consent withdrawal, and hidden-tab interruption persistence
 on sessions, task runs, and scores.
 
+Security-focused integration and browser tests cover Offline Mode no-upload
+behavior, anonymous reporting consent-scope rejection, account API
+authentication, admin-only ingestion status access, separated trial-contact
+profile data, and append-only account export audit records.
+
 Accessibility browser tests run axe WCAG A/AA checks on public/auth routes and
 cover visible focus, reduced motion, and keyboard-only task-runner completion.
 See [accessibility-audit.md](accessibility-audit.md).

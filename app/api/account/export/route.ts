@@ -1,5 +1,8 @@
+import {
+  buildAccountExport,
+  recordAccountExportAudit,
+} from "@/lib/account-data/export";
 import { auth } from "@/lib/auth";
-import { buildAccountExport } from "@/lib/account-data/export";
 
 export async function GET(request: Request) {
   const session = await auth.api.getSession({ headers: request.headers });
@@ -12,6 +15,7 @@ export async function GET(request: Request) {
 
   const generatedAt = new Date().toISOString();
   const body = await buildAccountExport(session.user, generatedAt);
+  await recordAccountExportAudit(session.user.id, body, generatedAt);
   return Response.json(body, {
     headers: {
       "cache-control": "no-store",

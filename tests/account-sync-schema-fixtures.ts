@@ -114,6 +114,9 @@ export const requiredColumns = {
   account_deletion_requests: columns(
     "request_id user_id requested_at status scope_json limitations_json source updated_at",
   ),
+  account_export_audit: columns(
+    "audit_id user_id event_type exported_at export_version record_counts_json source",
+  ),
 };
 
 function columns(names: string) {

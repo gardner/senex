@@ -19,7 +19,8 @@ test.describe("critical browser flows", () => {
     const page = await context.newPage();
     const apiPosts: string[] = [];
     page.on("request", (request) => {
-      if (request.method() === "POST" && request.url().includes("/api/")) {
+      const url = new URL(request.url());
+      if (request.method() === "POST" && url.pathname.startsWith("/api/")) {
         apiPosts.push(request.url());
       }
     });

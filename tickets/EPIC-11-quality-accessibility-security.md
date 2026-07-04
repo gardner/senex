@@ -106,7 +106,7 @@ Notes:
 
 ## E11-T04 Implement security P0 controls
 
-Status: Todo
+Status: Done
 
 Scope:
 
@@ -127,6 +127,20 @@ Validation:
 - Security-focused integration tests.
 
 Dependencies: `E07-T06`, `E09-T03`, `E10-T02`.
+
+Notes:
+
+- Added `account_export_audit` in
+  `migrations/0009_account_export_audit.sql` and now write an append-only audit
+  metadata row for every successful signed-in account export.
+- Expanded `tests/account-export-deletion-api.test.ts` and
+  `tests/account-sync-schema.test.ts` to verify export audit logging, account
+  scoping, and the committed D1 schema.
+- Existing security coverage verifies anonymous-reporting consent bypass
+  rejection, auth on account APIs, admin-only ingestion status, and separated
+  trial-contact profile storage.
+- `tests/browser/critical-flows.spec.ts` verifies private/offline task
+  completion does not POST to same-origin API routes.
 
 ## E11-T05 Run threat model workshops
 
