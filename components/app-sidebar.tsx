@@ -12,12 +12,17 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar";
-import { GalleryVerticalEndIcon, HomeIcon, BookOpenIcon } from "lucide-react";
+import {
+  BookOpenIcon,
+  GalleryVerticalEndIcon,
+  HomeIcon,
+  ShieldCheckIcon,
+} from "lucide-react";
 
 // AIDEV-NOTE: The nav below is intentionally minimal placeholder content for
 // the bootstrap app — replace it as real features appear. The signed-in user
 // comes in as a prop from the server component (app/dashboard/page.tsx).
-const data = {
+const baseData = {
   teams: [
     {
       name: "Senex",
@@ -60,19 +65,34 @@ const data = {
   ],
 };
 
+const adminNav = {
+  title: "Admin",
+  url: "/admin/ingestion/status",
+  icon: <ShieldCheckIcon />,
+  items: [
+    {
+      title: "Ingestion status",
+      url: "/admin/ingestion/status",
+    },
+  ],
+};
+
 export function AppSidebar({
   user,
   ...props
 }: React.ComponentProps<typeof Sidebar> & {
-  user: { name: string; email: string; avatar: string };
+  user: { name: string; email: string; avatar: string; role?: string | null };
 }) {
+  const navMain =
+    user.role === "admin" ? [...baseData.navMain, adminNav] : baseData.navMain;
+
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <TeamSwitcher teams={data.teams} />
+        <TeamSwitcher teams={baseData.teams} />
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
+        <NavMain items={navMain} />
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={user} />

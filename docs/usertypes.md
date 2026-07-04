@@ -29,6 +29,12 @@ The Better Auth admin plugin adds `user.role`:
 Use `requireUser()` and `requireAdmin()` from `lib/auth/helpers.ts` for
 server-side route protection.
 
+The anonymous ingestion status page at `/admin/ingestion/status` and its JSON
+endpoint at `/api/admin/ingestion/status` are admin-only. They show aggregate
+operational state, redacted accepted-submission rows, and actionable failure
+messages. Do not add anonymous study IDs, raw idempotency keys, or raw payloads
+to that surface.
+
 ## Account Data Controls
 
 The `/account` page lets signed-in users download an `account-export-v1` JSON

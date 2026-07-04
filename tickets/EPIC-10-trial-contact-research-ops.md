@@ -74,7 +74,7 @@ Dependencies: `E10-T01`, `E08-T01`.
 
 ## E10-T03 Build ingestion status view
 
-Status: Todo
+Status: Done
 
 Scope:
 
@@ -92,6 +92,15 @@ Validation:
 - Authz tests for admin-only access.
 
 Dependencies: `E07-T06`, `E09-T01`.
+
+Notes:
+
+- Added admin-only `/admin/ingestion/status` and
+  `/api/admin/ingestion/status`.
+- Added rejected-upload metadata storage without raw payloads or anonymous study
+  IDs.
+- Covered unauthenticated, non-admin, redaction, schema-version, retry-state,
+  and actionable-failure behavior in `tests/admin-ingestion-status-api.test.ts`.
 
 ## E10-T04 Build data quality dashboard
 

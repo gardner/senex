@@ -149,6 +149,14 @@ will include anonymous reporting history. Those events are stored in
 `account_sync_consent_events` with the rest of the consent history when the user
 later confirms import.
 
+Anonymous reporting ingestion stores accepted uploads append-only in
+`anonymous_research_submissions` and normalized child rows in
+`anonymous_research_submission_records`. Validation failures are kept in
+`anonymous_research_ingestion_failures` as operational metadata only: schema
+versions, category count, retry state, validation error, and action text. The
+failure table intentionally omits raw payloads, anonymous study IDs, and raw
+idempotency keys.
+
 `GET /api/account/export` returns an `account-export-v1` JSON document for the
 signed-in account. It includes account profile fields, sync state, sync batches,
 account-linked sessions/task runs/trial events/scores, account-linked consent

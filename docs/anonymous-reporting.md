@@ -69,10 +69,22 @@ stored in `anonymous_research_submissions`; duplicate idempotency keys return a
 success response without creating another submission. Ingestion events are
 recorded in `anonymous_research_submission_audit`.
 
+Rejected uploads are recorded in
+`anonymous_research_ingestion_failures` with redacted operational metadata:
+schema versions, category count, retry state, validation error, and the required
+operator action. The failure table does not store raw payload JSON, anonymous
+study IDs, or raw idempotency keys.
+
+Admins can review ingestion health at `/admin/ingestion/status` or through
+`GET /api/admin/ingestion/status`. Both surfaces require `user.role = 'admin'`
+and expose aggregate counts, schema-version distribution, recent accepted
+submissions, and actionable failures without direct anonymous identifiers.
+
 The D1 migration is additive:
 
 - `migrations/0002_anonymous_reporting.sql`
 - `migrations/0003_anonymous_reporting_records.sql`
+- `migrations/0008_anonymous_ingestion_failures.sql`
 
 Future deletion or exclusion workflows should build on the
 `deletion_request_status` field and audit table rather than mutating historical

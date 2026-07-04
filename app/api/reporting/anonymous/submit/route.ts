@@ -4,12 +4,37 @@ import {
   validateAnonymousReportingPayload,
   type AnonymousReportingPayload,
 } from "@/lib/anonymous-reporting";
+import { recordAnonymousIngestionFailure } from "@/lib/anonymous-reporting/ingestion-failures";
 
 export async function POST(request: Request) {
-  let payload;
+  const receivedAt = new Date().toISOString();
+  let rawPayload: unknown;
   try {
-    payload = validateAnonymousReportingPayload(await request.json());
+    rawPayload = await request.json();
   } catch (error) {
+    await recordAnonymousIngestionFailure({
+      payload: null,
+      error,
+      receivedAt,
+    });
+    return json(
+      {
+        status: "rejected",
+        error: error instanceof Error ? error.message : String(error),
+      },
+      400,
+    );
+  }
+
+  let payload: AnonymousReportingPayload;
+  try {
+    payload = validateAnonymousReportingPayload(rawPayload);
+  } catch (error) {
+    await recordAnonymousIngestionFailure({
+      payload: rawPayload,
+      error,
+      receivedAt,
+    });
     return json(
       {
         status: "rejected",
@@ -39,7 +64,6 @@ export async function POST(request: Request) {
     });
   }
 
-  const receivedAt = new Date().toISOString();
   const submissionId = `anonymous_submission_${payload.idempotencyKey}`;
   await env.DB.prepare(
     `INSERT INTO anonymous_research_submissions (
