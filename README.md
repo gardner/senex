@@ -68,6 +68,7 @@ pnpm dev                  # http://localhost:3000
 | [database.md](docs/database.md)                           | D1 setup, migrations, and admin roles  |
 | [environment-variables.md](docs/environment-variables.md) | Local and production configuration     |
 | [deployment.md](docs/deployment.md)                       | Cloudflare Workers deployment          |
+| [release-gates.md](docs/release-gates.md)                 | Release checklist gates                |
 | [email-sending.md](docs/email-sending.md)                 | Transactional email through Cloudflare |
 | [testing.md](docs/testing.md)                             | Test runtime and quality gates         |
 | [code-review.md](docs/code-review.md)                     | Automated review workflow              |

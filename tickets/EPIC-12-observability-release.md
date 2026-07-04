@@ -116,7 +116,7 @@ Notes:
 
 ## E12-T04 Define release gates
 
-Status: Todo
+Status: Done
 
 Scope:
 
@@ -134,6 +134,18 @@ Validation:
 - Release checklist reviewed by product and engineering.
 
 Dependencies: `E11-T03`, `E11-T04`, `E11-T06`.
+
+Notes:
+
+- Added [docs/release-gates.md](../docs/release-gates.md) with explicit
+  must-pass checklists for Release 0.1, 0.2, 0.3, 0.4, 0.5, and 1.0.
+- Each release checklist includes quality, accessibility, privacy/security,
+  deployment, data migration, and product/engineering sign-off gates.
+- Release 1.0 explicitly requires Privacy Review and Clinical-Claim Boundary
+  Review against the threat model, telemetry/anonymous-reporting docs,
+  copy-safety review, and the FDA General Wellness intended-use boundary.
+- Added `tests/release-gates.test.ts` to keep the release checklist structure
+  and Release 1.0 review requirements committed.
 
 ## E12-T05 Create release notes process
 

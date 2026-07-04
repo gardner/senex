@@ -4,6 +4,9 @@ Senex is configured for Cloudflare Workers Builds. The normal production path
 is GitHub push or merge, Cloudflare build, production D1 migrations, then Worker
 deploy.
 
+Release readiness is tracked in [release-gates.md](release-gates.md). Complete
+the relevant release checklist before promoting a preview or production build.
+
 ```text
 branch / pull request
         |
