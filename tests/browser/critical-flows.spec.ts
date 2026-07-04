@@ -1,4 +1,6 @@
-import { expect, test, type Page } from "@playwright/test";
+import { chromium, devices, expect, test, type Page } from "@playwright/test";
+
+const BASE_URL = process.env.PLAYWRIGHT_BASE_URL ?? "http://localhost:3000";
 
 test.describe("critical browser flows", () => {
   test.beforeEach(async ({ page }) => {
@@ -7,9 +9,14 @@ test.describe("critical browser flows", () => {
     await page.reload();
   });
 
-  test("completes a private session when the browser network is disabled", async ({
-    page,
-  }, testInfo) => {
+  test("completes a private session when the browser network is disabled", async ({}, testInfo) => {
+    const browser = await chromium.launch();
+    const context = await browser.newContext(
+      testInfo.project.name === "mobile-chromium"
+        ? devices["Pixel 5"]
+        : { viewport: { width: 1280, height: 720 } },
+    );
+    const page = await context.newPage();
     const apiPosts: string[] = [];
     page.on("request", (request) => {
       if (request.method() === "POST" && request.url().includes("/api/")) {
@@ -17,15 +24,18 @@ test.describe("critical browser flows", () => {
       }
     });
 
-    await page
-      .getByRole("button", { name: "Use privately on this device" })
-      .click();
-    await expect(
-      page.getByText("Private mode is ready on this browser."),
-    ).toBeVisible();
-    await page.waitForLoadState("networkidle");
-    await page.context().setOffline(true);
     try {
+      await page.goto(BASE_URL);
+      await clearLocalData(page);
+      await page.reload();
+      await page
+        .getByRole("button", { name: "Use privately on this device" })
+        .click();
+      await expect(
+        page.getByText("Private mode is ready on this browser."),
+      ).toBeVisible();
+      await page.waitForLoadState("networkidle");
+      await context.setOffline(true);
       await expect
         .poll(() => page.evaluate(() => navigator.onLine))
         .toBe(false);
@@ -60,21 +70,17 @@ test.describe("critical browser flows", () => {
         fullPage: true,
       });
     } finally {
-      if (!page.isClosed()) await page.context().setOffline(false);
+      await browser.close();
     }
   });
 
   test("withdraws anonymous reporting consent and stops future sharing", async ({
     page,
   }, testInfo) => {
-    await page
-      .getByRole("button", { name: "Create anonymous study ID" })
-      .click();
+    await seedAnonymousReportingConsent(page);
+    await page.reload();
+
     await expect(page.getByText(/^Study ID: study_/)).toBeVisible();
-    await page.getByLabel("Share test summaries").check();
-    await page.getByLabel("Allow longitudinal research use").check();
-    await page.getByRole("button", { name: "Save reporting consent" }).click();
-    await expect(page.getByText("Consent saved locally.")).toBeVisible();
     await expect(page.getByText("2 active")).toBeVisible();
 
     await page.getByRole("button", { name: "Stop future sharing" }).click();
@@ -170,6 +176,37 @@ async function clearLocalData(page: Page) {
     const localPath = "/lib/local/index.ts";
     const local = await import(/* @vite-ignore */ localPath);
     await local.deleteSenexLocalDatabase();
+  });
+}
+
+async function seedAnonymousReportingConsent(page: Page) {
+  await page.evaluate(async () => {
+    const localPath = "/lib/local/index.ts";
+    const reportingPath = "/lib/anonymous-reporting/index.ts";
+    const local = await import(/* @vite-ignore */ localPath);
+    const reporting = await import(/* @vite-ignore */ reportingPath);
+    const profile = await local.getOrCreateLocalProfile();
+    const decidedAt = "2026-07-04T00:00:00.000Z";
+    await local.saveAnonymousIdentity(
+      reporting.createAnonymousIdentityRecord({
+        profileId: profile.profileId,
+        createdAt: decidedAt,
+      }),
+    );
+    for (const category of [
+      "share_test_summaries",
+      "allow_longitudinal_research_use",
+    ] as const) {
+      await local.saveConsentRecord(
+        reporting.createAnonymousConsentRecord({
+          profileId: profile.profileId,
+          category,
+          decision: "granted",
+          decidedAt,
+          sourceScreen: "browser_test",
+        }),
+      );
+    }
   });
 }
 

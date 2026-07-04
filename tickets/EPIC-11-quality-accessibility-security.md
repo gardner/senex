@@ -76,7 +76,7 @@ Notes:
 
 ## E11-T03 Run accessibility baseline audit
 
-Status: Todo
+Status: Done
 
 Scope:
 
@@ -93,6 +93,16 @@ Validation:
 - Accessibility report added to docs or release notes.
 
 Dependencies: `E05-T01`, `E06-T03`.
+
+Notes:
+
+- Added [docs/accessibility-audit.md](../docs/accessibility-audit.md) with the
+  baseline method, sources, evidence, findings, and release gate.
+- Added `tests/browser/accessibility.spec.ts` for axe checks across public/auth
+  routes, visible keyboard focus, reduced-motion handling, and keyboard-only
+  Symbol Match / Arrow Focus completion.
+- Added a global reduced-motion CSS rule for `prefers-reduced-motion: reduce`.
+- No P0 accessibility blockers were found in this baseline.
 
 ## E11-T04 Implement security P0 controls
 

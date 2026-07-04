@@ -42,6 +42,7 @@
     "use-sync-external-store": "^1.6.0"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.12.1",
     "@cloudflare/vite-plugin": "^1.40.0",
     "@cloudflare/vitest-pool-workers": "^0.16.13",
     "@playwright/test": "^1.61.1",

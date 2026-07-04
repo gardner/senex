@@ -68,6 +68,10 @@ Critical browser-flow tests cover browser-network-off private task completion,
 anonymous-reporting consent withdrawal, and hidden-tab interruption persistence
 on sessions, task runs, and scores.
 
+Accessibility browser tests run axe WCAG A/AA checks on public/auth routes and
+cover visible focus, reduced motion, and keyboard-only task-runner completion.
+See [accessibility-audit.md](accessibility-audit.md).
+
 `tests/quality-coverage.test.ts` tracks E11 hardening coverage for conservative
 baseline/trend edges, duplicate trial-quality exclusions, even-count task
 medians, anonymous reporting category declarations, and backup stimulus
