@@ -1,0 +1,139 @@
+# EPIC-09: Accounts And Sync
+
+Goal: add signed-in continuity without undermining local-first execution or
+anonymous-reporting consent boundaries.
+
+Source: [PLAN Phase 4](../docs/PLAN.md#7-phase-4--signed-in-mode),
+[PLAN Epic 16](../docs/PLAN.md#epic-16--accounts).
+
+## E09-T01 Build signed-in account profile
+
+Status: Todo
+
+Scope:
+
+- Use existing Better Auth sign-up, sign-in, sign-out, and password reset
+  foundation.
+- Add account profile page.
+- Show account export/delete entry points.
+
+Acceptance criteria:
+
+- Signed-in user can view and update basic profile fields.
+- Account state is not treated as research consent.
+
+Validation:
+
+- Existing auth tests remain green.
+- Browser smoke test for profile route.
+
+Dependencies: none.
+
+## E09-T02 Define server account sync schema
+
+Status: Todo
+
+Scope:
+
+- Define server records for synced sessions, task runs, trial events, scores,
+  consent events, and sync state.
+- Add migrations.
+
+Acceptance criteria:
+
+- Schema preserves original local IDs and timestamps.
+- Sync records are append/merge oriented, not destructive overwrite.
+- Migrations pass the destructive migration guard.
+
+Validation:
+
+- D1 migration tests.
+
+Dependencies: `E02-T02`.
+
+## E09-T03 Implement account sync API
+
+Status: Todo
+
+Scope:
+
+- Add authenticated sync endpoint.
+- Validate payload schema.
+- Return sync state.
+- Handle duplicate submissions idempotently.
+
+Acceptance criteria:
+
+- Unauthenticated requests fail.
+- User can only sync to their own account.
+- Duplicate sync does not duplicate records.
+
+Validation:
+
+- Worker integration tests with real D1.
+
+Dependencies: `E09-T02`.
+
+## E09-T04 Implement local-to-account migration flow
+
+Status: Todo
+
+Scope:
+
+- Add confirmation UI for importing local history into account.
+- Let users keep local-only copy.
+- Do not share past history for research unless separately consented.
+
+Acceptance criteria:
+
+- No local history uploads without explicit confirmation.
+- Consent question for research sharing is separate from account sync.
+
+Validation:
+
+- Browser test for confirmation and cancellation.
+
+Dependencies: `E09-T03`, `E07-T03`.
+
+## E09-T05 Implement anonymous-to-account linking
+
+Status: Todo
+
+Scope:
+
+- Add explicit confirmation before linking anonymous history to account
+  identity.
+- Explain re-identification implications.
+- Preserve anonymous reporting consent history.
+
+Acceptance criteria:
+
+- Anonymous identity is never linked silently.
+- User can decline linking and still create/use account.
+
+Validation:
+
+- Integration test for accepted and declined linking.
+
+Dependencies: `E09-T04`, `E07-T04`.
+
+## E09-T06 Implement account export and deletion request
+
+Status: Todo
+
+Scope:
+
+- Add account export endpoint.
+- Add account deletion or deletion-request flow.
+- Represent what can and cannot be removed from already shared research data.
+
+Acceptance criteria:
+
+- Export includes account-linked history and consent records.
+- Deletion path is clear and auditable.
+
+Validation:
+
+- Integration tests for export and deletion request.
+
+Dependencies: `E09-T03`.

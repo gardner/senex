@@ -9,6 +9,7 @@ The current product direction is captured in:
 - [docs/PRD.md](docs/PRD.md) - product requirements for browser-based cognitive
   monitoring
 - [docs/PLAN.md](docs/PLAN.md) - engineering implementation plan
+- [tickets/](tickets/) - epics and implementation tickets derived from the plan
 
 The foundation uses [vinext](https://github.com/cloudflare/vinext) (Next.js 16
 App Router API on Vite) on **Cloudflare Workers**, **Cloudflare D1** for the

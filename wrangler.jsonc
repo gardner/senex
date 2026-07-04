@@ -9,11 +9,8 @@
   "compatibility_flags": ["nodejs_compat"],
   "main": "./worker/index.ts",
 
-  // Cloudflare account to deploy to. Find your account ID at
-  // dash.cloudflare.com (it's in the URL) or run `pnpm cf:whoami` after
-  // `pnpm wrangler login`. You can also set the CLOUDFLARE_ACCOUNT_ID
-  // environment variable instead of uncommenting this line.
-  // "account_id": "<replace-with-cloudflare-account-id>",
+  // Cloudflare account to deploy to. The account ID is not a secret.
+  "account_id": "e17fa7757762498aea68f8c653d5ecb7",
 
   // Static client assets produced by `pnpm build` (vinext build).
   "assets": {
@@ -33,7 +30,7 @@
     {
       "binding": "DB",
       "database_name": "senex-db",
-      "database_id": "REPLACE_WITH_YOUR_D1_DATABASE_ID",
+      "database_id": "0c2c0b30-e126-4274-86b7-5c2e7cc2f5b9",
       "migrations_dir": "migrations",
     },
   ],
