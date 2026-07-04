@@ -128,3 +128,9 @@ The core tables are:
 
 Do not treat local deletion as server deletion in these tables. Account data
 removal belongs in the explicit export/deletion-request flow.
+
+`POST /api/account/sessions/sync` is the signed-in write path for these tables.
+The endpoint authenticates with Better Auth, rejects payloads for a different
+`accountId`, validates local record shape and relationships, writes records with
+`INSERT OR IGNORE`, and returns the account sync state. Repeating the same
+idempotency key returns the existing batch without duplicating records.

@@ -80,7 +80,7 @@ Dependencies: `E02-T02`.
 
 ## E09-T03 Implement account sync API
 
-Status: Todo
+Status: Done
 
 Scope:
 
@@ -98,6 +98,18 @@ Acceptance criteria:
 Validation:
 
 - Worker integration tests with real D1.
+
+Implementation notes:
+
+- Added `POST /api/account/sessions/sync`.
+- Authenticates with Better Auth request headers before parsing trusted account
+  ownership.
+- Validates account sync payload shape, local record validators, and
+  session/task/score/consent relationships.
+- Stores batches and local records idempotently using the account sync schema.
+- Returns `syncState` with last batch and pending conflict count.
+- Added real D1 integration coverage for unauthenticated requests, mismatched
+  account IDs, accepted sync, and duplicate sync.
 
 Dependencies: `E09-T02`.
 
