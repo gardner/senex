@@ -160,6 +160,15 @@ versions, category count, retry state, validation error, and action text. The
 failure table intentionally omits raw payloads, anonymous study IDs, and raw
 idempotency keys.
 
+`research_exports` stores completed admin research export manifests. It records
+the export id, creating admin user id, purpose, approval reference, filter JSON,
+requested category JSON, exported submission/record counts, exclusion count,
+and manifest JSON. The table does not store the returned dataset. The export
+job reads only anonymous reporting tables, applies consent/date/study filters,
+excludes submissions with a non-`none` `deletion_request_status`, and writes
+hashed study-filter and subject/submission keys instead of raw anonymous study
+IDs or idempotency keys.
+
 `GET /api/account/export` returns an `account-export-v1` JSON document for the
 signed-in account. It includes account profile fields, sync state, sync batches,
 account-linked sessions/task runs/trial events/scores, account-linked consent

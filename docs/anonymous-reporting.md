@@ -88,11 +88,25 @@ anonymous identifiers or raw questionnaire answers.
 Unsafe or unknown quality flag labels are grouped as `unknown_quality_flag`
 rather than displayed verbatim.
 
+Approved research exports are created from `/admin/research-export` or
+`POST /api/admin/research-export`. The export path requires an admin session,
+purpose, approval reference, explicit data categories, and optional date or
+anonymous study filters. It applies the stored consent snapshot and skips
+submissions whose `deletion_request_status` is no longer `none`.
+
+Each completed export returns the dataset once and stores a manifest in
+`research_exports`. The manifest records the approval reference, filters,
+schema versions, consent versions, category counts, exported counts, and
+exclusion counts. Raw anonymous study IDs and idempotency keys are not returned
+or stored in the manifest; subject and submission keys are deterministic export
+keys. Trial-contact profile data is not read by this export path.
+
 The D1 migration is additive:
 
 - `migrations/0002_anonymous_reporting.sql`
 - `migrations/0003_anonymous_reporting_records.sql`
 - `migrations/0008_anonymous_ingestion_failures.sql`
+- `migrations/0010_research_exports.sql`
 
 Future deletion or exclusion workflows should build on the
 `deletion_request_status` field and audit table rather than mutating historical

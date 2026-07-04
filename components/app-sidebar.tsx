@@ -78,6 +78,10 @@ const adminNav = {
       title: "Data quality",
       url: "/admin/data-quality",
     },
+    {
+      title: "Research export",
+      url: "/admin/research-export",
+    },
   ],
 };
 

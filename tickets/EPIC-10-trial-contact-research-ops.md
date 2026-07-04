@@ -138,7 +138,7 @@ Notes:
 
 ## E10-T05 Implement research export job and manifest
 
-Status: Todo
+Status: Done
 
 Scope:
 
@@ -158,6 +158,24 @@ Validation:
 - Export tests with consent and withdrawal fixtures.
 
 Dependencies: `E10-T04`, `E07-T06`.
+
+Notes:
+
+- Added `research_exports` for completed manifest storage without duplicating
+  returned datasets.
+- Added admin-only `/admin/research-export`,
+  `GET /api/admin/research-export`, `POST /api/admin/research-export`, and
+  `GET /api/admin/research-export/:exportId`.
+- Export requests require a purpose, approval reference, requested categories,
+  and optional date/study filters.
+- Export jobs apply consent snapshots, date filters, study filters, and
+  withdrawal/exclusion state before returning records.
+- Raw anonymous study IDs and idempotency keys are not returned or stored in
+  manifests; export output uses deterministic subject/submission keys.
+- Trial-contact profile/contact data is not read by the research export path.
+- Covered API behavior and desktop/mobile admin workflow in
+  `tests/admin-research-export-api.test.ts` and
+  `tests/browser/admin-research-export.spec.ts`.
 
 ## E10-T06 Add withdrawal and exclusion tooling
 

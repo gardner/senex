@@ -95,6 +95,12 @@ quality metrics and redaction for the admin data-quality API.
 `tests/browser/admin-data-quality.spec.ts` covers the admin dashboard on desktop
 and mobile Chromium.
 
+`tests/admin-research-export-api.test.ts` covers admin authorization, consent
+filtering, date filtering, withdrawal exclusion, study filtering, manifest
+storage, and redaction for research exports.
+`tests/browser/admin-research-export.spec.ts` covers the admin research export
+workflow on desktop and mobile Chromium.
+
 `tests/quality-coverage.test.ts` tracks E11 hardening coverage for conservative
 baseline/trend edges, duplicate trial-quality exclusions, even-count task
 medians, anonymous reporting category declarations, and backup stimulus
