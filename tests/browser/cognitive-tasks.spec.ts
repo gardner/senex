@@ -185,4 +185,101 @@ test.describe("cognitive tasks", () => {
       fullPage: true,
     });
   });
+
+  test("captures interactive arrow focus responses by keyboard and touch", async ({
+    page,
+  }, testInfo) => {
+    const isMobile = testInfo.project.name === "mobile-chromium";
+    await page.getByRole("button", { name: "Start Arrow Focus" }).click();
+    const runner = page.getByRole("region", { name: "Arrow Focus runner" });
+    await expect(runner.getByText("Arrow Focus trial 1 of 8")).toBeVisible();
+
+    const firstDirection = await runner
+      .getByTestId("arrow-focus-target-direction")
+      .getAttribute("data-direction");
+    expect(firstDirection).toMatch(/^(left|right)$/);
+    await page.keyboard.press(
+      firstDirection === "left" ? "ArrowLeft" : "ArrowRight",
+    );
+
+    for (let trialIndex = 2; trialIndex <= 8; trialIndex += 1) {
+      await expect(
+        runner.getByText(`Arrow Focus trial ${trialIndex} of 8`),
+      ).toBeVisible();
+      const targetDirection = await runner
+        .getByTestId("arrow-focus-target-direction")
+        .getAttribute("data-direction");
+      expect(targetDirection).toMatch(/^(left|right)$/);
+      const responseButton = runner.getByRole("button", {
+        name: `Choose ${targetDirection}`,
+      });
+      if (isMobile) {
+        await responseButton.tap();
+      } else {
+        await responseButton.click();
+      }
+    }
+
+    await expect(page.getByText("Arrow Focus saved locally.")).toBeVisible();
+    await expect(runner.getByText("Arrow Focus accuracy:")).toBeVisible();
+
+    const persisted = await page.evaluate(async () => {
+      const localPath = "/lib/local/index.ts";
+      const local = await import(/* @vite-ignore */ localPath);
+      const sessions = await local.listAllLocalSessionsForTests();
+      const taskRuns = (
+        await Promise.all(
+          sessions.map((session: { sessionId: string }) =>
+            local.listTaskRunsForSession(session.sessionId),
+          ),
+        )
+      ).flat();
+      const arrowRun = taskRuns.find(
+        (run: { taskId: string }) => run.taskId === "arrow_focus",
+      );
+      if (!arrowRun) throw new Error("Arrow Focus task run was not saved.");
+      const arrowSession = sessions.find(
+        (session: { sessionId: string }) =>
+          session.sessionId === arrowRun.sessionId,
+      );
+      if (!arrowSession) throw new Error("Arrow Focus session was not saved.");
+      const trials = await local.listTrialEventsForTaskRun(arrowRun.taskRunId);
+      const scores = await local.listScores({
+        taskRunId: arrowRun.taskRunId,
+      });
+      return { arrowRun, arrowSession, trials, scores };
+    });
+
+    expect(persisted.arrowRun).toMatchObject({
+      taskVersion: "1.0.0",
+      stimulusSeed: "interactive-arrow-focus-v1",
+    });
+    expect(persisted.trials).toHaveLength(8);
+    expect(persisted.arrowSession.contextSnapshot).toMatchObject({
+      interactive: true,
+      taskId: "arrow_focus",
+    });
+    expect(persisted.arrowSession.contextSnapshot.demo).toBeUndefined();
+    expect(persisted.trials[0].actualResponse).toBe(firstDirection);
+    expect(persisted.trials[0].eventFlags).toContain("input_keyboard");
+    expect(
+      persisted.trials.flatMap(
+        (trial: { eventFlags: string[] }) => trial.eventFlags,
+      ),
+    ).toContain(isMobile ? "input_touch" : "input_pointer");
+    expect(persisted.scores).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          domain: "attention_control",
+          metricName: "valid_trial_count",
+          rawValue: 8,
+        }),
+      ]),
+    );
+
+    await page.screenshot({
+      path: testInfo.outputPath("arrow-focus-interactive.png"),
+      fullPage: true,
+    });
+  });
 });

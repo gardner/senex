@@ -59,7 +59,7 @@ Test-engine unit tests cover definition validation, state transitions, timing,
 quality flags, scoring, baselines, and trends. Cognitive-task tests cover the
 full local demo battery and dashboard aggregation. Browser tests cover
 monotonic timing, visibility metadata, Symbol Match keyboard/pointer capture,
-and full-battery persistence where feasible.
+Arrow Focus keyboard/touch capture, and full-battery persistence where feasible.
 
 To test an already running server or preview URL:
 

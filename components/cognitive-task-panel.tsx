@@ -25,6 +25,7 @@ import {
   startLocalSession,
 } from "@/lib/local";
 
+import { ArrowFocusRunner } from "./cognitive-tasks/arrow-focus-runner";
 import { persistDemoTaskResult } from "./cognitive-tasks/persist-demo-result";
 import { SymbolMatchRunner } from "./cognitive-tasks/symbol-match-runner";
 
@@ -152,6 +153,7 @@ export function CognitiveTaskPanel() {
           <TaskBadge label="Seven-Day Learning" />
         </div>
         <SymbolMatchRunner onSaved={notifyLocalDataUpdated} />
+        <ArrowFocusRunner onSaved={notifyLocalDataUpdated} />
         {state === "saved" && lastResult === "reaction" && (
           <div className="space-y-1">
             <p>Reaction Time Sprint saved locally.</p>

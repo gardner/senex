@@ -50,12 +50,16 @@ export function scoreArrowFocus(
   );
   const congruentRt = meanRt(trials, responses, "congruent");
   const incongruentRt = meanRt(trials, responses, "incongruent");
+  const conflictCostMs =
+    congruentRt === null || incongruentRt === null
+      ? 0
+      : incongruentRt - congruentRt;
   return {
     taskId: ARROW_FOCUS_TASK.taskId,
     metrics: {
       accuracy: trials.length === 0 ? 0 : correctTrials.length / trials.length,
       median_rt_ms: median(responses.map((response) => response.rtMs)),
-      conflict_cost_ms: incongruentRt - congruentRt,
+      conflict_cost_ms: conflictCostMs,
       valid_trial_count: responses.length,
     },
   };
@@ -78,7 +82,7 @@ function meanRt(
   const rts = responses
     .filter((response) => ids.has(response.trialId))
     .map((response) => response.rtMs);
-  if (rts.length === 0) return 0;
+  if (rts.length === 0) return null;
   return rts.reduce((sum, rtMs) => sum + rtMs, 0) / rts.length;
 }
 

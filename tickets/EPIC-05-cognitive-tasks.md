@@ -83,7 +83,7 @@ Implementation notes:
 
 ## E05-T03 Implement Arrow Focus
 
-Status: In progress
+Status: Done
 
 Scope:
 
@@ -97,11 +97,17 @@ Acceptance criteria:
 - Trial balance is deterministic by seed.
 - Conflict-cost scoring handles low valid-trial counts conservatively.
 - Dashboard card exists.
+- Compact interactive runner captures keyboard, pointer, and touch left/right
+  responses.
+- Results persist locally with task version, stimulus seed, congruency trial
+  events, and score rows.
 
 Validation:
 
 - Stimulus generation tests.
 - Scoring tests.
+- Browser happy path for keyboard plus touch/pointer input on desktop and
+  mobile.
 
 Dependencies: `E05-T01`.
 
@@ -111,7 +117,11 @@ Implementation notes:
   conflict-cost scoring are implemented in
   `lib/cognitive-tasks/arrow-focus.ts`.
 - Full demo-battery local persistence and dashboard presentation are
-  implemented. Full timed keyboard/touch runner capture remains.
+  implemented.
+- `components/cognitive-tasks/arrow-focus-runner.tsx` implements a compact
+  interactive runner with left/right arrow-key input and pointer/touch buttons.
+  It persists the same local task-run records as the deterministic demo
+  battery.
 
 ## E05-T04 Implement Sequence Tap
 

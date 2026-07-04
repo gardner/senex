@@ -10,8 +10,8 @@ performance trends over time and must not diagnose or imply clinical certainty.
 
 ## Current Scope
 
-The first implemented vertical slices are **Reaction Time Sprint** and
-**Symbol Match**.
+The first implemented vertical slices are **Reaction Time Sprint**, **Symbol
+Match**, and **Arrow Focus**.
 
 Reaction Time Sprint includes:
 
@@ -34,11 +34,21 @@ Symbol Match includes:
   and score rows
 - browser coverage on desktop and mobile Chromium
 
+Arrow Focus includes:
+
+- task definition v1
+- balanced congruent/incongruent flanker-style trial generation
+- accuracy, median RT, and conflict-cost scoring
+- compact interactive capture through left/right arrow keys and pointer/touch
+  buttons
+- local IndexedDB persistence with task version, stimulus seed, trial events,
+  and score rows
+- browser coverage on desktop and mobile Chromium
+
 The remaining task modules currently provide deterministic definitions,
 stimulus generation, scoring foundations, local demo persistence, and dashboard
 presentation:
 
-- **Arrow Focus**: balanced congruent/incongruent trials, conflict-cost scoring
 - **Sequence Tap**: seeded tile sequences, span/error/missed scoring
 - **Pair Learning**: versioned pair packs, immediate/delayed/recognition scoring
 - **Seven-Day Learning Week**: repeated pack schedule, missed-day handling, and
@@ -51,8 +61,8 @@ offline dashboard so processing, working-memory, and learning cards are filled
 from local score history.
 
 Future work should replace the compact demo capture with full timed interactive
-runners for Arrow Focus, Sequence Tap, Pair Learning, and Seven-Day Learning
-before making research claims from those modules.
+runners for Sequence Tap, Pair Learning, and Seven-Day Learning before making
+research claims from those modules.
 
 ## Research Anchors
 
@@ -94,7 +104,8 @@ or result states so JSON backup/export remains valid.
   stimulus generation, scoring, full demo battery construction, and JSON-safe
   edge cases.
 - `tests/browser/cognitive-tasks.spec.ts` covers the Reaction Time Sprint demo,
-  Symbol Match keyboard/pointer capture, full demo battery persistence,
-  dashboard-card refresh, and real browser IndexedDB records.
+  Symbol Match keyboard/pointer capture, Arrow Focus keyboard/touch capture,
+  full demo battery persistence, dashboard-card refresh, and real browser
+  IndexedDB records.
 - `tests/test-engine-runner-scoring.test.ts` covers the reusable engine scorer,
   including insufficient-data JSON safety.

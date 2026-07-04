@@ -168,6 +168,25 @@ describe("arrow focus", () => {
     expect(score.metrics.conflict_cost_ms).toBe(0);
     expect(score.metrics.valid_trial_count).toBe(0);
   });
+
+  it("keeps arrow-focus conflict cost neutral with one-sided responses", () => {
+    const trials = generateArrowFocusTrials("arrow-low-count", 4);
+    const congruentTrial = trials.find(
+      (trial) => trial.congruency === "congruent",
+    );
+    expect(congruentTrial).toBeDefined();
+
+    const score = scoreArrowFocus(trials, [
+      {
+        trialId: congruentTrial!.trialId,
+        direction: congruentTrial!.targetDirection,
+        rtMs: 420,
+      },
+    ]);
+
+    expect(score.metrics.conflict_cost_ms).toBe(0);
+    expect(score.metrics.valid_trial_count).toBe(1);
+  });
 });
 
 describe("sequence tap", () => {
