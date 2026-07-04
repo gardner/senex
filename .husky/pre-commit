@@ -1,0 +1,5 @@
+# Runs automatically before every commit: formats and lints ONLY the files
+# you staged (config: "lint-staged" in package.json). Fixed files are
+# re-staged automatically. If it fails, read the error — it usually names
+# the exact file and line. Bypass in an emergency with: git commit --no-verify
+pnpm exec lint-staged

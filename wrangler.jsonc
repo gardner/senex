@@ -1,0 +1,78 @@
+// AIDEV-NOTE: This file matches the structure `vinext deploy` auto-generates,
+// plus the D1 database and email bindings. If this file exists, `vinext
+// deploy` uses it as-is, so keep `main` and `assets` in the generated shape.
+// Docs: node_modules/vinext/README.md ("Cloudflare Workers" section).
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "senex",
+  "compatibility_date": "2026-06-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "main": "./worker/index.ts",
+
+  // Cloudflare account to deploy to. Find your account ID at
+  // dash.cloudflare.com (it's in the URL) or run `pnpm cf:whoami` after
+  // `pnpm wrangler login`. You can also set the CLOUDFLARE_ACCOUNT_ID
+  // environment variable instead of uncommenting this line.
+  // "account_id": "<replace-with-cloudflare-account-id>",
+
+  // Static client assets produced by `pnpm build` (vinext build).
+  "assets": {
+    "directory": "dist/client",
+    "not_found_handling": "none",
+    "binding": "ASSETS",
+  },
+
+  // Cloudflare Images binding used by worker/index.ts for next/image
+  // optimization in production.
+  "images": { "binding": "IMAGES" },
+
+  // D1 database for the app AND Better Auth tables.
+  // Create your own with `pnpm wrangler d1 create senex-db` and paste the
+  // returned database_id below. (The id is not a secret — safe to commit.)
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "senex-db",
+      "database_id": "REPLACE_WITH_YOUR_D1_DATABASE_ID",
+      "migrations_dir": "migrations",
+    },
+  ],
+
+  // Cloudflare Email Sending — transactional mail only (e.g. password
+  // resets). All sending goes through lib/email.ts, never env.EMAIL
+  // directly.
+  "send_email": [
+    {
+      "name": "EMAIL",
+      // Local dev proxies sends to the REAL service — emails really deliver
+      // from a laptop. Only send to addresses you control.
+      "remote": true,
+      // A bug can't send mail as arbitrary identities: this binding only
+      // accepts these from-addresses. They must be verified in your
+      // Cloudflare Email Sending setup.
+      "allowed_sender_addresses": ["no-reply@senex.nz"],
+    },
+  ],
+
+  // Keep variables that were set in the Cloudflare dashboard (e.g.
+  // GOOGLE_CLIENT_SECRET) instead of replacing them on every deploy.
+  // Without this, wrangler deploy wipes dashboard-set Text variables.
+  "keep_vars": true,
+
+  // Plain (non-secret) runtime variables managed in Git. Encrypted secrets
+  // (BETTER_AUTH_SECRET) are set once via `pnpm wrangler secret put <NAME>`
+  // or the dashboard, and persist on their own.
+  "vars": {
+    "APP_ENV": "production",
+    // Canonical production URL — Better Auth uses this for OAuth callbacks
+    // and cookies. Replace with your deployed Worker or custom domain URL.
+    "BETTER_AUTH_URL": "https://senex.nz",
+    // Public OAuth client id — safe to commit. Google sign-in stays disabled
+    // until both this and GOOGLE_CLIENT_SECRET are set; the `<...>`
+    // placeholder reads as "not configured" (see lib/auth/index.ts).
+    "GOOGLE_CLIENT_ID": "<your-google-oauth-client-id>",
+  },
+
+  // Worker logs in the Cloudflare dashboard — handy for debugging production.
+  "observability": { "enabled": true },
+}

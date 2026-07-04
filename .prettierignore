@@ -1,0 +1,4 @@
+# Generated files (gitignored paths like dist/ are excluded automatically
+# because prettier respects .gitignore)
+pnpm-lock.yaml
+worker-configuration.d.ts

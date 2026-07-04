@@ -1,0 +1,18 @@
+# Cloudflare Workers runtime variables for LOCAL development (`pnpm dev`).
+#
+#   cp .dev.vars.example .dev.vars
+#
+# These become the `env` bindings the app reads at runtime in dev — the
+# same way Cloudflare secrets/vars work in production. Keep in sync with
+# .env (see .env.example). Never commit the real .dev.vars file.
+#
+# Production equivalents are set in Cloudflare, not here:
+#   pnpm wrangler secret put BETTER_AUTH_SECRET
+#   pnpm wrangler secret put GOOGLE_CLIENT_SECRET
+# and plain vars in wrangler.jsonc or the Cloudflare dashboard.
+
+BETTER_AUTH_SECRET=Not_Really_A_Secret_for_dev_env
+BETTER_AUTH_URL=http://localhost:3000
+GOOGLE_CLIENT_ID=<your-google-oauth-client-id>
+GOOGLE_CLIENT_SECRET=<your-google-oauth-client-secret>
+APP_ENV=development

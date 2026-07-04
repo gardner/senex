@@ -1,0 +1,8 @@
+ignoredBuiltDependencies:
+  - sharp
+  - unrs-resolver
+# AIDEV-NOTE: esbuild + workerd ship platform binaries via postinstall;
+# without these approvals `wrangler dev` and the Cloudflare vite plugin break.
+onlyBuiltDependencies:
+  - esbuild
+  - workerd
