@@ -39,6 +39,17 @@ browser history must be deleted on the device. Changing account profile fields
 does not change research consent, anonymous reporting consent, or local-only
 history.
 
+## Trial Contact
+
+Trial contact is available only to signed-in users. It is separate from general
+research sharing, anonymous reporting, and study enrolment: opting in only means
+the user is open to being contacted about relevant studies or clinical trials.
+The user can turn trial contact off at any time from `/account`.
+
+Anonymous Reporting users cannot be contacted for trials because that mode has
+no traditional account identity or contact channel. Do not infer trial-contact
+permission from anonymous reporting consent or account sync consent.
+
 ## Organization Roles
 
 The organization plugin is installed for future team or partner workflows.

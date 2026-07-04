@@ -8,7 +8,7 @@ Source: [PLAN trial contact](../docs/PLAN.md#75-trial-contact-registry),
 
 ## E10-T01 Implement trial-contact consent flow
 
-Status: Todo
+Status: Done
 
 Scope:
 
@@ -25,6 +25,16 @@ Acceptance criteria:
 Validation:
 
 - Browser test for opt in and opt out.
+
+Implementation:
+
+- Added D1 tables `trial_contact_status` and
+  `trial_contact_consent_events`.
+- Added `GET /api/account/trial-contact` and
+  `POST /api/account/trial-contact`.
+- Added the `/account` trial-contact panel with opt-in and opt-out controls.
+- Added API and browser coverage in `tests/trial-contact-api.test.ts` and
+  `tests/browser/trial-contact.spec.ts`.
 
 Dependencies: `E09-T01`, `E07-T01`.
 

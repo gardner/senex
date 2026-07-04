@@ -159,3 +159,26 @@ account deletion request. It does not immediately delete records. The request
 scope covers account profile and account-linked sync tables; already shared
 research submissions require review or exclusion handling, and local browser
 storage must be deleted on the device.
+
+## Trial Contact Schema
+
+Trial contact is a signed-in account setting, not Anonymous Reporting consent
+and not study enrolment. Anonymous Reporting users have no trial-contact write
+path because they do not have account contact details.
+
+The current terms version is `trial-contact-v1`.
+
+- `trial_contact_status`: one current preference row per signed-in user,
+  including whether contact is enabled, the consent version, opt-in timestamp,
+  opt-out timestamp, last reviewed timestamp, and update timestamp.
+- `trial_contact_consent_events`: append-only opt-in/opt-out decisions with the
+  signed-in user id, version, decision timestamp, and source.
+
+`GET /api/account/trial-contact` returns the current signed-in user's
+trial-contact status. A missing row returns the explicit disabled default with
+the current consent version and null timestamps.
+
+`POST /api/account/trial-contact` accepts `{ "enabled": boolean }`, writes an
+append-only decision event, updates the current status row, and returns the
+updated status. Opting out preserves the original opt-in timestamp and records a
+new opt-out timestamp so the audit trail remains understandable.

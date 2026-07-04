@@ -1,6 +1,7 @@
 import { AppSidebar } from "@/components/app-sidebar";
 import { AccountProfileForm } from "@/components/account/account-profile-form";
 import { AccountSyncPanel } from "@/components/account/account-sync-panel";
+import { TrialContactPanel } from "@/components/account/trial-contact-panel";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -67,6 +68,18 @@ export default async function AccountPage() {
                   role: user.role,
                 }}
               />
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle as="h2">Trial contact</CardTitle>
+              <CardDescription>
+                Manage whether approved teams may contact you about relevant
+                studies or trials.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <TrialContactPanel />
             </CardContent>
           </Card>
           <Card>
