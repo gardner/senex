@@ -1,5 +1,3 @@
-import type * as React from "react";
-
 import {
   Card,
   CardContent,
@@ -8,6 +6,15 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import type { DataQualityDashboard } from "@/lib/admin/data-quality";
+
+import {
+  DistributionCard,
+  formatExternalRelease,
+  formatPercent,
+  Guardrail,
+  MetricCard,
+  Table,
+} from "./components";
 
 export function DataQualityView({
   dashboard,
@@ -38,6 +45,29 @@ export function DataQualityView({
           detail={`${dashboard.uploadRetries.failedUploads} failed uploads`}
         />
       </section>
+      <Card>
+        <CardHeader>
+          <CardTitle as="h2">Privacy guardrails</CardTitle>
+          <CardDescription>
+            Aggregate-only view with small-cell checks for context
+            distributions.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="grid gap-3 text-sm md:grid-cols-3">
+          <Guardrail
+            label="External release"
+            value={formatExternalRelease(dashboard.privacy.externalRelease)}
+          />
+          <Guardrail
+            label="Minimum cohort"
+            value={`${dashboard.privacy.minimumCohortSize} submissions`}
+          />
+          <Guardrail
+            label="Suppressed cells"
+            value={dashboard.privacy.suppressedDistributionCells}
+          />
+        </CardContent>
+      </Card>
       <section className="grid gap-4 xl:grid-cols-2">
         <Card>
           <CardHeader>
@@ -168,101 +198,4 @@ export function DataQualityView({
       </Card>
     </>
   );
-}
-
-function DistributionCard({
-  title,
-  data,
-}: {
-  title: string;
-  data: Array<{ value: string; count: number; share: number }>;
-}) {
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle as="h2">{title}</CardTitle>
-        <CardDescription>Session context distribution.</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <Table
-          empty="No session context has been submitted."
-          headers={["Value", "Count", "Share"]}
-          rows={data.map((row) => [
-            row.value,
-            row.count,
-            formatPercent(row.share),
-          ])}
-        />
-      </CardContent>
-    </Card>
-  );
-}
-
-function MetricCard({
-  label,
-  value,
-  detail,
-}: {
-  label: string;
-  value: React.ReactNode;
-  detail: string;
-}) {
-  return (
-    <Card size="sm">
-      <CardHeader>
-        <CardTitle as="h2">{label}</CardTitle>
-        <CardDescription>{detail}</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <p className="text-3xl font-semibold tracking-normal">{value}</p>
-      </CardContent>
-    </Card>
-  );
-}
-
-function Table({
-  headers,
-  rows,
-  empty,
-}: {
-  headers: string[];
-  rows: Array<Array<React.ReactNode>>;
-  empty: string;
-}) {
-  if (rows.length === 0) {
-    return <p className="text-sm text-muted-foreground">{empty}</p>;
-  }
-  return (
-    <div className="overflow-x-auto">
-      <table className="w-full text-left text-sm">
-        <thead className="text-xs text-muted-foreground">
-          <tr className="border-b">
-            {headers.map((header) => (
-              <th key={header} className="py-2 pr-3 font-medium">
-                {header}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((row, index) => (
-            <tr key={index} className="border-b last:border-0">
-              {row.map((cell, cellIndex) => (
-                <td key={cellIndex} className="py-2 pr-3">
-                  {cell}
-                </td>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
-}
-
-function formatPercent(value: number) {
-  return new Intl.NumberFormat("en-NZ", {
-    style: "percent",
-    maximumFractionDigits: 1,
-  }).format(value);
 }

@@ -26,6 +26,10 @@ test.describe("Admin data quality", () => {
     ).toBeVisible();
     await expect(page.getByText("Completion").first()).toBeVisible();
     await expect(page.getByText("Invalid trials").first()).toBeVisible();
+    await expect(page.getByText("Privacy guardrails").first()).toBeVisible();
+    await expect(page.getByText("External release").first()).toBeVisible();
+    await expect(page.getByText("Minimum cohort").first()).toBeVisible();
+    await expect(page.getByText("Suppressed cells").first()).toBeVisible();
     await expect(page.getByText("Drop-off by test").first()).toBeVisible();
     await expect(
       page.getByText("Missing questionnaire fields").first(),

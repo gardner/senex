@@ -79,6 +79,14 @@ describe("admin data quality API", () => {
     expect(body.summary.sessionCompletionRate).toBe(0.5);
     expect(body.summary.taskRunCompletionRate).toBe(0.5);
     expect(body.summary.invalidTrialRate).toBe(0.5);
+    expect(body.privacy).toMatchObject({
+      aggregateOnly: true,
+      minimumCohortSize: 5,
+      smallCellThreshold: 3,
+      externalRelease: "blocked_small_cohort",
+      smallCellSuppressed: true,
+      suppressedDistributionCells: 4,
+    });
 
     expect(body.dropOffByTest).toContainEqual({
       taskId: "memory_span",
@@ -101,16 +109,22 @@ describe("admin data quality API", () => {
       flag: "unknown_quality_flag",
       count: 1,
     });
-    expect(body.deviceDistribution).toContainEqual({
-      value: "desktop",
-      count: 1,
-      share: 0.5,
-    });
-    expect(body.inputDistribution).toContainEqual({
-      value: "keyboard",
-      count: 1,
-      share: 0.5,
-    });
+    expect(body.deviceDistribution).toEqual([
+      {
+        value: "small_cell_suppressed",
+        count: 2,
+        share: 1,
+        suppressed: true,
+      },
+    ]);
+    expect(body.inputDistribution).toEqual([
+      {
+        value: "small_cell_suppressed",
+        count: 2,
+        share: 1,
+        suppressed: true,
+      },
+    ]);
     expect(body.missingQuestionnaireFields).toContainEqual({
       questionnaireId: "demographics_v1",
       questionId: "birth_year",

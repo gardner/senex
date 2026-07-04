@@ -1,10 +1,10 @@
 import type {
   AnonymousReportingPayload,
-  AnonymousSessionContext,
-  AnonymousSessionSummary,
   AnonymousTaskRunSummary,
 } from "@/lib/anonymous-reporting";
+import { buildContextDistribution } from "@/lib/admin/data-quality-context";
 import { normalizedQualityFlag } from "@/lib/admin/data-quality-flags";
+import { buildDataQualityPrivacyReview } from "@/lib/admin/data-quality-privacy";
 import type { TrialEventRecord } from "@/lib/local/schema";
 import { buildMissingQuestionnaireFields } from "@/lib/admin/data-quality-questionnaires";
 
@@ -33,10 +33,26 @@ export function buildDataQualityDashboard(
   ).length;
   const invalidTrialEvents = records.trialEvents.filter(isInvalidTrial).length;
   const missingQuestionnaireFields = buildMissingQuestionnaireFields(payloads);
+  const deviceDistribution = buildContextDistribution(
+    records.sessions,
+    records.sessionContext,
+    [["deviceType"], ["deviceClass"], ["device", "type"], ["device"]],
+  );
+  const inputDistribution = buildContextDistribution(
+    records.sessions,
+    records.sessionContext,
+    [["inputMethod"], ["inputMode"], ["input", "method"], ["pointerType"]],
+  );
+  const suppressedDistributionCells =
+    deviceDistribution.suppressedCells + inputDistribution.suppressedCells;
 
   return {
     status: "ok" as const,
     generatedAt,
+    privacy: buildDataQualityPrivacyReview({
+      acceptedSubmissions: payloads.length,
+      suppressedDistributionCells,
+    }),
     summary: {
       acceptedSubmissions: payloads.length,
       sessions: records.sessions.length,
@@ -57,16 +73,8 @@ export function buildDataQualityDashboard(
     ),
     medianTaskDurationByTask: buildMedianDurations(records.taskRuns),
     qualityFlagFrequency: buildQualityFlagFrequency(records),
-    deviceDistribution: buildContextDistribution(
-      records.sessions,
-      records.sessionContext,
-      [["deviceType"], ["deviceClass"], ["device", "type"], ["device"]],
-    ),
-    inputDistribution: buildContextDistribution(
-      records.sessions,
-      records.sessionContext,
-      [["inputMethod"], ["inputMode"], ["input", "method"], ["pointerType"]],
-    ),
+    deviceDistribution: deviceDistribution.rows,
+    inputDistribution: inputDistribution.rows,
     missingQuestionnaireFields,
     uploadRetries: buildUploadRetries(retryRows),
   };
@@ -169,22 +177,6 @@ function buildQualityFlagFrequency(
     .sort(byCountDescThenName("count", "flag"));
 }
 
-function buildContextDistribution(
-  sessions: AnonymousSessionSummary[],
-  contexts: AnonymousSessionContext[],
-  paths: string[][],
-) {
-  const bySession = new Map(
-    contexts.map((context) => [context.sessionId, context.contextSnapshot]),
-  );
-  const counts = new Map<string, number>();
-  for (const session of sessions) {
-    const snapshot = bySession.get(session.sessionId);
-    increment(counts, snapshot ? contextString(snapshot, paths) : "unknown");
-  }
-  return countedValues(counts, sessions.length);
-}
-
 function buildUploadRetries(rows: RetryStateRow[]) {
   const retryStateFrequency = rows.map((row) => ({
     retryState: row.retry_state,
@@ -230,36 +222,6 @@ function incrementQualityFlags(counts: Map<string, number>, values: string[]) {
 
 function increment(counts: Map<string, number>, value: string) {
   counts.set(value, (counts.get(value) ?? 0) + 1);
-}
-
-function countedValues(counts: Map<string, number>, denominator: number) {
-  return [...counts.entries()]
-    .map(([value, count]) => ({
-      value,
-      count,
-      share: rate(count, denominator),
-    }))
-    .sort(byCountDescThenName("count", "value"));
-}
-
-function contextString(snapshot: Record<string, unknown>, paths: string[][]) {
-  for (const path of paths) {
-    const value = nestedValue(snapshot, path);
-    if (typeof value === "string" && value.trim().length > 0) {
-      return value.trim().toLowerCase();
-    }
-  }
-  return "unknown";
-}
-
-function nestedValue(value: unknown, path: string[]): unknown {
-  return path.reduce<unknown>(
-    (current, key) =>
-      typeof current === "object" && current !== null && !Array.isArray(current)
-        ? (current as Record<string, unknown>)[key]
-        : undefined,
-    value,
-  );
 }
 
 function secondsBetween(start: string, end: string) {

@@ -118,6 +118,10 @@ idempotency keys, questionnaire answer IDs, raw answers, raw trial payloads, or
 free-text notes.
 Unsafe or unknown quality flag labels are grouped as `unknown_quality_flag`
 rather than displayed verbatim.
+Session-context device and input distributions apply small-cell suppression to
+rare labels before they are returned, and the response includes a privacy
+guardrail summary that blocks external release when the cohort is below the
+minimum review threshold.
 
 ## References
 

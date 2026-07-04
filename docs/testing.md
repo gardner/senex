@@ -97,6 +97,8 @@ open questions, follow-up tickets, and release-blocking policy.
 
 `tests/admin-data-quality-api.test.ts` covers aggregate anonymous reporting
 quality metrics and redaction for the admin data-quality API.
+`tests/admin-data-quality-privacy.test.ts` covers small-cell suppression and
+cohort release guardrails for context distributions.
 `tests/browser/admin-data-quality.spec.ts` covers the admin dashboard on desktop
 and mobile Chromium.
 

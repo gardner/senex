@@ -87,6 +87,9 @@ device/input distribution, and missing questionnaire fields without direct
 anonymous identifiers or raw questionnaire answers.
 Unsafe or unknown quality flag labels are grouped as `unknown_quality_flag`
 rather than displayed verbatim.
+Device/input distribution labels below the small-cell threshold are grouped as
+`small_cell_suppressed`, and the dashboard shows whether the current cohort is
+too small for external release.
 
 Approved research exports are created from `/admin/research-export` or
 `POST /api/admin/research-export`. The export path requires an admin session,

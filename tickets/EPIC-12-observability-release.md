@@ -79,7 +79,7 @@ Notes:
 
 ## E12-T03 Build internal cognitive data observability
 
-Status: Todo
+Status: Done
 
 Scope:
 
@@ -97,6 +97,22 @@ Validation:
 - Query tests with fixture data.
 
 Dependencies: `E10-T04`, `E12-T01`.
+
+Notes:
+
+- Confirmed the existing admin-only `/admin/data-quality` and
+  `/api/admin/data-quality` surfaces cover completion rates, invalid trial
+  rates, quality flag frequency, median task duration, drop-off by test,
+  device/input distribution, missing questionnaire fields, and upload retry
+  state from accepted anonymous reporting payloads.
+- Added explicit privacy guardrails to the dashboard response: aggregate-only
+  status, minimum cohort threshold, external-release status, and small-cell
+  suppression counts.
+- Added small-cell suppression for rare device/input context distribution labels
+  so unusual browser/device values are grouped before display or API return.
+- Covered the guardrails with `tests/admin-data-quality-privacy.test.ts`,
+  expanded `tests/admin-data-quality-api.test.ts`, and added visible Playwright
+  assertions in `tests/browser/admin-data-quality.spec.ts`.
 
 ## E12-T04 Define release gates
 
