@@ -22,6 +22,9 @@ TypeScript contracts.
 runs must store the `taskId`, `taskVersion`, stimulus seed, and scoring version
 used for the run.
 
+Task-specific v1 definitions and scorers live in
+[`cognitive-tasks.md`](cognitive-tasks.md) and `lib/cognitive-tasks/`.
+
 ## Runner
 
 The runner state machine is UI-independent. Supported states are `setup`,
@@ -55,6 +58,10 @@ clinical judgments.
 quality flag references, confidence, and result state. Low-quality runs
 downgrade confidence instead of presenting unsupported certainty.
 
+Insufficient-data scores use explicit finite fallback metrics and an
+`insufficient_data` result state. Scoring code must not emit `NaN` or infinite
+numbers because local backup/export requires JSON-safe metrics.
+
 Baseline logic compares against personal data only. One session never creates a
 definitive baseline; the engine reports `forming`, `usable`, `stable`, or
 `needs_recalibration` based on usable sample count and confidence.
@@ -67,5 +74,7 @@ Trend summaries currently expose 7-day and 30-day windows with explicit
 - `tests/test-engine-task-definition.test.ts` covers definition validation.
 - `tests/test-engine-runner-scoring.test.ts` covers runner transitions, timing,
   quality flags, scoring, baselines, and trends.
+- `tests/cognitive-tasks.test.ts` covers task-specific definitions, stimulus
+  generation, scoring, and JSON-safe edge cases.
 - `tests/browser/test-engine.spec.ts` covers browser monotonic timing and
   visibility metadata.

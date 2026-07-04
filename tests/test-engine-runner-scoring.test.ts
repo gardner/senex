@@ -184,6 +184,21 @@ describe("scoring, baselines, and trends", () => {
     expect(evenScore.metrics.median_rt_ms).toBe(450);
   });
 
+  it("keeps insufficient-data reaction-time scores JSON-safe", () => {
+    const score = scoreReactionTimeRun({
+      definition: task,
+      taskRunId: "task_run_empty",
+      sessionId: "session_1",
+      trials: [trial({ responded: false, rtMs: null })],
+      qualityFlags: [],
+    });
+
+    expect(score.metrics.median_rt_ms).toBe(0);
+    expect(score.metrics.mean_rt_ms).toBe(0);
+    expect(score.metrics.valid_trial_count).toBe(0);
+    expect(score.resultState).toBe("insufficient_data");
+  });
+
   it("does not create a definitive baseline from one session", () => {
     expect(computeBaselineState([{ value: 400, confidence: 0.9 }]).state).toBe(
       "forming",

@@ -57,13 +57,13 @@ function resultState(confidence: number, validCount: number) {
 }
 
 function median(values: number[]) {
-  if (values.length === 0) return Number.NaN;
+  if (values.length === 0) return 0;
   const middle = Math.floor(values.length / 2);
   if (values.length % 2 === 1) return values[middle];
   return (values[middle - 1] + values[middle]) / 2;
 }
 
 function mean(values: number[]) {
-  if (values.length === 0) return Number.NaN;
+  if (values.length === 0) return 0;
   return values.reduce((sum, value) => sum + value, 0) / values.length;
 }

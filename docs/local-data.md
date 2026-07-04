@@ -68,3 +68,8 @@ storage requests are non-blocking because browsers may deny or ignore them.
 `components/backup-restore-panel.tsx` provides JSON backup generation, import
 preview, merge restore, and replace restore. See
 [export-import.md](export-import.md).
+
+`components/cognitive-task-panel.tsx` currently provides the Reaction Time
+Sprint demo path. It creates a local session, stores a versioned task run,
+stores trial events, stores the median-RT score, and then completes the
+session. See [cognitive-tasks.md](cognitive-tasks.md).

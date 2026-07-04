@@ -27,6 +27,7 @@ The current product direction and platform documentation are:
 | [docs/local-data.md](docs/local-data.md)                       | Browser local storage platform         |
 | [docs/export-import.md](docs/export-import.md)                 | JSON backup and restore                |
 | [docs/test-engine.md](docs/test-engine.md)                     | Cognitive task runner and scoring      |
+| [docs/cognitive-tasks.md](docs/cognitive-tasks.md)             | Task battery modules and status        |
 | [docs/common-commands.md](docs/common-commands.md)             | Day-to-day commands                    |
 | [docs/database.md](docs/database.md)                           | D1 setup and migrations                |
 | [docs/environment-variables.md](docs/environment-variables.md) | Local and Cloudflare env vars          |

@@ -30,6 +30,9 @@ sync when framework, runtime, or infrastructure behavior changes.
 - **Test engine:** cognitive task contracts, runner states, quality flags,
   scoring, baselines, and trends live in `lib/test-engine/`; see
   [test-engine.md](test-engine.md).
+- **Cognitive tasks:** task-specific definitions, stimulus generation, and
+  scorers live in `lib/cognitive-tasks/`; see
+  [cognitive-tasks.md](cognitive-tasks.md).
 - **Deploys:** GitHub-connected Cloudflare Workers Builds are the intended
   production path. Production deploys run `pnpm run deploy:prod`, which checks
   migrations, applies D1 migrations to `senex-db`, then runs Wrangler deploy.
