@@ -166,7 +166,7 @@ Dependencies: `E03-T05`, `E07-T06`, `E10-T05`.
 
 ## E11-T06 Clinical-claim and copy safety review
 
-Status: Todo
+Status: Done
 
 Scope:
 
@@ -183,3 +183,14 @@ Validation:
 - Copy review checklist completed.
 
 Dependencies: `E06-T04`, `E05-T03`.
+
+Notes:
+
+- Added [docs/copy-safety.md](../docs/copy-safety.md) with the clinical-claim
+  boundary, allowed/forbidden language list, review checklist, source
+  references, and current review notes.
+- Added `tests/copy-safety.test.ts` to keep the checklist committed, scan
+  routine user-facing result/dashboard copy for forbidden claim language, and
+  assert personal-baseline / local-history result wording.
+- Reviewed routine dashboard, task battery, questionnaire, and trial-contact
+  copy. No P0 clinical-claim blockers were found.

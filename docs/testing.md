@@ -77,6 +77,11 @@ Accessibility browser tests run axe WCAG A/AA checks on public/auth routes and
 cover visible focus, reduced motion, and keyboard-only task-runner completion.
 See [accessibility-audit.md](accessibility-audit.md).
 
+Clinical-claim copy safety is covered by `tests/copy-safety.test.ts`, which
+checks the committed [copy-safety.md](copy-safety.md) review checklist, scans
+routine user-facing result/dashboard copy for forbidden claim language, and
+asserts personal-baseline wording in dashboard summaries.
+
 `tests/quality-coverage.test.ts` tracks E11 hardening coverage for conservative
 baseline/trend edges, duplicate trial-quality exclusions, even-count task
 medians, anonymous reporting category declarations, and backup stimulus
