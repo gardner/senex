@@ -14,23 +14,12 @@ const sourceFields = {
 };
 
 export const requiredColumns = {
-  account_sync_batches: [
-    "sync_batch_id",
-    "user_id",
-    "idempotency_key",
-    "source_profile_id",
-    "record_counts_json",
-    "received_at",
-    "status",
-  ],
-  account_sync_state: [
-    "user_id",
-    "last_sync_batch_id",
-    "last_synced_at",
-    "cursor_json",
-    "pending_conflict_count",
-    "updated_at",
-  ],
+  account_sync_batches: columns(
+    "sync_batch_id user_id idempotency_key source_profile_id record_counts_json received_at status",
+  ),
+  account_sync_state: columns(
+    "user_id last_sync_batch_id last_synced_at cursor_json pending_conflict_count updated_at",
+  ),
   account_sync_sessions: [
     "account_session_id",
     "user_id",
@@ -122,7 +111,14 @@ export const requiredColumns = {
     "source_app_version",
     "received_at",
   ],
+  account_deletion_requests: columns(
+    "request_id user_id requested_at status scope_json limitations_json source updated_at",
+  ),
 };
+
+function columns(names: string) {
+  return names.split(" ");
+}
 
 export async function tableColumns(table: string) {
   const result = await env.DB.prepare(`PRAGMA table_info(${table})`).all<{

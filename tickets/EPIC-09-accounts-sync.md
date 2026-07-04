@@ -187,7 +187,7 @@ Dependencies: `E09-T04`, `E07-T04`.
 
 ## E09-T06 Implement account export and deletion request
 
-Status: Todo
+Status: Done
 
 Scope:
 
@@ -203,5 +203,20 @@ Acceptance criteria:
 Validation:
 
 - Integration tests for export and deletion request.
+
+Implementation notes:
+
+- Added additive `account_deletion_requests` D1 table with an open-request
+  uniqueness guard.
+- Added authenticated `GET /api/account/export` for account profile, sync state,
+  sync batches, account-linked history, account-linked consent records, deletion
+  requests, and retention notes.
+- Added authenticated `POST /api/account/deletion-requests`, which records or
+  returns an open auditable deletion request instead of silently deleting data.
+- Enabled `/account` export and deletion controls with explicit deletion
+  acknowledgement and clear limits for already shared research submissions and
+  local browser storage.
+- Added Worker integration coverage and desktop/mobile Playwright coverage for
+  export download and deletion request.
 
 Dependencies: `E09-T03`.

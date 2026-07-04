@@ -43,12 +43,20 @@ test.describe("Account profile", () => {
     ).toBeVisible();
     await expect(
       page.getByRole("button", { name: "Export account data" }),
-    ).toBeDisabled();
+    ).toBeEnabled();
     await expect(
       page.getByRole("button", { name: "Request account deletion" }),
     ).toBeDisabled();
+    await page
+      .getByRole("checkbox", {
+        name: /I understand this creates a deletion request/,
+      })
+      .check();
     await expect(
-      page.getByText("Account updates do not change research consent."),
+      page.getByRole("button", { name: "Request account deletion" }),
+    ).toBeEnabled();
+    await expect(
+      page.getByText("Already shared research submissions"),
     ).toBeVisible();
 
     await page.screenshot({

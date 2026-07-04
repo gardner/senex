@@ -125,6 +125,9 @@ The core tables are:
   local test history.
 - `account_sync_consent_events`: account-linked consent history; consent events
   stay append-only and separate from account profile state.
+- `account_deletion_requests`: one auditable account deletion review request per
+  open user request, including the server-side scope and limitations shown to
+  the user.
 
 Do not treat local deletion as server deletion in these tables. Account data
 removal belongs in the explicit export/deletion-request flow.
@@ -145,3 +148,14 @@ browser records accepted or declined linking decisions as local
 will include anonymous reporting history. Those events are stored in
 `account_sync_consent_events` with the rest of the consent history when the user
 later confirms import.
+
+`GET /api/account/export` returns an `account-export-v1` JSON document for the
+signed-in account. It includes account profile fields, sync state, sync batches,
+account-linked sessions/task runs/trial events/scores, account-linked consent
+events, deletion requests, and retention notes.
+
+`POST /api/account/deletion-requests` creates or returns the current open
+account deletion request. It does not immediately delete records. The request
+scope covers account profile and account-linked sync tables; already shared
+research submissions require review or exclusion handling, and local browser
+storage must be deleted on the device.

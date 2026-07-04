@@ -3,6 +3,7 @@
 import { useState, type FormEvent, type MouseEvent } from "react";
 import { useRouter } from "next/navigation";
 
+import { AccountDataControls } from "@/components/account/account-data-controls";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -99,36 +100,7 @@ export function AccountProfileForm({ user }: AccountProfileFormProps) {
         </Button>
       </form>
 
-      <section className="border-input space-y-3 rounded-md border p-4">
-        <div>
-          <h2 className="font-medium">Account data controls</h2>
-          <p className="text-muted-foreground text-sm">
-            Account export and deletion apply to account-linked records once
-            sync is enabled.
-          </p>
-        </div>
-        <dl className="space-y-2 text-sm">
-          <div>
-            <dt className="font-medium">Email</dt>
-            <dd className="text-muted-foreground">{user.email}</dd>
-          </div>
-          <div>
-            <dt className="font-medium">Role</dt>
-            <dd className="text-muted-foreground">{user.role ?? "user"}</dd>
-          </div>
-        </dl>
-        <p className="text-muted-foreground text-sm">
-          Account updates do not change research consent.
-        </p>
-        <div className="flex flex-wrap gap-2">
-          <Button type="button" variant="outline" disabled>
-            Export account data
-          </Button>
-          <Button type="button" variant="outline" disabled>
-            Request account deletion
-          </Button>
-        </div>
-      </section>
+      <AccountDataControls user={{ email: user.email, role: user.role }} />
     </div>
   );
 }

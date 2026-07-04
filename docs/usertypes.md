@@ -31,10 +31,13 @@ server-side route protection.
 
 ## Account Data Controls
 
-The `/account` page shows account export and deletion controls as disabled
-entry points until account sync, export, and deletion flows are implemented.
-Changing account profile fields does not change research consent, anonymous
-reporting consent, or local-only history.
+The `/account` page lets signed-in users download an `account-export-v1` JSON
+file containing account profile fields and account-linked sync records. It also
+lets users create an auditable account deletion request after acknowledging that
+already shared research submissions require review/exclusion handling and local
+browser history must be deleted on the device. Changing account profile fields
+does not change research consent, anonymous reporting consent, or local-only
+history.
 
 ## Organization Roles
 
