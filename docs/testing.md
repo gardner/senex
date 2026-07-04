@@ -90,6 +90,11 @@ against browser analytics transports by default.
 allowlist, coarse failure classification, sensitive-field rejection, and
 non-blocking sink failures.
 
+Threat-model coverage is guarded by `tests/threat-model.test.ts`, which checks
+the committed [threat-model.md](threat-model.md) workshop notes and
+`tickets/SECURITY-FOLLOWUPS.md` for the required E11 risk areas, mitigations,
+open questions, follow-up tickets, and release-blocking policy.
+
 `tests/admin-data-quality-api.test.ts` covers aggregate anonymous reporting
 quality metrics and redaction for the admin data-quality API.
 `tests/browser/admin-data-quality.spec.ts` covers the admin dashboard on desktop

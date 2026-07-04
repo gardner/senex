@@ -144,7 +144,7 @@ Notes:
 
 ## E11-T05 Run threat model workshops
 
-Status: Todo
+Status: Done
 
 Scope:
 
@@ -163,6 +163,18 @@ Validation:
 - Threat model notes committed.
 
 Dependencies: `E03-T05`, `E07-T06`, `E10-T05`.
+
+Notes:
+
+- Added [docs/threat-model.md](../docs/threat-model.md) with workshop notes for
+  offline data loss, anonymous re-identification, consent bypass, account
+  takeover, research export misuse, trial-contact misuse, corrupt import files,
+  and malicious JSON import.
+- Added [SECURITY-FOLLOWUPS.md](SECURITY-FOLLOWUPS.md) with follow-up tickets
+  and release-blocking scope for external partner exports, staff/admin
+  operations, and trial recruiter workflows.
+- Added `tests/threat-model.test.ts` to keep the required threat-model sections,
+  sources, and follow-up ticket coverage committed.
 
 ## E11-T06 Clinical-claim and copy safety review
 
