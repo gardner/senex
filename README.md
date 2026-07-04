@@ -61,6 +61,7 @@ pnpm dev                  # http://localhost:3000
 | [adr/](docs/adr/)                                         | Architecture decision records          |
 | [local-data.md](docs/local-data.md)                       | Browser local storage platform         |
 | [export-import.md](docs/export-import.md)                 | JSON backup and restore                |
+| [test-engine.md](docs/test-engine.md)                     | Cognitive task runner and scoring      |
 | [common-commands.md](docs/common-commands.md)             | Day-to-day commands                    |
 | [database.md](docs/database.md)                           | D1 setup, migrations, and admin roles  |
 | [environment-variables.md](docs/environment-variables.md) | Local and production configuration     |

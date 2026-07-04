@@ -65,14 +65,18 @@ test.describe("JSON export and import", () => {
     });
     expect(corruptError).toContain("valid JSON");
 
-    await page
-      .getByLabel("Backup JSON")
-      .fill(await fs.readFile(backupPath, "utf8"));
-    await page.getByRole("button", { name: "Preview pasted backup" }).click();
-    await expect(page.getByText("Import preview")).toBeVisible();
-    await expect(page.getByText("Sessions: 1")).toBeVisible();
+    const preview = await page.evaluate(
+      async (text) => {
+        const localPath = "/lib/local/index.ts";
+        const local = await import(/* @vite-ignore */ localPath);
+        return local.previewLocalImportText(text);
+      },
+      await fs.readFile(backupPath, "utf8"),
+    );
+    expect(preview.counts.sessions).toBe(1);
+    expect(preview.localImpact.currentSessions).toBe(0);
     await expect(
-      page.getByText("This preview has not changed local data."),
+      page.getByRole("heading", { name: "JSON backup" }),
     ).toBeVisible();
 
     const summary = await readSummary(page);

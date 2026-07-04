@@ -8,7 +8,7 @@ Source: [PLAN Phase 2](../docs/PLAN.md#5-phase-2--test-engine-and-scoring-platfo
 
 ## E04-T01 Define task definition contract
 
-Status: Todo
+Status: Done
 
 Scope:
 
@@ -31,7 +31,7 @@ Dependencies: none.
 
 ## E04-T02 Build test runner state machine
 
-Status: Todo
+Status: Done
 
 Scope:
 
@@ -53,7 +53,7 @@ Dependencies: `E04-T01`.
 
 ## E04-T03 Build timing and input utilities
 
-Status: Todo
+Status: Done
 
 Scope:
 
@@ -76,7 +76,7 @@ Dependencies: `E04-T02`.
 
 ## E04-T04 Implement quality flag engine
 
-Status: Todo
+Status: Done
 
 Scope:
 
@@ -98,7 +98,7 @@ Dependencies: `E04-T03`, `E02-T05`.
 
 ## E04-T05 Implement scoring result contract
 
-Status: Todo
+Status: Done
 
 Scope:
 
@@ -120,7 +120,7 @@ Dependencies: `E04-T04`.
 
 ## E04-T06 Implement baseline and trend engines
 
-Status: Todo
+Status: Done
 
 Scope:
 

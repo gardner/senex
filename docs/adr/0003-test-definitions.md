@@ -24,6 +24,11 @@ parameters, scoring references, quality flag rules, and fixture cases.
 React components render and collect input. They do not define the authoritative
 scoring or eligibility rules.
 
+The v1 engine implementation lives in `lib/test-engine/` and keeps task
+definition validation, runner transitions, timing/input metadata, quality flag
+evaluation, scoring contracts, and baseline/trend logic independent of UI
+components.
+
 ## Consequences
 
 Task changes require version bumps and regression fixtures. Historical sessions

@@ -47,6 +47,10 @@ storage behavior is exercised in Chromium rather than mocked.
 JSON export/import tests cover schema validation in Vitest and browser
 generation, preview, merge, replace, and rollback behavior in Playwright.
 
+Test-engine unit tests cover definition validation, state transitions, timing,
+quality flags, scoring, baselines, and trends. Browser tests cover monotonic
+timing and visibility metadata where feasible.
+
 To test an already running server or preview URL:
 
 ```bash
