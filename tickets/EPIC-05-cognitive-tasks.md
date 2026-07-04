@@ -125,7 +125,7 @@ Implementation notes:
 
 ## E05-T04 Implement Sequence Tap
 
-Status: In progress
+Status: Done
 
 Scope:
 
@@ -139,12 +139,18 @@ Acceptance criteria:
 - Keyboard and touch operation both work.
 - Sequence generation is deterministic by seed.
 - Missed or abandoned responses are stored explicitly.
+- Compact interactive runner captures keyboard, pointer, touch, and explicit
+  missed responses.
+- Results persist locally with task version, stimulus seed, trial events, and
+  score rows.
 
 Validation:
 
 - Sequence generation tests.
 - Scoring tests.
 - Accessibility smoke test.
+- Browser happy path for keyboard plus touch/pointer input and missed-response
+  storage on desktop and mobile.
 
 Dependencies: `E04-T04`.
 
@@ -153,8 +159,11 @@ Implementation notes:
 - Deterministic v1 definition, sequence generation, and span/error/missed
   scoring are implemented in `lib/cognitive-tasks/sequence-tap.ts`.
 - Full demo-battery local persistence and dashboard presentation are
-  implemented. Full interactive keyboard/touch runner capture and accessibility
-  smoke coverage remain.
+  implemented.
+- `components/cognitive-tasks/sequence-tap-runner.tsx` implements a compact
+  interactive runner with number-key input, pointer/touch tile buttons, and an
+  explicit missed-response control. It persists the same local task-run records
+  as the deterministic demo battery.
 
 ## E05-T05 Implement Pair Learning
 

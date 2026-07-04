@@ -11,7 +11,7 @@ performance trends over time and must not diagnose or imply clinical certainty.
 ## Current Scope
 
 The first implemented vertical slices are **Reaction Time Sprint**, **Symbol
-Match**, and **Arrow Focus**.
+Match**, **Arrow Focus**, and **Sequence Tap**.
 
 Reaction Time Sprint includes:
 
@@ -45,11 +45,22 @@ Arrow Focus includes:
   and score rows
 - browser coverage on desktop and mobile Chromium
 
+Sequence Tap includes:
+
+- task definition v1
+- seeded spatial sequence generation
+- span, error, and missed-response scoring
+- compact interactive capture through number keys and pointer/touch tile
+  buttons
+- explicit missed-response storage
+- local IndexedDB persistence with task version, stimulus seed, trial events,
+  and score rows
+- browser coverage on desktop and mobile Chromium
+
 The remaining task modules currently provide deterministic definitions,
 stimulus generation, scoring foundations, local demo persistence, and dashboard
 presentation:
 
-- **Sequence Tap**: seeded tile sequences, span/error/missed scoring
 - **Pair Learning**: versioned pair packs, immediate/delayed/recognition scoring
 - **Seven-Day Learning Week**: repeated pack schedule, missed-day handling, and
   learning/retention metrics
@@ -61,8 +72,8 @@ offline dashboard so processing, working-memory, and learning cards are filled
 from local score history.
 
 Future work should replace the compact demo capture with full timed interactive
-runners for Sequence Tap, Pair Learning, and Seven-Day Learning before making
-research claims from those modules.
+runners for Pair Learning and Seven-Day Learning before making research claims
+from those modules.
 
 ## Research Anchors
 
@@ -107,5 +118,7 @@ or result states so JSON backup/export remains valid.
   Symbol Match keyboard/pointer capture, Arrow Focus keyboard/touch capture,
   full demo battery persistence, dashboard-card refresh, and real browser
   IndexedDB records.
+- `tests/browser/cognitive-sequence-tap.spec.ts` covers Sequence Tap keyboard,
+  pointer/touch, and explicit missed-response persistence.
 - `tests/test-engine-runner-scoring.test.ts` covers the reusable engine scorer,
   including insufficient-data JSON safety.
