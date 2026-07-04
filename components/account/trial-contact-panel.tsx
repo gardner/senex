@@ -2,7 +2,13 @@
 
 import { useEffect, useState } from "react";
 
+import { TrialContactProfileFields } from "@/components/account/trial-contact-profile-fields";
 import { Button } from "@/components/ui/button";
+import {
+  emptyTrialContactProfileInput,
+  type TrialContactProfile,
+  type TrialContactProfileInput,
+} from "@/lib/trial-contact/schema";
 
 type TrialContactState = {
   enabled: boolean;
@@ -11,21 +17,23 @@ type TrialContactState = {
   optedOutAt: string | null;
   lastReviewedAt: string | null;
   updatedAt: string | null;
+  profile: TrialContactProfile;
 };
 
 type PanelMessage = {
   tone: "neutral" | "error";
   text: string;
-} | null;
+};
 
 export function TrialContactPanel() {
   const [trialContact, setTrialContact] = useState<TrialContactState | null>(
     null,
   );
   const [checked, setChecked] = useState(false);
+  const [profile, setProfile] = useState(emptyTrialContactProfileInput);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [message, setMessage] = useState<PanelMessage>(null);
+  const [messages, setMessages] = useState<PanelMessage[]>([]);
 
   useEffect(() => {
     let active = true;
@@ -35,8 +43,11 @@ export function TrialContactPanel() {
         if (!active) return;
         setTrialContact(next);
         setChecked(next.enabled);
+        setProfile(profileInput(next.profile));
       } catch (error) {
-        if (active) setMessage(formatError(error, "Trial contact failed."));
+        if (active) {
+          setMessages([formatError(error, "Trial contact failed.")]);
+        }
       } finally {
         if (active) setLoading(false);
       }
@@ -49,24 +60,61 @@ export function TrialContactPanel() {
 
   async function savePreference() {
     setSaving(true);
-    setMessage(null);
+    setMessages([]);
     try {
-      const next = await writeTrialContact(checked);
+      const profileChanged = trialContact
+        ? !sameProfile(profile, profileInput(trialContact.profile))
+        : true;
+      const next = await writeTrialContact({
+        enabled: statusChanged ? checked : undefined,
+        profile: profileChanged ? profile : undefined,
+      });
       setTrialContact(next);
       setChecked(next.enabled);
-      setMessage({
-        tone: "neutral",
-        text: "Trial contact preference saved.",
-      });
+      setProfile(profileInput(next.profile));
+      setMessages([
+        { tone: "neutral", text: "Trial contact preference saved." },
+        ...(profileChanged
+          ? [{ tone: "neutral" as const, text: "Trial contact profile saved." }]
+          : []),
+      ]);
     } catch (error) {
-      setMessage(formatError(error, "Trial contact preference failed."));
+      setMessages([formatError(error, "Trial contact preference failed.")]);
     } finally {
       setSaving(false);
     }
   }
 
-  const changed = trialContact ? checked !== trialContact.enabled : false;
-  const statusText = statusLabel({ loading, trialContact, message });
+  async function clearProfile() {
+    setSaving(true);
+    setMessages([]);
+    try {
+      const next = await writeTrialContact({
+        profile: emptyTrialContactProfileInput(),
+      });
+      setTrialContact(next);
+      setChecked(next.enabled);
+      setProfile(profileInput(next.profile));
+      setMessages([
+        { tone: "neutral", text: "Trial contact profile cleared." },
+      ]);
+    } catch (error) {
+      setMessages([formatError(error, "Trial contact profile clear failed.")]);
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  const statusChanged = trialContact ? checked !== trialContact.enabled : false;
+  const profileChanged = trialContact
+    ? !sameProfile(profile, profileInput(trialContact.profile))
+    : false;
+  const changed = statusChanged || profileChanged;
+  const statusText = statusLabel({
+    loading,
+    trialContact,
+    hasError: messages.some((message) => message.tone === "error"),
+  });
 
   return (
     <section className="space-y-4">
@@ -91,7 +139,7 @@ export function TrialContactPanel() {
           disabled={loading || saving}
           onChange={(event) => {
             setChecked(event.target.checked);
-            setMessage(null);
+            setMessages([]);
           }}
         />
         <span>
@@ -99,18 +147,39 @@ export function TrialContactPanel() {
           clinical trials.
         </span>
       </label>
-      {message && (
-        <p className={message.tone === "error" ? "text-destructive" : ""}>
+      <TrialContactProfileFields
+        profile={profile}
+        disabled={loading || saving}
+        onChange={(next) => {
+          setProfile(next);
+          setMessages([]);
+        }}
+      />
+      {messages.map((message) => (
+        <p
+          key={message.text}
+          className={message.tone === "error" ? "text-destructive" : ""}
+        >
           {message.text}
         </p>
-      )}
-      <Button
-        type="button"
-        disabled={loading || saving || !changed}
-        onClick={() => void savePreference()}
-      >
-        {saving ? "Saving trial contact..." : "Save trial contact preference"}
-      </Button>
+      ))}
+      <div className="flex flex-wrap gap-2">
+        <Button
+          type="button"
+          disabled={loading || saving || !changed}
+          onClick={() => void savePreference()}
+        >
+          {saving ? "Saving trial contact..." : "Save trial contact preference"}
+        </Button>
+        <Button
+          type="button"
+          variant="outline"
+          disabled={loading || saving}
+          onClick={() => void clearProfile()}
+        >
+          Clear trial contact profile
+        </Button>
+      </div>
     </section>
   );
 }
@@ -138,6 +207,10 @@ function TrialContactMetadata({
         label="Opted out"
         value={formatDateTime(trialContact.optedOutAt)}
       />
+      <MetadataItem
+        label="Profile reviewed"
+        value={formatDateTime(trialContact.profile.lastReviewedAt)}
+      />
     </dl>
   );
 }
@@ -158,11 +231,14 @@ async function readTrialContact() {
   return body.trialContact;
 }
 
-async function writeTrialContact(enabled: boolean) {
+async function writeTrialContact(input: {
+  enabled?: boolean;
+  profile?: TrialContactProfileInput;
+}) {
   const response = await fetch("/api/account/trial-contact", {
     method: "POST",
     headers: { "content-type": "application/json" },
-    body: JSON.stringify({ enabled }),
+    body: JSON.stringify(input),
   });
   if (!response.ok) throw await responseError(response);
   const body = (await response.json()) as { trialContact: TrialContactState };
@@ -174,6 +250,23 @@ async function responseError(response: Response) {
     error?: string;
   } | null;
   return new Error(body?.error ?? "Trial contact request failed.");
+}
+
+function profileInput(profile: TrialContactProfile): TrialContactProfileInput {
+  return {
+    preferredContactMethod: profile.preferredContactMethod,
+    countryRegion: profile.countryRegion,
+    ageEligibility: profile.ageEligibility,
+    broadHealthAnswers: profile.broadHealthAnswers,
+    availabilityPreference: profile.availabilityPreference,
+  };
+}
+
+function sameProfile(
+  left: TrialContactProfileInput,
+  right: TrialContactProfileInput,
+) {
+  return JSON.stringify(left) === JSON.stringify(right);
 }
 
 function formatError(error: unknown, fallback: string): PanelMessage {
@@ -191,16 +284,15 @@ function formatDateTime(value: string | null) {
 function statusLabel({
   loading,
   trialContact,
-  message,
+  hasError,
 }: {
   loading: boolean;
   trialContact: TrialContactState | null;
-  message: PanelMessage;
+  hasError: boolean;
 }) {
   if (loading) return "Loading trial contact preference.";
-  if (!trialContact && message?.tone === "error") {
+  if (!trialContact && hasError)
     return "Trial contact preference is unavailable.";
-  }
   return trialContact?.enabled
     ? "Trial contact is on."
     : "Trial contact is off.";

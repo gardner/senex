@@ -40,7 +40,7 @@ Dependencies: `E09-T01`, `E07-T01`.
 
 ## E10-T02 Add trial-contact profile fields
 
-Status: Todo
+Status: Done
 
 Scope:
 
@@ -56,6 +56,19 @@ Validation:
 
 - D1 migration tests.
 - Integration test for preference updates.
+
+Implementation:
+
+- Added `trial_contact_profiles` and `trial_contact_profile_events`.
+- Extended `GET /api/account/trial-contact` and
+  `POST /api/account/trial-contact` to return and update optional profile
+  fields.
+- Added account UI controls for preferred contact method, country/region,
+  coarse age eligibility, broad health answers, availability preference, and
+  clearing saved profile fields.
+- Added account export support with a separate `trialContact` block.
+- Covered schema, update, clear, invalid input, export separation, and browser
+  save/clear flows.
 
 Dependencies: `E10-T01`, `E08-T01`.
 

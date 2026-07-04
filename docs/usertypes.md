@@ -44,11 +44,18 @@ history.
 Trial contact is available only to signed-in users. It is separate from general
 research sharing, anonymous reporting, and study enrolment: opting in only means
 the user is open to being contacted about relevant studies or clinical trials.
-The user can turn trial contact off at any time from `/account`.
+The user can turn trial contact off at any time from `/account`, and can clear
+optional contact-profile fields separately.
 
 Anonymous Reporting users cannot be contacted for trials because that mode has
 no traditional account identity or contact channel. Do not infer trial-contact
 permission from anonymous reporting consent or account sync consent.
+
+Optional trial-contact profile fields are account-scoped data: preferred contact
+method, country/region, coarse age eligibility, broad health answers, and
+availability preference. They are exported in the account export's separate
+`trialContact` block, not inside account sync records or anonymous reporting
+payloads.
 
 ## Organization Roles
 

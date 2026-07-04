@@ -152,7 +152,8 @@ later confirms import.
 `GET /api/account/export` returns an `account-export-v1` JSON document for the
 signed-in account. It includes account profile fields, sync state, sync batches,
 account-linked sessions/task runs/trial events/scores, account-linked consent
-events, deletion requests, and retention notes.
+events, trial-contact settings/profile data in a separate `trialContact` block,
+deletion requests, and retention notes.
 
 `POST /api/account/deletion-requests` creates or returns the current open
 account deletion request. It does not immediately delete records. The request
@@ -167,18 +168,30 @@ and not study enrolment. Anonymous Reporting users have no trial-contact write
 path because they do not have account contact details.
 
 The current terms version is `trial-contact-v1`.
+The current profile version is `trial-contact-profile-v1`.
 
 - `trial_contact_status`: one current preference row per signed-in user,
   including whether contact is enabled, the consent version, opt-in timestamp,
   opt-out timestamp, last reviewed timestamp, and update timestamp.
 - `trial_contact_consent_events`: append-only opt-in/opt-out decisions with the
   signed-in user id, version, decision timestamp, and source.
+- `trial_contact_profiles`: one current optional profile per signed-in user,
+  including preferred contact method, country/region, coarse age eligibility,
+  broad health answers, availability preference, profile version, and review
+  timestamp.
+- `trial_contact_profile_events`: append-only profile update and clear events.
+  These events keep trial-contact profile history auditable without mixing it
+  into account sync or anonymous reporting tables.
 
 `GET /api/account/trial-contact` returns the current signed-in user's
-trial-contact status. A missing row returns the explicit disabled default with
-the current consent version and null timestamps.
+trial-contact status and profile. Missing rows return explicit disabled/empty
+defaults with the current versions and null timestamps.
 
-`POST /api/account/trial-contact` accepts `{ "enabled": boolean }`, writes an
-append-only decision event, updates the current status row, and returns the
-updated status. Opting out preserves the original opt-in timestamp and records a
-new opt-out timestamp so the audit trail remains understandable.
+`POST /api/account/trial-contact` accepts an optional `enabled` boolean and an
+optional `profile` object; at least one must be present. When `enabled` is
+present, the endpoint writes an append-only consent decision and updates the
+current status row. When `profile` is present, the endpoint writes an
+append-only profile event and replaces the current profile. Posting an empty
+profile records a `cleared` event, so profile preferences are reversible.
+Opting out preserves the original opt-in timestamp and records a new opt-out
+timestamp so the audit trail remains understandable.

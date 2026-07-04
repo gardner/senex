@@ -1,5 +1,6 @@
 import { readDeletionRequests } from "./deletion-requests";
 import { readAccountRecords, readSyncBatches, readSyncState } from "./records";
+import { readTrialContact } from "@/lib/trial-contact/server";
 
 export type AccountExportUser = {
   id: string;
@@ -12,14 +13,14 @@ export async function buildAccountExport(
   user: AccountExportUser,
   generatedAt: string,
 ) {
-  const [syncState, syncBatches, records, deletionRequests] = await Promise.all(
-    [
+  const [syncState, syncBatches, records, deletionRequests, trialContact] =
+    await Promise.all([
       readSyncState(user.id),
       readSyncBatches(user.id),
       readAccountRecords(user.id),
       readDeletionRequests(user.id),
-    ],
-  );
+      readTrialContact(user.id),
+    ]);
 
   return {
     exportVersion: "account-export-v1",
@@ -30,6 +31,7 @@ export async function buildAccountExport(
       email: user.email,
       role: user.role ?? "user",
     },
+    trialContact,
     syncState,
     syncBatches,
     records,
@@ -47,6 +49,10 @@ function retentionNotes() {
     {
       scope: "research",
       text: "Already shared research submissions are not automatically removed by account deletion; they require review or exclusion handling under the research data policy.",
+    },
+    {
+      scope: "trial_contact",
+      text: "Trial-contact preferences are exported separately from synced history and research records.",
     },
     {
       scope: "local",

@@ -28,14 +28,33 @@ test.describe("Trial contact", () => {
         name: "I'm open to being contacted about relevant research studies or clinical trials.",
       })
       .check();
+    await page
+      .getByLabel("Preferred contact method")
+      .selectOption("account_email");
+    await page.getByLabel("Country or region").fill("New Zealand");
+    await page.getByLabel("Age eligibility").selectOption("40_to_64");
+    await page
+      .getByRole("checkbox", { name: "Memory or attention concern" })
+      .check();
+    await page
+      .getByLabel("Availability preference")
+      .selectOption("remote_only");
     await expect(saveButton).toBeEnabled();
     await saveButton.click();
     await expect(
       page.getByText("Trial contact preference saved."),
     ).toBeVisible();
+    await expect(page.getByText("Trial contact profile saved.")).toBeVisible();
     await expect(page.getByText("Trial contact is on.")).toBeVisible();
     await expect(page.getByText("Consent version")).toBeVisible();
     await expect(page.getByText("trial-contact-v1")).toBeVisible();
+    await page.reload();
+    await expect(page.getByLabel("Country or region")).toHaveValue(
+      "New Zealand",
+    );
+    await expect(
+      page.getByRole("checkbox", { name: "Memory or attention concern" }),
+    ).toBeChecked();
 
     await page
       .getByRole("checkbox", {
@@ -48,6 +67,16 @@ test.describe("Trial contact", () => {
     ).toBeVisible();
     await expect(page.getByText("Trial contact is off.")).toBeVisible();
     await expect(page.getByText("Opted out")).toBeVisible();
+    await page
+      .getByRole("button", { name: "Clear trial contact profile" })
+      .click();
+    await expect(
+      page.getByText("Trial contact profile cleared."),
+    ).toBeVisible();
+    await expect(page.getByLabel("Country or region")).toHaveValue("");
+    await expect(
+      page.getByRole("checkbox", { name: "Memory or attention concern" }),
+    ).not.toBeChecked();
 
     await page.screenshot({
       path: testInfo.outputPath("trial-contact.png"),

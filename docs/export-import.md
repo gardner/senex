@@ -51,6 +51,11 @@ transaction so an aborted or failed import leaves prior local data intact.
 Imported data is never uploaded automatically. Account sync and research upload
 remain separate consent-gated flows.
 
+Signed-in account export is separate from this local backup format. Account
+exports include trial-contact preferences in a distinct `trialContact` block so
+optional contact details are not mixed into synced history records or general
+research data.
+
 ## Tests
 
 - `tests/export-schema.test.ts` validates the envelope schema and corrupt/future
