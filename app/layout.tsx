@@ -16,7 +16,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Senex",
-  description: "Senex — a Cloudflare Workers + D1 + Better Auth starter app.",
+  description:
+    "Senex helps people run private cognitive checks and keep local-first performance history.",
 };
 
 export default function RootLayout({

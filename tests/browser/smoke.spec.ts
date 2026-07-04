@@ -5,14 +5,23 @@ test.describe("public shell", () => {
     await page.goto("/");
 
     await expect(
-      page.getByRole("heading", { name: "Welcome to Senex" }),
+      page.getByRole("heading", {
+        name: "Start with a quick cognitive check",
+      }),
+    ).toBeVisible();
+    await expect(page.getByText("No account needed.")).toBeVisible();
+    await expect(
+      page.getByRole("link", { name: "Start a quick check" }),
     ).toBeVisible();
     await expect(
-      page.getByRole("link", { name: "Create an account" }),
+      page.getByRole("link", { name: "Create an account" }).first(),
     ).toBeVisible();
     await expect(
-      page.getByRole("link", { name: "Go to the dashboard" }),
+      page.getByText("Save it after it proves useful."),
     ).toBeVisible();
+    await expect(
+      page.getByText("Cloudflare-native starter app"),
+    ).not.toBeVisible();
   });
 
   test("renders auth entry pages", async ({ page }) => {

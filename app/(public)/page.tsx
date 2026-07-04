@@ -16,31 +16,128 @@ import {
 
 export default function HomePage() {
   return (
-    <div className="mx-auto w-full max-w-5xl px-4 py-12">
-      <section className="py-8">
-        <h1 className="text-3xl font-semibold tracking-tight">
-          Welcome to Senex
-        </h1>
-        <p className="text-muted-foreground mt-3 max-w-2xl">
-          Senex is a Cloudflare-native starter app. It runs on Cloudflare
-          Workers, stores data in Cloudflare D1, and signs users in with Better
-          Auth — a clean foundation to build your own product on, shipped
-          through pull requests.
-        </p>
-        <div className="mt-6 flex gap-2">
-          <Link href="/sign-up" className={buttonVariants()}>
-            Create an account
-          </Link>
-          <Link
-            href="/dashboard"
-            className={buttonVariants({ variant: "outline" })}
-          >
-            Go to the dashboard
-          </Link>
+    <div className="mx-auto w-full max-w-5xl px-4 py-8">
+      <section className="grid gap-8 py-8 lg:grid-cols-[1.4fr_0.8fr] lg:items-center">
+        <div>
+          <p className="text-muted-foreground text-sm font-medium">
+            No account needed.
+          </p>
+          <h1 className="mt-3 max-w-3xl text-4xl leading-tight font-semibold tracking-tight text-balance">
+            Start with a quick cognitive check
+          </h1>
+          <p className="text-muted-foreground mt-4 max-w-2xl text-base leading-7">
+            Run a short attention, memory, or reaction task in your browser.
+            Your first result stays on this device. If Senex feels useful, save
+            your history afterward with a JSON backup or an account.
+          </p>
+          <div className="mt-6 flex flex-wrap gap-2">
+            <a href="#task-battery" className={buttonVariants()}>
+              Start a quick check
+            </a>
+            <a
+              href="#save-history"
+              className={buttonVariants({ variant: "outline" })}
+            >
+              Save it later
+            </a>
+            <Link
+              href="/sign-up"
+              className={buttonVariants({ variant: "ghost" })}
+            >
+              Create an account
+            </Link>
+          </div>
+        </div>
+
+        <div className="grid gap-3 rounded-lg border bg-muted/30 p-4 text-sm">
+          <FunnelStep
+            step="1"
+            title="Try it"
+            body="Pick a task and get a local result before deciding anything."
+          />
+          <FunnelStep
+            step="2"
+            title="Keep control"
+            body="Nothing uploads just because you ran a task."
+          />
+          <FunnelStep
+            step="3"
+            title="Save if useful"
+            body="Download JSON for offline backup or sign up for continuity."
+          />
         </div>
       </section>
 
-      <section className="py-4">
+      <section id="task-battery" className="scroll-mt-16 py-4">
+        <CognitiveTaskPanel />
+      </section>
+
+      <section id="save-history" className="scroll-mt-16 py-6">
+        <div className="mb-4">
+          <h2 className="text-xl font-semibold tracking-tight">
+            Save it after it proves useful.
+          </h2>
+          <p className="text-muted-foreground mt-2 max-w-2xl text-sm leading-6">
+            Senex starts offline so there is no signup wall. Once there is
+            history worth keeping, choose the lightest persistence option that
+            fits how you want to use it.
+          </p>
+        </div>
+        <div className="grid gap-4 md:grid-cols-3">
+          <Card>
+            <CardHeader>
+              <CardTitle>Stay offline</CardTitle>
+              <CardDescription>No upload, no account.</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-3 text-sm">
+              <p>
+                Keep testing privately in this browser and build a local
+                baseline first.
+              </p>
+              <a
+                href="#offline-mode"
+                className={buttonVariants({ variant: "outline" })}
+              >
+                Open offline controls
+              </a>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle>Download JSON</CardTitle>
+              <CardDescription>Portable backup, still private.</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-3 text-sm">
+              <p>
+                Save a file copy of local history so clearing browser data is
+                not the end of the record.
+              </p>
+              <a href="#json-backup" className={buttonVariants()}>
+                Prepare backup
+              </a>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle>Create an account</CardTitle>
+              <CardDescription>
+                For continuity and research controls.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-3 text-sm">
+              <p>
+                Keep history available beyond one browser and manage sharing
+                choices with a signed-in profile.
+              </p>
+              <Link href="/sign-up" className={buttonVariants()}>
+                Create an account
+              </Link>
+            </CardContent>
+          </Card>
+        </div>
+      </section>
+
+      <section id="offline-mode" className="scroll-mt-16 py-4">
         <OfflineModePanel />
       </section>
 
@@ -48,8 +145,37 @@ export default function HomePage() {
         <BackupRestorePanel />
       </section>
 
-      <section className="py-4">
-        <CognitiveTaskPanel />
+      <section className="grid gap-4 py-6 md:grid-cols-3">
+        <Card>
+          <CardHeader>
+            <CardTitle>Build your range</CardTitle>
+            <CardDescription>One score is not the story.</CardDescription>
+          </CardHeader>
+          <CardContent className="text-sm">
+            Repeated sessions help separate normal variation, practice effects,
+            and days that deserve a closer look.
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>No medical claims</CardTitle>
+            <CardDescription>Personal trends only.</CardDescription>
+          </CardHeader>
+          <CardContent className="text-sm">
+            Senex tracks repeatable performance patterns and avoids medical
+            conclusions it cannot support.
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>Share deliberately</CardTitle>
+            <CardDescription>Consent controls the path.</CardDescription>
+          </CardHeader>
+          <CardContent className="text-sm">
+            Contribute selected data for research later, using a study ID and
+            clear controls for what gets included.
+          </CardContent>
+        </Card>
       </section>
 
       <section className="py-4">
@@ -59,45 +185,28 @@ export default function HomePage() {
       <section className="py-4">
         <AnonymousReportingPanel />
       </section>
+    </div>
+  );
+}
 
-      <section className="grid gap-4 py-8 md:grid-cols-3">
-        <Card>
-          <CardHeader>
-            <CardTitle>Start with the docs</CardTitle>
-            <CardDescription>Run it locally, then ship.</CardDescription>
-          </CardHeader>
-          <CardContent className="text-sm">
-            Open <code className="font-mono">README.md</code> and the{" "}
-            <code className="font-mono">docs/</code> folder. They cover
-            installing the tools, running this app locally, and the stack it is
-            built on.
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle>Make a change</CardTitle>
-            <CardDescription>Small and safe, on a branch.</CardDescription>
-          </CardHeader>
-          <CardContent className="text-sm">
-            Try editing this page&apos;s text in{" "}
-            <code className="font-mono">app/(public)/page.tsx</code>, then
-            commit, push, and open a pull request.{" "}
-            <code className="font-mono">docs/common-commands.md</code> lists the
-            commands you need.
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle>Deploys are automatic</CardTitle>
-            <CardDescription>GitHub → Cloudflare Workers.</CardDescription>
-          </CardHeader>
-          <CardContent className="text-sm">
-            Merging a pull request to <code className="font-mono">main</code>{" "}
-            deploys to production. See{" "}
-            <code className="font-mono">docs/deployment.md</code>.
-          </CardContent>
-        </Card>
-      </section>
+function FunnelStep({
+  step,
+  title,
+  body,
+}: {
+  step: string;
+  title: string;
+  body: string;
+}) {
+  return (
+    <div className="grid grid-cols-[2rem_1fr] gap-3">
+      <div className="flex size-7 items-center justify-center rounded-md bg-primary text-xs font-medium text-primary-foreground">
+        {step}
+      </div>
+      <div>
+        <h2 className="font-medium">{title}</h2>
+        <p className="text-muted-foreground mt-1 leading-6">{body}</p>
+      </div>
     </div>
   );
 }

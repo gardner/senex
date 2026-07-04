@@ -2,7 +2,7 @@ import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Page } from "@playwright/test";
 
 const PUBLIC_ROUTES = [
-  { path: "/", heading: "Welcome to Senex" },
+  { path: "/", heading: "Start with a quick cognitive check" },
   { path: "/sign-in", heading: "Sign in" },
   { path: "/sign-up", heading: "Create an account" },
   { path: "/forgot-password", heading: "Forgot your password?" },
@@ -61,7 +61,7 @@ test.describe("accessibility baseline", () => {
     await page.goto("/");
 
     const transitionDuration = await page
-      .getByRole("link", { name: "Create an account" })
+      .getByRole("link", { name: "Start a quick check" })
       .evaluate((element) => getComputedStyle(element).transitionDuration);
 
     expect(

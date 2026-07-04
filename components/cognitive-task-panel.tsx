@@ -140,10 +140,10 @@ export function CognitiveTaskPanel() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle as="h2">Task battery</CardTitle>
+        <CardTitle as="h2">Start a quick check</CardTitle>
         <CardDescription>
-          Run the demo task slices locally; these scaffolds are not diagnostic
-          instruments.
+          Pick a short task below. Results stay local, and these tasks are not
+          medical tests.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-3 text-sm">

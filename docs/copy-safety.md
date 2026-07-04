@@ -67,7 +67,8 @@ copy.
 ## Copy Review Checklist
 
 - Home page states that Senex is local-first and non-diagnostic.
-- Task battery says task slices are scaffolds and not diagnostic instruments.
+- Quick-check task copy says results stay local and tasks are not medical
+  tests.
 - Offline dashboard uses personal-baseline and local-history language.
 - Domain cards avoid population norms, normal/abnormal labels, and disease
   labels.
