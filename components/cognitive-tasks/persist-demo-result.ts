@@ -8,13 +8,32 @@ import {
   type JsonObject,
 } from "@/lib/local";
 
+type PersistTaskResultOptions = {
+  completedAt?: string;
+  contextSnapshot?: JsonObject;
+};
+
 export async function persistDemoTaskResult(
   result: DemoTaskResult,
   completedAt = new Date().toISOString(),
 ) {
+  return persistTaskResult(result, {
+    completedAt,
+    contextSnapshot: { demo: true },
+  });
+}
+
+export async function persistTaskResult(
+  result: DemoTaskResult,
+  options: PersistTaskResultOptions = {},
+) {
+  const completedAt = options.completedAt ?? new Date().toISOString();
   const session = await startLocalSession({
     cadence: result.task.cadence,
-    contextSnapshot: { demo: true, taskId: result.task.taskId },
+    contextSnapshot: {
+      ...options.contextSnapshot,
+      taskId: result.task.taskId,
+    },
     startedAt: completedAt,
   });
   const taskRun = await saveTaskRun({

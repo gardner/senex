@@ -26,6 +26,7 @@ import {
 } from "@/lib/local";
 
 import { persistDemoTaskResult } from "./cognitive-tasks/persist-demo-result";
+import { SymbolMatchRunner } from "./cognitive-tasks/symbol-match-runner";
 
 const DEMO_SEED = "demo-reaction-seed";
 const DEMO_RESPONSES = [
@@ -150,6 +151,7 @@ export function CognitiveTaskPanel() {
           <TaskBadge label="Pair Learning" />
           <TaskBadge label="Seven-Day Learning" />
         </div>
+        <SymbolMatchRunner onSaved={notifyLocalDataUpdated} />
         {state === "saved" && lastResult === "reaction" && (
           <div className="space-y-1">
             <p>Reaction Time Sprint saved locally.</p>

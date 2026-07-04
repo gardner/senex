@@ -102,4 +102,87 @@ test.describe("cognitive tasks", () => {
       fullPage: true,
     });
   });
+
+  test("captures interactive symbol match responses by keyboard and pointer", async ({
+    page,
+  }, testInfo) => {
+    await page.getByRole("button", { name: "Start Symbol Match" }).click();
+    const runner = page.getByRole("region", { name: "Symbol Match runner" });
+    await expect(runner.getByText("Symbol Match trial 1 of 6")).toBeVisible();
+
+    const firstChoice = await runner
+      .getByTestId("symbol-match-choice-0")
+      .getAttribute("data-symbol-value");
+    expect(firstChoice).not.toBeNull();
+    await page.keyboard.press("1");
+
+    for (let trialIndex = 2; trialIndex <= 6; trialIndex += 1) {
+      await expect(
+        runner.getByText(`Symbol Match trial ${trialIndex} of 6`),
+      ).toBeVisible();
+      const target = await runner
+        .getByTestId("symbol-match-target")
+        .textContent();
+      await runner.getByRole("button", { name: `Choose ${target}` }).click();
+    }
+
+    await expect(page.getByText("Symbol Match saved locally.")).toBeVisible();
+    await expect(runner.getByText("Symbol Match correct count:")).toBeVisible();
+
+    const persisted = await page.evaluate(async () => {
+      const localPath = "/lib/local/index.ts";
+      const local = await import(/* @vite-ignore */ localPath);
+      const sessions = await local.listAllLocalSessionsForTests();
+      const taskRuns = (
+        await Promise.all(
+          sessions.map((session: { sessionId: string }) =>
+            local.listTaskRunsForSession(session.sessionId),
+          ),
+        )
+      ).flat();
+      const symbolRun = taskRuns.find(
+        (run: { taskId: string }) => run.taskId === "symbol_match",
+      );
+      if (!symbolRun) throw new Error("Symbol Match task run was not saved.");
+      const symbolSession = sessions.find(
+        (session: { sessionId: string }) =>
+          session.sessionId === symbolRun.sessionId,
+      );
+      if (!symbolSession) {
+        throw new Error("Symbol Match session was not saved.");
+      }
+      const trials = await local.listTrialEventsForTaskRun(symbolRun.taskRunId);
+      const scores = await local.listScores({
+        taskRunId: symbolRun.taskRunId,
+      });
+      return { symbolRun, symbolSession, trials, scores };
+    });
+
+    expect(persisted.symbolRun).toMatchObject({
+      taskVersion: "1.0.0",
+      stimulusSeed: "interactive-symbol-match-v1",
+    });
+    expect(persisted.trials).toHaveLength(6);
+    expect(persisted.symbolSession.contextSnapshot).toMatchObject({
+      interactive: true,
+      taskId: "symbol_match",
+    });
+    expect(persisted.symbolSession.contextSnapshot.demo).toBeUndefined();
+    expect(persisted.trials[0].actualResponse).toBe(firstChoice);
+    expect(persisted.trials[0].eventFlags).toContain("input_keyboard");
+    expect(persisted.scores).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          domain: "processing_speed",
+          metricName: "valid_trial_count",
+          rawValue: 6,
+        }),
+      ]),
+    );
+
+    await page.screenshot({
+      path: testInfo.outputPath("symbol-match-interactive.png"),
+      fullPage: true,
+    });
+  });
 });

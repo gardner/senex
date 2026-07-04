@@ -44,7 +44,7 @@ Dependencies: `E02-T05`, `E03-T02`, `E04-T06`.
 
 ## E05-T02 Implement Symbol Match
 
-Status: In progress
+Status: Done
 
 Scope:
 
@@ -58,12 +58,16 @@ Acceptance criteria:
 - Same seed produces same trial sequence.
 - Alternate seeds produce valid alternate forms.
 - Dashboard card exists.
+- Compact interactive runner captures keyboard and pointer responses.
+- Results persist locally with task version, stimulus seed, trial events, and
+  score rows.
 
 Validation:
 
 - Stimulus generation tests.
 - Scoring tests.
 - Runner integration test.
+- Browser happy path for keyboard plus pointer input on desktop and mobile.
 
 Dependencies: `E05-T01`.
 
@@ -72,7 +76,10 @@ Implementation notes:
 - Deterministic v1 definition, stimulus generation, and scoring are implemented
   in `lib/cognitive-tasks/symbol-match.ts`.
 - Full demo-battery local persistence and dashboard presentation are
-  implemented. Full timed interactive runner capture remains.
+  implemented.
+- `components/cognitive-tasks/symbol-match-runner.tsx` implements a compact
+  interactive runner with number-key and pointer input. It persists the same
+  local task-run records as the deterministic demo battery.
 
 ## E05-T03 Implement Arrow Focus
 
