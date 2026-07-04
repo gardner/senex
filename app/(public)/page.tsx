@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { AnonymousReportingPanel } from "@/components/anonymous-reporting-panel";
 import { BackupRestorePanel } from "@/components/backup-restore-panel";
 import { CognitiveTaskPanel } from "@/components/cognitive-task-panel";
 import { OfflineModePanel } from "@/components/offline-mode-panel";
@@ -48,6 +49,10 @@ export default function HomePage() {
 
       <section className="py-4">
         <CognitiveTaskPanel />
+      </section>
+
+      <section className="py-4">
+        <AnonymousReportingPanel />
       </section>
 
       <section className="grid gap-4 py-8 md:grid-cols-3">

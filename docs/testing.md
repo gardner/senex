@@ -47,6 +47,10 @@ storage behavior is exercised in Chromium rather than mocked.
 JSON export/import tests cover schema validation in Vitest and browser
 generation, preview, merge, replace, and rollback behavior in Playwright.
 
+Anonymous reporting tests cover consent state transitions, category gating,
+idempotent queue records, D1 ingestion idempotency, rejection of unconsented
+payload categories, and the browser reporting dashboard.
+
 Test-engine unit tests cover definition validation, state transitions, timing,
 quality flags, scoring, baselines, and trends. Browser tests cover monotonic
 timing and visibility metadata where feasible.

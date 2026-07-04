@@ -1,7 +1,11 @@
 import { describe, expect, it } from "vitest";
 
 import { buildOfflineDashboardSummary } from "@/lib/offline-dashboard";
-import type { LocalSession, ScoreRecord } from "@/lib/local";
+import {
+  LOCAL_SCHEMA_VERSION,
+  type LocalSession,
+  type ScoreRecord,
+} from "@/lib/local";
 
 describe("offline dashboard summary", () => {
   it("shows conservative empty states without population comparisons", () => {
@@ -66,7 +70,7 @@ function session(sessionId: string, completedAt: string): LocalSession {
     cadence: "daily",
     contextSnapshot: {},
     qualityFlags: [],
-    schemaVersion: 1,
+    schemaVersion: LOCAL_SCHEMA_VERSION,
     appVersion: "0.1.0",
   };
 }
@@ -87,7 +91,7 @@ function score(
     normalizedValue: null,
     confidence,
     qualityFlags: [],
-    schemaVersion: 1,
+    schemaVersion: LOCAL_SCHEMA_VERSION,
     appVersion: "0.1.0",
   };
 }

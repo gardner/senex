@@ -5,7 +5,7 @@ reporting or account sync. The local data layer lives in `lib/local/`.
 
 ## Schema
 
-Current local schema version: `1`.
+Current local schema version: `2`.
 
 Durable record types:
 
@@ -16,6 +16,8 @@ Durable record types:
 - `ScoreRecord`
 - `QuestionnaireAnswerRecord`
 - `ConsentRecord`
+- `AnonymousIdentityRecord`
+- `ReportingUploadRecord`
 - `ImportAuditRecord`
 
 Each durable record includes stable IDs, `schemaVersion`, `appVersion`, and the
@@ -32,6 +34,8 @@ The `senex-local` database currently has these stores:
 - `scores`
 - `questionnaireAnswers`
 - `consentRecords`
+- `anonymousIdentities`
+- `reportingUploads`
 - `importAudits`
 - `metadata`
 
@@ -40,10 +44,11 @@ changes must add explicit migration code and tests.
 
 ## Migrations
 
-`runLocalMigrations()` opens the database, creates v1 stores when needed, and
-migrates known older local schema metadata to the current version. If metadata
-claims a future local schema version, the app throws instead of trying to
-downgrade or discard user data.
+`runLocalMigrations()` opens the database, creates stores when needed, and
+migrates known older local schema metadata to the current version. The v2
+migration adds anonymous reporting identity/upload stores and stamps legacy
+records to the current schema version. If metadata claims a future local schema
+version, the app throws instead of trying to downgrade or discard user data.
 
 Restore writes use a single IndexedDB transaction across data stores and the
 metadata store. If import validation or a write fails, the transaction aborts
@@ -78,3 +83,6 @@ session. See [cognitive-tasks.md](cognitive-tasks.md).
 
 The first-run Offline Mode flow and dashboard are documented in
 [offline-mode.md](offline-mode.md).
+
+Anonymous reporting consent, identity, payload, and queue records are documented
+in [anonymous-reporting.md](anonymous-reporting.md).

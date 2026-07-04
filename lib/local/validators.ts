@@ -1,9 +1,11 @@
 import {
+  type AnonymousIdentityRecord,
   type ConsentRecord,
   type ImportAuditRecord,
   type LocalProfile,
   type LocalSession,
   type QuestionnaireAnswerRecord,
+  type ReportingUploadRecord,
   type ScoreRecord,
   type TaskRunRecord,
   type TrialEventRecord,
@@ -164,8 +166,66 @@ export function assertConsentRecord(
     "ConsentRecord",
   );
   expectIso(record, "decidedAt", "ConsentRecord");
+  expectNonEmptyString(record, "sourceScreen", "ConsentRecord");
   expectStringArray(record, "dataCategories", "ConsentRecord");
   expectBase(record, "ConsentRecord");
+}
+
+export function assertAnonymousIdentityRecord(
+  value: unknown,
+): asserts value is AnonymousIdentityRecord {
+  const record = asRecord(value, "AnonymousIdentityRecord");
+  expectNonEmptyString(
+    record,
+    "anonymousIdentityId",
+    "AnonymousIdentityRecord",
+  );
+  expectNonEmptyString(record, "profileId", "AnonymousIdentityRecord");
+  expectNonEmptyString(record, "anonymousStudyId", "AnonymousIdentityRecord");
+  expectStringOrNull(
+    record,
+    "previousAnonymousStudyId",
+    "AnonymousIdentityRecord",
+  );
+  expectEnum(
+    record,
+    "status",
+    ["active", "paused", "stopped"],
+    "AnonymousIdentityRecord",
+  );
+  expectIso(record, "createdAt", "AnonymousIdentityRecord");
+  expectIso(record, "updatedAt", "AnonymousIdentityRecord");
+  expectNullableIso(record, "pausedAt", "AnonymousIdentityRecord");
+  expectNullableIso(record, "stoppedAt", "AnonymousIdentityRecord");
+  expectBase(record, "AnonymousIdentityRecord");
+}
+
+export function assertReportingUploadRecord(
+  value: unknown,
+): asserts value is ReportingUploadRecord {
+  const record = asRecord(value, "ReportingUploadRecord");
+  for (const field of [
+    "reportingUploadId",
+    "profileId",
+    "anonymousStudyId",
+    "idempotencyKey",
+  ]) {
+    expectNonEmptyString(record, field, "ReportingUploadRecord");
+  }
+  expectEnum(
+    record,
+    "status",
+    ["queued", "submitting", "succeeded", "failed"],
+    "ReportingUploadRecord",
+  );
+  expectStringArray(record, "includedCategories", "ReportingUploadRecord");
+  expectJsonObject(record, "consentSnapshot", "ReportingUploadRecord");
+  expectJsonObject(record, "payload", "ReportingUploadRecord");
+  expectIso(record, "queuedAt", "ReportingUploadRecord");
+  expectNullableIso(record, "submittedAt", "ReportingUploadRecord");
+  expectNullableIso(record, "completedAt", "ReportingUploadRecord");
+  expectStringOrNull(record, "lastError", "ReportingUploadRecord");
+  expectBase(record, "ReportingUploadRecord");
 }
 
 export function assertImportAuditRecord(

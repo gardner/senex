@@ -5,11 +5,13 @@ import {
   type LocalExportEnvelope,
 } from "./export-schema";
 import type {
+  AnonymousIdentityRecord,
   ConsentRecord,
   ImportAuditRecord,
   LocalProfile,
   LocalSession,
   QuestionnaireAnswerRecord,
+  ReportingUploadRecord,
   ScoreRecord,
   TaskRunRecord,
   TrialEventRecord,
@@ -44,6 +46,8 @@ export async function readAllLocalRecords(
     scores,
     questionnaireAnswers,
     consentRecords,
+    anonymousIdentities,
+    reportingUploads,
     importAudits,
   ] = await Promise.all([
     getAllRecords<LocalProfile>(LOCAL_STORES.profiles),
@@ -55,6 +59,8 @@ export async function readAllLocalRecords(
     getAllRecords<ScoreRecord>(LOCAL_STORES.scores),
     getAllRecords<QuestionnaireAnswerRecord>(LOCAL_STORES.questionnaireAnswers),
     getAllRecords<ConsentRecord>(LOCAL_STORES.consentRecords),
+    getAllRecords<AnonymousIdentityRecord>(LOCAL_STORES.anonymousIdentities),
+    getAllRecords<ReportingUploadRecord>(LOCAL_STORES.reportingUploads),
     getAllRecords<ImportAuditRecord>(LOCAL_STORES.importAudits),
   ]);
   return {
@@ -65,6 +71,8 @@ export async function readAllLocalRecords(
     scores,
     questionnaireAnswers,
     consentRecords,
+    anonymousIdentities,
+    reportingUploads,
     importAudits,
   };
 }

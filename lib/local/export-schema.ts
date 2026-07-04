@@ -1,11 +1,13 @@
 import {
   LOCAL_APP_VERSION,
   LOCAL_SCHEMA_VERSION,
+  type AnonymousIdentityRecord,
   type ConsentRecord,
   type ImportAuditRecord,
   type LocalProfile,
   type LocalSession,
   type QuestionnaireAnswerRecord,
+  type ReportingUploadRecord,
   type ScoreRecord,
   type TaskRunRecord,
   type TrialEventRecord,
@@ -18,11 +20,13 @@ import {
   fail,
 } from "./validation-utils";
 import {
+  assertAnonymousIdentityRecord,
   assertConsentRecord,
   assertImportAuditRecord,
   assertLocalProfile,
   assertLocalSession,
   assertQuestionnaireAnswerRecord,
+  assertReportingUploadRecord,
   assertScoreRecord,
   assertTaskRunRecord,
   assertTrialEventRecord,
@@ -47,6 +51,8 @@ export interface ExportableLocalRecords {
   scores: ScoreRecord[];
   questionnaireAnswers: QuestionnaireAnswerRecord[];
   consentRecords: ConsentRecord[];
+  anonymousIdentities: AnonymousIdentityRecord[];
+  reportingUploads: ReportingUploadRecord[];
   importAudits: ImportAuditRecord[];
 }
 
@@ -179,6 +185,16 @@ function validateExportData(value: unknown) {
     "questionnaireAnswers",
   );
   validateArray(data.consentRecords, assertConsentRecord, "consentRecords");
+  validateArray(
+    data.anonymousIdentities,
+    assertAnonymousIdentityRecord,
+    "anonymousIdentities",
+  );
+  validateArray(
+    data.reportingUploads,
+    assertReportingUploadRecord,
+    "reportingUploads",
+  );
   validateArray(data.importAudits, assertImportAuditRecord, "importAudits");
   validateArray(
     data.stimulusReferences,
@@ -235,6 +251,10 @@ export function assertExportableRecords(records: ExportableLocalRecords) {
   for (const answer of records.questionnaireAnswers)
     assertQuestionnaireAnswerRecord(answer);
   for (const consent of records.consentRecords) assertConsentRecord(consent);
+  for (const identity of records.anonymousIdentities)
+    assertAnonymousIdentityRecord(identity);
+  for (const upload of records.reportingUploads)
+    assertReportingUploadRecord(upload);
   for (const audit of records.importAudits) assertImportAuditRecord(audit);
 }
 
@@ -247,6 +267,8 @@ export function recordCounts(records: ExportableLocalRecords) {
     scores: records.scores.length,
     questionnaireAnswers: records.questionnaireAnswers.length,
     consentRecords: records.consentRecords.length,
+    anonymousIdentities: records.anonymousIdentities.length,
+    reportingUploads: records.reportingUploads.length,
     importAudits: records.importAudits.length,
   };
 }

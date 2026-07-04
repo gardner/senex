@@ -3,23 +3,13 @@ import {
   type JsonValue,
   type LocalProfile,
 } from "./types";
+import { queueSchemaVersionTwoMigration } from "./migrations";
+import { LOCAL_STORES, type StoreName } from "./stores";
 
 export const LOCAL_DATABASE_NAME = "senex-local";
-export const LOCAL_DATABASE_VERSION = 1;
+export const LOCAL_DATABASE_VERSION = 2;
 
-export const LOCAL_STORES = {
-  metadata: "metadata",
-  profiles: "profiles",
-  sessions: "sessions",
-  taskRuns: "taskRuns",
-  trialEvents: "trialEvents",
-  scores: "scores",
-  questionnaireAnswers: "questionnaireAnswers",
-  consentRecords: "consentRecords",
-  importAudits: "importAudits",
-} as const;
-
-type StoreName = (typeof LOCAL_STORES)[keyof typeof LOCAL_STORES];
+export { LOCAL_STORES };
 type MetadataValue = number | string | null;
 type MetadataRecord = { key: string; value: MetadataValue };
 
@@ -163,12 +153,15 @@ export async function getFirstProfile(): Promise<LocalProfile | null> {
 
 async function openRawDatabase(): Promise<IDBDatabase> {
   const request = indexedDB.open(LOCAL_DATABASE_NAME, LOCAL_DATABASE_VERSION);
-  request.onupgradeneeded = () => {
+  request.onupgradeneeded = (event) => {
     const db = request.result;
     const transaction = request.transaction;
     if (!transaction)
       throw new Error("IndexedDB upgrade transaction is unavailable");
     createSchema(db, transaction);
+    if (event.oldVersion > 0 && event.oldVersion < 2) {
+      queueSchemaVersionTwoMigration(transaction);
+    }
     const metadata = request.transaction?.objectStore(LOCAL_STORES.metadata);
     metadata?.put({
       key: "schemaVersion",
@@ -255,6 +248,20 @@ function createSchema(db: IDBDatabase, transaction: IDBTransaction) {
     "profileId",
     "consentType",
   ]);
+  createStore(
+    db,
+    transaction,
+    LOCAL_STORES.anonymousIdentities,
+    "anonymousIdentityId",
+    ["profileId", "anonymousStudyId", "status"],
+  );
+  createStore(
+    db,
+    transaction,
+    LOCAL_STORES.reportingUploads,
+    "reportingUploadId",
+    ["profileId", "anonymousStudyId", "idempotencyKey", "status"],
+  );
   createStore(db, transaction, LOCAL_STORES.importAudits, "importAuditId", [
     "profileId",
     "importedAt",

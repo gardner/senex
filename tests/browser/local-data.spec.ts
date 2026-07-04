@@ -39,6 +39,7 @@ test.describe("local data platform", () => {
         currentSummary,
         migratedSummary,
         futureError,
+        expectedSchemaVersion: local.LOCAL_SCHEMA_VERSION,
       };
     });
 
@@ -46,7 +47,9 @@ test.describe("local data platform", () => {
     expect(result.profile.mode).toBe("offline");
     expect(result.currentSummary.hasLocalHistory).toBe(true);
     expect(result.currentSummary.localProfileId).toBe(result.profile.profileId);
-    expect(result.migratedSummary.schemaVersion).toBe(1);
+    expect(result.migratedSummary.schemaVersion).toBe(
+      result.expectedSchemaVersion,
+    );
     expect(result.futureError).toContain("future local schema");
   });
 

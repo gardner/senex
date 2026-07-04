@@ -27,6 +27,8 @@ const LOCAL_DATA_STORES = [
   LOCAL_STORES.scores,
   LOCAL_STORES.questionnaireAnswers,
   LOCAL_STORES.consentRecords,
+  LOCAL_STORES.anonymousIdentities,
+  LOCAL_STORES.reportingUploads,
   LOCAL_STORES.importAudits,
 ] as const;
 
@@ -107,6 +109,8 @@ function recordsFromEnvelope(
     scores: envelope.data.scores,
     questionnaireAnswers: envelope.data.questionnaireAnswers,
     consentRecords: envelope.data.consentRecords,
+    anonymousIdentities: envelope.data.anonymousIdentities,
+    reportingUploads: envelope.data.reportingUploads,
     importAudits: envelope.data.importAudits,
   };
 }
@@ -147,6 +151,16 @@ async function writeImportTransaction(
         transaction,
         LOCAL_STORES.consentRecords,
         records.consentRecords,
+      );
+      queueRecords(
+        transaction,
+        LOCAL_STORES.anonymousIdentities,
+        records.anonymousIdentities,
+      );
+      queueRecords(
+        transaction,
+        LOCAL_STORES.reportingUploads,
+        records.reportingUploads,
       );
       queueRecords(
         transaction,

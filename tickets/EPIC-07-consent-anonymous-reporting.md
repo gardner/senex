@@ -8,7 +8,7 @@ Source: [PLAN Phase 3](../docs/PLAN.md#6-phase-3--anonymous-reporting-mode),
 
 ## E07-T01 Implement consent terms and category model
 
-Status: Todo
+Status: Done
 
 Scope:
 
@@ -33,7 +33,7 @@ Dependencies: `E02-T02`.
 
 ## E07-T02 Build consent UI and history
 
-Status: Todo
+Status: Done
 
 Scope:
 
@@ -56,7 +56,7 @@ Dependencies: `E07-T01`.
 
 ## E07-T03 Implement consent gating utilities
 
-Status: Todo
+Status: Done
 
 Scope:
 
@@ -77,7 +77,7 @@ Dependencies: `E07-T01`, `E03-T01`.
 
 ## E07-T04 Implement anonymous study identity
 
-Status: Todo
+Status: Done
 
 Scope:
 
@@ -99,7 +99,7 @@ Dependencies: `E07-T02`.
 
 ## E07-T05 Build anonymous reporting payload and upload queue
 
-Status: Todo
+Status: Done
 
 Scope:
 
@@ -122,7 +122,7 @@ Dependencies: `E07-T03`, `E07-T04`.
 
 ## E07-T06 Implement server ingestion endpoint
 
-Status: Todo
+Status: Done
 
 Scope:
 
@@ -145,7 +145,7 @@ Dependencies: `E07-T05`.
 
 ## E07-T07 Build anonymous reporting dashboard
 
-Status: Todo
+Status: Done
 
 Scope:
 
@@ -156,6 +156,10 @@ Acceptance criteria:
 
 - Dashboard distinguishes local history from contributed data.
 - Stop/pause controls are clear and reversible where appropriate.
+
+Notes: the dashboard shows identity, status, active consent count, queued upload
+state, last local upload record, sessions contributed from the current payload,
+demographics sharing/completion state, and pause/resume/stop controls.
 
 Validation:
 

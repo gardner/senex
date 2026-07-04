@@ -13,7 +13,6 @@ import {
 import {
   LOCAL_APP_VERSION,
   LOCAL_SCHEMA_VERSION,
-  type ConsentRecord,
   type ImportAuditRecord,
   type JsonObject,
   type LocalCadence,
@@ -25,7 +24,6 @@ import {
   type TrialEventRecord,
 } from "./types";
 import {
-  assertConsentRecord,
   assertImportAuditRecord,
   assertLocalProfile,
   assertLocalSession,
@@ -68,7 +66,6 @@ type QuestionnaireAnswerInput = Omit<
   QuestionnaireAnswerRecord,
   "schemaVersion" | "appVersion"
 >;
-type ConsentInput = Omit<ConsentRecord, "schemaVersion" | "appVersion">;
 
 export {
   deleteSenexLocalDatabase,
@@ -287,15 +284,6 @@ export async function listQuestionnaireAnswers(filters: {
       return true;
     })
     .toSorted((a, b) => a.answeredAt.localeCompare(b.answeredAt));
-}
-
-export async function saveConsentRecord(
-  input: ConsentInput,
-): Promise<ConsentRecord> {
-  const record = withVersion(input);
-  assertConsentRecord(record);
-  await putRecord(LOCAL_STORES.consentRecords, record);
-  return record;
 }
 
 export async function listImportAudits(): Promise<ImportAuditRecord[]> {

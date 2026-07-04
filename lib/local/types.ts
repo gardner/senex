@@ -1,9 +1,15 @@
-export const LOCAL_SCHEMA_VERSION = 1;
+export const LOCAL_SCHEMA_VERSION = 2;
 export const LOCAL_APP_VERSION = "0.1.0";
 
 export type LocalMode = "offline" | "anonymous_reporting" | "signed_in";
 export type LocalCadence = "daily" | "weekly" | "monthly" | "ad_hoc";
 export type ConsentDecision = "granted" | "denied" | "withdrawn";
+export type AnonymousIdentityStatus = "active" | "paused" | "stopped";
+export type ReportingUploadStatus =
+  | "queued"
+  | "submitting"
+  | "succeeded"
+  | "failed";
 
 export type JsonValue =
   | null
@@ -102,7 +108,39 @@ export interface ConsentRecord {
   version: string;
   decision: ConsentDecision;
   decidedAt: string;
+  sourceScreen: string;
   dataCategories: string[];
+  schemaVersion: typeof LOCAL_SCHEMA_VERSION;
+  appVersion: string;
+}
+
+export interface AnonymousIdentityRecord {
+  anonymousIdentityId: string;
+  profileId: string;
+  anonymousStudyId: string;
+  previousAnonymousStudyId: string | null;
+  status: AnonymousIdentityStatus;
+  createdAt: string;
+  updatedAt: string;
+  pausedAt: string | null;
+  stoppedAt: string | null;
+  schemaVersion: typeof LOCAL_SCHEMA_VERSION;
+  appVersion: string;
+}
+
+export interface ReportingUploadRecord {
+  reportingUploadId: string;
+  profileId: string;
+  anonymousStudyId: string;
+  idempotencyKey: string;
+  status: ReportingUploadStatus;
+  includedCategories: string[];
+  consentSnapshot: JsonObject;
+  payload: JsonObject;
+  queuedAt: string;
+  submittedAt: string | null;
+  completedAt: string | null;
+  lastError: string | null;
   schemaVersion: typeof LOCAL_SCHEMA_VERSION;
   appVersion: string;
 }
