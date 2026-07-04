@@ -16,6 +16,10 @@ export default defineConfig({
   // "createContext is not a function". vinext propagates this exclude into
   // its rsc/ssr/client environments.
   optimizeDeps: {
+    include: [
+      "use-sync-external-store/shim",
+      "use-sync-external-store/shim/with-selector",
+    ],
     exclude: [
       "@base-ui/react",
       "lucide-react",

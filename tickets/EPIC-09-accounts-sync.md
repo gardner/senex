@@ -8,7 +8,7 @@ Source: [PLAN Phase 4](../docs/PLAN.md#7-phase-4--signed-in-mode),
 
 ## E09-T01 Build signed-in account profile
 
-Status: Todo
+Status: Done
 
 Scope:
 
@@ -26,6 +26,21 @@ Validation:
 
 - Existing auth tests remain green.
 - Browser smoke test for profile route.
+
+Implementation notes:
+
+- Added protected `/account` route with Better Auth `requireUser()` gating.
+- Added `AccountProfileForm` for Better Auth `name` and `image` updates.
+- Added disabled export/delete entry points until account sync and deletion
+  flows exist.
+- Account profile copy explicitly keeps account state separate from research
+  consent.
+- Added desktop/mobile Playwright coverage for signed-in profile update and
+  signed-out redirect.
+- Fixed auth form hydration guards so pre-hydration input/click races do not
+  drop controlled field values or submit natively.
+- Split `buttonVariants` into a server-safe module and made the interactive
+  `Button` wrapper a client component.
 
 Dependencies: none.
 

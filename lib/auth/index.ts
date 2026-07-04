@@ -39,6 +39,7 @@ export const auth = betterAuth({
   plugins: [...options.plugins, nextCookies()],
   baseURL: env.BETTER_AUTH_URL,
   secret: env.BETTER_AUTH_SECRET,
+  trustedOrigins: localTrustedOrigins,
   database: {
     dialect: new D1Dialect({ database: env.DB }),
     type: "sqlite",
@@ -52,3 +53,28 @@ export const auth = betterAuth({
       }
     : {},
 });
+
+function localTrustedOrigins(request?: Request) {
+  if (!request) return [];
+  const origin = request.headers.get("origin");
+  if (!origin) return [];
+  if (!URL.canParse(origin)) return [];
+  const requestUrl = new URL(request.url);
+  const originUrl = new URL(origin);
+  if (
+    isLoopbackHost(requestUrl.hostname) &&
+    requestUrl.origin === originUrl.origin
+  ) {
+    return [originUrl.origin];
+  }
+  return [];
+}
+
+function isLoopbackHost(hostname: string) {
+  return (
+    hostname === "localhost" ||
+    hostname === "127.0.0.1" ||
+    hostname === "::1" ||
+    hostname === "[::1]"
+  );
+}

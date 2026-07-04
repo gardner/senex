@@ -5,7 +5,7 @@ import { BackupRestorePanel } from "@/components/backup-restore-panel";
 import { CognitiveTaskPanel } from "@/components/cognitive-task-panel";
 import { OfflineModePanel } from "@/components/offline-mode-panel";
 import { ResearchQuestionnairesPanel } from "@/components/research-questionnaires-panel";
-import { buttonVariants } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button-variants";
 import {
   Card,
   CardContent,

@@ -47,7 +47,11 @@ sync when framework, runtime, or infrastructure behavior changes.
   and sqlite chunks currently depend on symbols removed in `kysely` 0.29.
 - `@base-ui/react`, `lucide-react`, and lucide's deep `Icon.mjs` module are
   excluded from Vite dependency pre-bundling in `vite.config.ts` so client
-  boundaries stay visible to the RSC plugin.
+  boundaries stay visible to the RSC plugin. Base UI's
+  `use-sync-external-store` shim entries are explicitly included so Vite
+  converts their CommonJS exports for browser ESM; keep
+  `use-sync-external-store` as an explicit dependency so those entries resolve
+  from the app root.
 - `pnpm typecheck` runs `vinext typegen` before `tsc --noEmit`.
 - `wrangler.jsonc` currently uses compatibility date `2026-06-10` because the
   installed local workerd/miniflare binary rejects newer dates. Bump it only

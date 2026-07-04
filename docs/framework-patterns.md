@@ -42,12 +42,18 @@ Current examples:
 
 - `components/auth/sign-in-form.tsx`
 - `components/auth/sign-up-form.tsx`
+- `components/account/account-profile-form.tsx`
 - `components/auth/forgot-password-form.tsx`
 - `components/auth/reset-password-form.tsx`
 - shadcn sidebar/dropdown primitives under `components/ui/`
 
 Place `"use client"` at the top of the file. Keep the client boundary narrow:
 prefer a small form or control component inside a Server Component shell.
+
+For shared UI, keep server-safe class helpers separate from interactive client
+components. Current example: `components/ui/button-variants.ts` exports
+`buttonVariants()` for Server Components, while `components/ui/button.tsx`
+contains the client `Button` wrapper that receives event handlers.
 
 ## Route Handlers
 

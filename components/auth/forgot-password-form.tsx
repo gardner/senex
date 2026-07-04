@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type FormEvent, type MouseEvent } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -21,8 +21,19 @@ export function ForgotPasswordForm() {
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
 
-  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    void submitResetRequest();
+  }
+
+  function handleSubmitClick(event: MouseEvent<HTMLButtonElement>) {
+    event.preventDefault();
+    if (!event.currentTarget.form?.reportValidity()) return;
+    void submitResetRequest();
+  }
+
+  async function submitResetRequest() {
+    if (pending) return;
     setError(null);
     setPending(true);
     const { error: requestError } = await authClient.requestPasswordReset({
@@ -75,7 +86,12 @@ export function ForgotPasswordForm() {
           {error && <p className="text-destructive text-sm">{error}</p>}
         </CardContent>
         <CardFooter className="mt-4">
-          <Button type="submit" className="w-full" disabled={pending}>
+          <Button
+            type="submit"
+            className="w-full"
+            disabled={pending}
+            onClick={handleSubmitClick}
+          >
             {pending ? "Sending..." : "Send reset link"}
           </Button>
         </CardFooter>

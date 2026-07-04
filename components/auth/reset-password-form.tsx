@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type FormEvent, type MouseEvent } from "react";
 import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
@@ -22,8 +22,19 @@ export function ResetPasswordForm({ token }: { token: string }) {
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
 
-  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    void submitNewPassword();
+  }
+
+  function handleSubmitClick(event: MouseEvent<HTMLButtonElement>) {
+    event.preventDefault();
+    if (!event.currentTarget.form?.reportValidity()) return;
+    void submitNewPassword();
+  }
+
+  async function submitNewPassword() {
+    if (pending) return;
     setError(null);
     setPending(true);
     const { error: resetError } = await authClient.resetPassword({
@@ -63,7 +74,12 @@ export function ResetPasswordForm({ token }: { token: string }) {
           {error && <p className="text-destructive text-sm">{error}</p>}
         </CardContent>
         <CardFooter className="mt-4">
-          <Button type="submit" className="w-full" disabled={pending}>
+          <Button
+            type="submit"
+            className="w-full"
+            disabled={pending}
+            onClick={handleSubmitClick}
+          >
             {pending ? "Saving..." : "Set new password"}
           </Button>
         </CardFooter>

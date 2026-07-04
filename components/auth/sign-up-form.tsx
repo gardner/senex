@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState, type FormEvent, type MouseEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
@@ -24,9 +24,26 @@ export function SignUpForm({ googleEnabled }: { googleEnabled: boolean }) {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
+  const [isReady, setIsReady] = useState(false);
 
-  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  useEffect(() => {
+    const frame = requestAnimationFrame(() => setIsReady(true));
+    return () => cancelAnimationFrame(frame);
+  }, []);
+
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    void submitSignUp();
+  }
+
+  function handleSubmitClick(event: MouseEvent<HTMLButtonElement>) {
+    event.preventDefault();
+    if (!event.currentTarget.form?.reportValidity()) return;
+    void submitSignUp();
+  }
+
+  async function submitSignUp() {
+    if (pending || !isReady) return;
     setError(null);
     setPending(true);
     await authClient.signUp.email(
@@ -66,6 +83,7 @@ export function SignUpForm({ googleEnabled }: { googleEnabled: boolean }) {
               id="name"
               autoComplete="name"
               required
+              disabled={pending || !isReady}
               value={name}
               onChange={(e) => setName(e.target.value)}
             />
@@ -77,6 +95,7 @@ export function SignUpForm({ googleEnabled }: { googleEnabled: boolean }) {
               type="email"
               autoComplete="email"
               required
+              disabled={pending || !isReady}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
@@ -89,6 +108,7 @@ export function SignUpForm({ googleEnabled }: { googleEnabled: boolean }) {
               autoComplete="new-password"
               required
               minLength={8}
+              disabled={pending || !isReady}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
@@ -96,7 +116,12 @@ export function SignUpForm({ googleEnabled }: { googleEnabled: boolean }) {
           {error && <p className="text-destructive text-sm">{error}</p>}
         </CardContent>
         <CardFooter className="mt-4 flex flex-col gap-3">
-          <Button type="submit" className="w-full" disabled={pending}>
+          <Button
+            type="submit"
+            className="w-full"
+            disabled={pending || !isReady}
+            onClick={handleSubmitClick}
+          >
             {pending ? "Creating account..." : "Sign up"}
           </Button>
           {googleEnabled ? (
@@ -104,6 +129,7 @@ export function SignUpForm({ googleEnabled }: { googleEnabled: boolean }) {
               type="button"
               variant="outline"
               className="w-full"
+              disabled={pending || !isReady}
               onClick={handleGoogle}
             >
               Continue with Google

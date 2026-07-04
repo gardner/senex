@@ -8,6 +8,8 @@ from consent state and local/offline state.
 
 - **Email and password:** sign up at `/sign-up`, sign in at `/sign-in`, and
   reset passwords through `/forgot-password` and `/reset-password`.
+- **Account profile:** signed-in users manage their Better Auth display name
+  and profile image at `/account`.
 - **Google OAuth:** enabled when `GOOGLE_CLIENT_ID` and
   `GOOGLE_CLIENT_SECRET` are configured.
 - **Bearer tokens:** available through the Better Auth bearer plugin for API or
@@ -26,6 +28,13 @@ The Better Auth admin plugin adds `user.role`:
 
 Use `requireUser()` and `requireAdmin()` from `lib/auth/helpers.ts` for
 server-side route protection.
+
+## Account Data Controls
+
+The `/account` page shows account export and deletion controls as disabled
+entry points until account sync, export, and deletion flows are implemented.
+Changing account profile fields does not change research consent, anonymous
+reporting consent, or local-only history.
 
 ## Organization Roles
 

@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 import { ResetPasswordForm } from "@/components/auth/reset-password-form";
-import { buttonVariants } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button-variants";
 import {
   Card,
   CardDescription,
