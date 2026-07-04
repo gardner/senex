@@ -12,6 +12,7 @@ import {
 } from "@/lib/cognitive-tasks";
 
 import { persistTaskResult } from "./persist-demo-result";
+import { useTaskInterruptions } from "./use-task-interruptions";
 
 const SYMBOL_MATCH_SEED = "interactive-symbol-match-v1";
 const SYMBOL_MATCH_TRIAL_COUNT = 6;
@@ -38,6 +39,9 @@ export function SymbolMatchRunner({ onSaved }: { onSaved: () => void }) {
     accuracy: number;
   } | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const { readInterruptionCodes, resetInterruptions } = useTaskInterruptions(
+    phase === "running",
+  );
 
   const currentTrial = trials[trialIndex] ?? null;
 
@@ -52,7 +56,12 @@ export function SymbolMatchRunner({ onSaved }: { onSaved: () => void }) {
         setPhase("saving");
         const score = scoreSymbolMatch(trials, nextResponses);
         await persistTaskResult(
-          buildSymbolMatchResult(trials, nextResponses, score.metrics),
+          buildSymbolMatchResult(
+            trials,
+            nextResponses,
+            score.metrics,
+            readInterruptionCodes(),
+          ),
           {
             contextSnapshot: {
               interactive: true,
@@ -70,7 +79,7 @@ export function SymbolMatchRunner({ onSaved }: { onSaved: () => void }) {
         setError(caught instanceof Error ? caught.message : String(caught));
       }
     },
-    [onSaved, trials],
+    [onSaved, readInterruptionCodes, trials],
   );
 
   const submitResponse = useCallback(
@@ -121,6 +130,7 @@ export function SymbolMatchRunner({ onSaved }: { onSaved: () => void }) {
   }, [currentTrial, phase, submitResponse]);
 
   function start() {
+    resetInterruptions();
     setTrials(
       generateSymbolMatchTrials(SYMBOL_MATCH_SEED, SYMBOL_MATCH_TRIAL_COUNT),
     );
@@ -201,6 +211,7 @@ function buildSymbolMatchResult(
   trials: SymbolMatchTrial[],
   responses: SymbolResponse[],
   metrics: ReturnType<typeof scoreSymbolMatch>["metrics"],
+  qualityFlags: string[],
 ): DemoTaskResult {
   const responseByTrial = new Map(
     responses.map((response) => [response.trialId, response]),
@@ -210,7 +221,7 @@ function buildSymbolMatchResult(
     seed: SYMBOL_MATCH_SEED,
     stimulusPackId: "symbol_match_v1",
     summaryScore: metrics,
-    qualityFlags: [],
+    qualityFlags,
     confidence: metrics.valid_trial_count === trials.length ? 0.95 : 0.5,
     events: trials.map((trial) => {
       const response = responseByTrial.get(trial.trialId);

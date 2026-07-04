@@ -41,7 +41,7 @@ Notes:
 
 ## E11-T02 Add browser coverage for critical flows
 
-Status: Todo
+Status: Done
 
 Scope:
 
@@ -61,6 +61,18 @@ Validation:
 - Browser test command passes.
 
 Dependencies: `E01-T02`, `E06-T05`, `E07-T02`.
+
+Notes:
+
+- Existing browser coverage already exercised the complete private-mode session
+  path and JSON export/import generation, preview, merge, replace, duplicate
+  merge, and rollback behavior across desktop and mobile Chromium.
+- Added `tests/browser/critical-flows.spec.ts` for true browser-network-off
+  private task completion, anonymous-reporting consent withdrawal, and hidden-tab
+  interruption persistence.
+- Added a shared interactive-task interruption recorder so hidden-tab
+  interruptions persist as `tab_hidden` quality flags on the session, task run,
+  and scores.
 
 ## E11-T03 Run accessibility baseline audit
 

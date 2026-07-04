@@ -13,6 +13,7 @@ import {
 } from "@/lib/cognitive-tasks";
 
 import { persistTaskResult } from "./persist-demo-result";
+import { useTaskInterruptions } from "./use-task-interruptions";
 
 const ARROW_FOCUS_SEED = "interactive-arrow-focus-v1";
 const ARROW_FOCUS_TRIAL_COUNT = 8;
@@ -40,6 +41,9 @@ export function ArrowFocusRunner({ onSaved }: { onSaved: () => void }) {
     conflictCostMs: number;
   } | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const { readInterruptionCodes, resetInterruptions } = useTaskInterruptions(
+    phase === "running",
+  );
 
   const currentTrial = trials[trialIndex] ?? null;
 
@@ -54,7 +58,12 @@ export function ArrowFocusRunner({ onSaved }: { onSaved: () => void }) {
         setPhase("saving");
         const score = scoreArrowFocus(trials, nextResponses);
         await persistTaskResult(
-          buildArrowFocusResult(trials, nextResponses, score.metrics),
+          buildArrowFocusResult(
+            trials,
+            nextResponses,
+            score.metrics,
+            readInterruptionCodes(),
+          ),
           {
             contextSnapshot: {
               interactive: true,
@@ -72,7 +81,7 @@ export function ArrowFocusRunner({ onSaved }: { onSaved: () => void }) {
         setError(caught instanceof Error ? caught.message : String(caught));
       }
     },
-    [onSaved, trials],
+    [onSaved, readInterruptionCodes, trials],
   );
 
   const submitResponse = useCallback(
@@ -122,6 +131,7 @@ export function ArrowFocusRunner({ onSaved }: { onSaved: () => void }) {
   }, [currentTrial, phase, submitResponse]);
 
   function start() {
+    resetInterruptions();
     setTrials(
       generateArrowFocusTrials(ARROW_FOCUS_SEED, ARROW_FOCUS_TRIAL_COUNT),
     );
@@ -218,6 +228,7 @@ function buildArrowFocusResult(
   trials: ArrowFocusTrial[],
   responses: ArrowResponse[],
   metrics: ReturnType<typeof scoreArrowFocus>["metrics"],
+  qualityFlags: string[],
 ): DemoTaskResult {
   const responseByTrial = new Map(
     responses.map((response) => [response.trialId, response]),
@@ -227,7 +238,7 @@ function buildArrowFocusResult(
     seed: ARROW_FOCUS_SEED,
     stimulusPackId: "arrow_focus_v1",
     summaryScore: metrics,
-    qualityFlags: [],
+    qualityFlags,
     confidence: metrics.valid_trial_count === trials.length ? 0.9 : 0.5,
     events: trials.map((trial) => {
       const response = responseByTrial.get(trial.trialId);

@@ -64,6 +64,10 @@ capture, Pair Learning study/immediate/delayed/recognition capture, and
 Seven-Day Learning repeated-pack/missed-day capture, and full-battery
 persistence where feasible.
 
+Critical browser-flow tests cover browser-network-off private task completion,
+anonymous-reporting consent withdrawal, and hidden-tab interruption persistence
+on sessions, task runs, and scores.
+
 `tests/quality-coverage.test.ts` tracks E11 hardening coverage for conservative
 baseline/trend edges, duplicate trial-quality exclusions, even-count task
 medians, anonymous reporting category declarations, and backup stimulus
