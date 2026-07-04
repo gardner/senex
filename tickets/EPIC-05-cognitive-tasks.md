@@ -167,7 +167,7 @@ Implementation notes:
 
 ## E05-T05 Implement Pair Learning
 
-Status: In progress
+Status: Done
 
 Scope:
 
@@ -181,12 +181,16 @@ Acceptance criteria:
 - Item packs are versioned and deterministic.
 - Delayed recall timing is represented explicitly.
 - Dashboard card exists.
+- Compact interactive runner captures study, immediate recall, delayed recall,
+  and recognition phases.
+- Results persist locally with task version, stimulus seed, phase-tagged trial
+  events, explicit delayed-recall timing, and score rows.
 
 Validation:
 
 - Item pack tests.
 - Scoring tests.
-- Integration test for complete learning flow.
+- Browser happy path for the complete learning flow on desktop and mobile.
 
 Dependencies: `E05-T04`.
 
@@ -195,7 +199,11 @@ Implementation notes:
 - Versioned deterministic pair packs and immediate/delayed/recognition scoring
   are implemented in `lib/cognitive-tasks/pair-learning.ts`.
 - Full demo-battery local persistence and dashboard presentation are
-  implemented. Full learning screen and delayed recall timing UI remain.
+  implemented.
+- `components/cognitive-tasks/pair-learning-runner.tsx` implements a compact
+  interactive runner for study, immediate recall, delayed recall, and
+  recognition. It persists phase-tagged local task-run records, including the
+  delayed recall marker used by the current compact flow.
 
 ## E05-T06 Implement Seven-Day Learning Week
 

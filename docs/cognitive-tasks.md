@@ -11,7 +11,7 @@ performance trends over time and must not diagnose or imply clinical certainty.
 ## Current Scope
 
 The first implemented vertical slices are **Reaction Time Sprint**, **Symbol
-Match**, **Arrow Focus**, and **Sequence Tap**.
+Match**, **Arrow Focus**, **Sequence Tap**, and **Pair Learning**.
 
 Reaction Time Sprint includes:
 
@@ -57,11 +57,21 @@ Sequence Tap includes:
   and score rows
 - browser coverage on desktop and mobile Chromium
 
-The remaining task modules currently provide deterministic definitions,
+Pair Learning includes:
+
+- task definition v1
+- versioned deterministic pair packs
+- immediate recall, delayed recall, and recognition scoring
+- compact interactive capture through pointer/touch choices
+- explicit delayed-recall timing marker in persisted trial stimuli
+- local IndexedDB persistence with task version, stimulus seed, phase-tagged
+  trial events, and score rows
+- browser coverage on desktop and mobile Chromium
+
+The remaining task module currently provides deterministic definitions,
 stimulus generation, scoring foundations, local demo persistence, and dashboard
 presentation:
 
-- **Pair Learning**: versioned pair packs, immediate/delayed/recognition scoring
 - **Seven-Day Learning Week**: repeated pack schedule, missed-day handling, and
   learning/retention metrics
 
@@ -71,9 +81,9 @@ P0 modules. This writes normal `LocalSession`, `TaskRunRecord`,
 offline dashboard so processing, working-memory, and learning cards are filled
 from local score history.
 
-Future work should replace the compact demo capture with full timed interactive
-runners for Pair Learning and Seven-Day Learning before making research claims
-from those modules.
+Future work should replace compact demo capture with a full timed interactive
+runner for Seven-Day Learning, and validate all task flows before making
+research claims from those modules.
 
 ## Research Anchors
 
@@ -120,5 +130,8 @@ or result states so JSON backup/export remains valid.
   IndexedDB records.
 - `tests/browser/cognitive-sequence-tap.spec.ts` covers Sequence Tap keyboard,
   pointer/touch, and explicit missed-response persistence.
+- `tests/browser/cognitive-pair-learning.spec.ts` covers Pair Learning study,
+  immediate recall, delayed recall, recognition, and persisted phase/timing
+  metadata.
 - `tests/test-engine-runner-scoring.test.ts` covers the reusable engine scorer,
   including insufficient-data JSON safety.

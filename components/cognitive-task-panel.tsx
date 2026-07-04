@@ -26,6 +26,7 @@ import {
 } from "@/lib/local";
 
 import { ArrowFocusRunner } from "./cognitive-tasks/arrow-focus-runner";
+import { PairLearningRunner } from "./cognitive-tasks/pair-learning-runner";
 import { persistDemoTaskResult } from "./cognitive-tasks/persist-demo-result";
 import { SequenceTapRunner } from "./cognitive-tasks/sequence-tap-runner";
 import { SymbolMatchRunner } from "./cognitive-tasks/symbol-match-runner";
@@ -156,6 +157,7 @@ export function CognitiveTaskPanel() {
         <SymbolMatchRunner onSaved={notifyLocalDataUpdated} />
         <ArrowFocusRunner onSaved={notifyLocalDataUpdated} />
         <SequenceTapRunner onSaved={notifyLocalDataUpdated} />
+        <PairLearningRunner onSaved={notifyLocalDataUpdated} />
         {state === "saved" && lastResult === "reaction" && (
           <div className="space-y-1">
             <p>Reaction Time Sprint saved locally.</p>
