@@ -1,5 +1,6 @@
 import { AppSidebar } from "@/components/app-sidebar";
 import { AccountProfileForm } from "@/components/account/account-profile-form";
+import { AccountSyncPanel } from "@/components/account/account-sync-panel";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -66,6 +67,18 @@ export default async function AccountPage() {
                   role: user.role,
                 }}
               />
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle as="h2">Local history import</CardTitle>
+              <CardDescription>
+                Import local history into your signed-in account only when you
+                choose to.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <AccountSyncPanel accountId={user.id} />
             </CardContent>
           </Card>
         </main>

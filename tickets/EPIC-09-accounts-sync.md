@@ -115,7 +115,7 @@ Dependencies: `E09-T02`.
 
 ## E09-T04 Implement local-to-account migration flow
 
-Status: Todo
+Status: Done
 
 Scope:
 
@@ -131,6 +131,22 @@ Acceptance criteria:
 Validation:
 
 - Browser test for confirmation and cancellation.
+
+Implementation notes:
+
+- Added `/account` local history import panel backed by browser IndexedDB.
+- Added account sync payload builder that preserves local IDs, timestamps,
+  scores, trial events, and consent records.
+- Import button stays disabled until the user explicitly confirms copying local
+  history to the account.
+- Cancel path makes no sync request.
+- Local browser history is not deleted after account import.
+- Research sharing is shown as a separate disabled control and is not included
+  in account sync.
+- Anonymous reporting history is blocked until the separate explicit linking
+  flow in `E09-T05`.
+- Added desktop/mobile Playwright coverage for cancellation, confirmation,
+  local-copy preservation, and research-sharing separation.
 
 Dependencies: `E09-T03`, `E07-T03`.
 

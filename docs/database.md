@@ -134,3 +134,7 @@ The endpoint authenticates with Better Auth, rejects payloads for a different
 `accountId`, validates local record shape and relationships, writes records with
 `INSERT OR IGNORE`, and returns the account sync state. Repeating the same
 idempotency key returns the existing batch without duplicating records.
+
+The `/account` page is the first client entry point for this endpoint. It shows
+local IndexedDB counts, requires a confirmation checkbox before upload, keeps
+the local browser copy, and keeps research sharing separate from account sync.

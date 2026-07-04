@@ -90,3 +90,10 @@ in [anonymous-reporting.md](anonymous-reporting.md).
 
 Questionnaire definitions, versioned answers, and research profile completion
 are documented in [questionnaires.md](questionnaires.md).
+
+Signed-in users can copy ordinary local history to their account from
+`/account`. The account sync panel reads IndexedDB, shows record counts,
+requires explicit confirmation, and keeps the local copy on the device.
+Anonymous reporting history is blocked until the separate account-linking flow
+exists. Research sharing remains a separate consent-gated flow; account import
+does not submit records for research.
