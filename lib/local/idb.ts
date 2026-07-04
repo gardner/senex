@@ -1,12 +1,18 @@
 import {
+  LOCAL_APP_VERSION,
   LOCAL_SCHEMA_VERSION,
   type JsonValue,
   type LocalProfile,
 } from "./types";
 import {
+  captureEngineeringTelemetry,
+  classifyTelemetryFailure,
+} from "../telemetry";
+import {
   queueSchemaVersionThreeMigration,
   queueSchemaVersionTwoMigration,
 } from "./migrations";
+import { createSchema } from "./schema-upgrade";
 import { LOCAL_STORES, type StoreName } from "./stores";
 
 export const LOCAL_DATABASE_NAME = "senex-local";
@@ -19,14 +25,23 @@ type MetadataRecord = { key: string; value: MetadataValue };
 export async function openSenexLocalDatabase(): Promise<IDBDatabase> {
   const db = await openRawDatabase();
   db.onversionchange = () => db.close();
-  await runLocalMigrationsWithDatabase(db);
-  return db;
+  try {
+    await runLocalMigrationsWithDatabase(db);
+    return db;
+  } catch (error) {
+    db.close();
+    captureLocalSchemaMigrationFailure(error);
+    throw error;
+  }
 }
 
 export async function runLocalMigrations(): Promise<void> {
   const db = await openRawDatabase();
   try {
     await runLocalMigrationsWithDatabase(db);
+  } catch (error) {
+    captureLocalSchemaMigrationFailure(error);
+    throw error;
   } finally {
     db.close();
   }
@@ -188,7 +203,40 @@ async function runLocalMigrationsWithDatabase(db: IDBDatabase): Promise<void> {
       "schemaVersion",
       LOCAL_SCHEMA_VERSION,
     );
+    void captureEngineeringTelemetry({
+      type: "local_schema_migration_success",
+      mode: "offline",
+      occurredAt: new Date().toISOString(),
+      details: {
+        operation: "migrate",
+        fromSchemaVersion: schemaVersionLabel(current),
+        toSchemaVersion: LOCAL_SCHEMA_VERSION,
+        localSchemaVersion: LOCAL_SCHEMA_VERSION,
+        appVersion: LOCAL_APP_VERSION,
+      },
+    });
   }
+}
+
+function captureLocalSchemaMigrationFailure(error: unknown) {
+  void captureEngineeringTelemetry({
+    type: "local_schema_migration_failure",
+    mode: "offline",
+    occurredAt: new Date().toISOString(),
+    details: {
+      operation: "migrate",
+      reason: classifyTelemetryFailure(error),
+      toSchemaVersion: LOCAL_SCHEMA_VERSION,
+      localSchemaVersion: LOCAL_SCHEMA_VERSION,
+      appVersion: LOCAL_APP_VERSION,
+    },
+  });
+}
+
+function schemaVersionLabel(value: MetadataValue) {
+  if (typeof value === "number") return value;
+  if (value === null) return "missing";
+  return "unknown";
 }
 
 async function getMetadataValueWithDatabase(
@@ -220,74 +268,6 @@ function touchMetadata(transaction: IDBTransaction) {
     key: "lastSavedAt",
     value: new Date().toISOString(),
   } satisfies MetadataRecord);
-}
-
-function createSchema(db: IDBDatabase, transaction: IDBTransaction) {
-  createStore(db, transaction, LOCAL_STORES.metadata, "key");
-  createStore(db, transaction, LOCAL_STORES.profiles, "profileId", [
-    "mode",
-    "updatedAt",
-  ]);
-  createStore(db, transaction, LOCAL_STORES.sessions, "sessionId", [
-    "profileId",
-    "startedAt",
-  ]);
-  createStore(db, transaction, LOCAL_STORES.taskRuns, "taskRunId", [
-    "sessionId",
-    "taskId",
-  ]);
-  createStore(db, transaction, LOCAL_STORES.trialEvents, "trialEventId", [
-    "taskRunId",
-    "trialIndex",
-  ]);
-  createStore(db, transaction, LOCAL_STORES.scores, "scoreId", [
-    "sessionId",
-    "taskRunId",
-    "domain",
-    "metricName",
-  ]);
-  createStore(db, transaction, LOCAL_STORES.questionnaireAnswers, "answerId", [
-    "profileId",
-    "sessionId",
-  ]);
-  createStore(db, transaction, LOCAL_STORES.consentRecords, "consentRecordId", [
-    "profileId",
-    "consentType",
-  ]);
-  createStore(
-    db,
-    transaction,
-    LOCAL_STORES.anonymousIdentities,
-    "anonymousIdentityId",
-    ["profileId", "anonymousStudyId", "status"],
-  );
-  createStore(
-    db,
-    transaction,
-    LOCAL_STORES.reportingUploads,
-    "reportingUploadId",
-    ["profileId", "anonymousStudyId", "idempotencyKey", "status"],
-  );
-  createStore(db, transaction, LOCAL_STORES.importAudits, "importAuditId", [
-    "profileId",
-    "importedAt",
-  ]);
-}
-
-function createStore(
-  db: IDBDatabase,
-  transaction: IDBTransaction,
-  name: string,
-  keyPath: string,
-  indexes: string[] = [],
-) {
-  const store = db.objectStoreNames.contains(name)
-    ? transaction.objectStore(name)
-    : db.createObjectStore(name, { keyPath });
-  if (!store) return;
-  for (const index of indexes) {
-    if (!store.indexNames.contains(index)) store.createIndex(index, index);
-  }
 }
 
 function requestToPromise<T>(request: IDBRequest<T>): Promise<T> {

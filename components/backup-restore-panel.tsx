@@ -17,10 +17,16 @@ import {
   createLocalExportEnvelope,
   previewLocalImportText,
   restoreLocalExportEnvelope,
+  LOCAL_APP_VERSION,
+  LOCAL_SCHEMA_VERSION,
   type LocalExportDownload,
   type LocalImportMode,
   type LocalImportPreview,
 } from "@/lib/local";
+import {
+  captureEngineeringTelemetry,
+  classifyTelemetryFailure,
+} from "@/lib/telemetry";
 
 type Status = "idle" | "working" | "complete" | "error";
 
@@ -64,6 +70,7 @@ export function BackupRestorePanel() {
       setPreview(await previewLocalImportText(text));
       setStatus("idle");
     } catch (caught) {
+      captureImportFailure("preview", caught);
       setPreview(null);
       setStatus("error");
       setMessage(caught instanceof Error ? caught.message : String(caught));
@@ -81,6 +88,7 @@ export function BackupRestorePanel() {
       setMessage(`Import complete: ${preview.counts.sessions} sessions.`);
       setPreview(null);
     } catch (caught) {
+      captureImportFailure("restore", caught);
       setStatus("error");
       setMessage(caught instanceof Error ? caught.message : String(caught));
     }
@@ -219,4 +227,21 @@ function confirmReplace() {
   return window.confirm(
     "Replace local history? Current local records will be deleted before this backup is restored.",
   );
+}
+
+function captureImportFailure(
+  operation: "preview" | "restore",
+  error: unknown,
+) {
+  void captureEngineeringTelemetry({
+    type: "import_failure",
+    mode: "offline",
+    occurredAt: new Date().toISOString(),
+    details: {
+      operation,
+      reason: classifyTelemetryFailure(error),
+      localSchemaVersion: LOCAL_SCHEMA_VERSION,
+      appVersion: LOCAL_APP_VERSION,
+    },
+  });
 }

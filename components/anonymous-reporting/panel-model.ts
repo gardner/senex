@@ -16,6 +16,10 @@ import {
   saveReportingUpload,
 } from "@/lib/local";
 import {
+  captureEngineeringTelemetry,
+  classifyTelemetryFailure,
+} from "@/lib/telemetry";
+import {
   P0_RESEARCH_PROFILE_QUESTIONNAIRES,
   buildResearchProfileCompletionState,
   type ResearchProfileCompletionState,
@@ -119,6 +123,16 @@ export async function submitReportingUpload(upload: ReportingUploadRecord) {
       status: "failed",
       completedAt: new Date().toISOString(),
       lastError: caught instanceof Error ? caught.message : String(caught),
+    });
+    void captureEngineeringTelemetry({
+      type: "anonymous_upload_failure",
+      mode: "anonymous_reporting",
+      occurredAt: new Date().toISOString(),
+      details: {
+        operation: "submit",
+        reason: classifyTelemetryFailure(caught),
+        includedCategoryCount: upload.includedCategories.length,
+      },
     });
     throw caught;
   }

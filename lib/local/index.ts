@@ -1,5 +1,6 @@
 export * from "./schema";
 export * from "./repository";
+export * from "./storage-summary";
 export * from "./session-repository";
 export * from "./reporting-repository";
 export * from "./export-schema";

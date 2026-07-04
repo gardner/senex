@@ -10,11 +10,14 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { getAnonymousAccountLinkState } from "@/lib/account-sync/anonymous-link";
-import { buildAccountSyncPayload } from "@/lib/account-sync/payload";
 import { readAllLocalRecords, readLocalStorageSummary } from "@/lib/local";
 import type { ExportableLocalRecords } from "@/lib/local/export-schema";
 
 import { AnonymousAccountLinkPanel } from "./anonymous-account-link-panel";
+import {
+  captureAccountSyncFailure,
+  postSyncPayload,
+} from "./account-sync-import";
 import {
   AccountSyncRecordCounts,
   countAccountSyncRecords,
@@ -162,6 +165,7 @@ function useAccountSyncImport(input: {
       setConfirmed(false);
       setMessage({ tone: "neutral", text: syncSuccessMessage(body.status) });
     } catch (error) {
+      captureAccountSyncFailure("submit", error, input.records);
       setMessage(formatSyncError(error));
     } finally {
       setPending(false);
@@ -191,6 +195,7 @@ function useLocalRecords() {
     try {
       setRecords(await loadLocalRecordSnapshot());
     } catch (error) {
+      captureAccountSyncFailure("load", error, null);
       setLoadError(formatLoadError(error));
     } finally {
       setLoading(false);
@@ -204,6 +209,7 @@ function useLocalRecords() {
         const nextRecords = await loadLocalRecordSnapshot();
         if (active) setRecords(nextRecords);
       } catch (error) {
+        captureAccountSyncFailure("load", error, null);
         if (active) setLoadError(formatLoadError(error));
       } finally {
         if (active) setLoading(false);
@@ -237,28 +243,6 @@ function sourceProfileIdFor(records: ExportableLocalRecords | null) {
 async function loadLocalRecordSnapshot() {
   await readLocalStorageSummary();
   return readAllLocalRecords(true);
-}
-
-async function postSyncPayload(
-  accountId: string,
-  records: ExportableLocalRecords,
-) {
-  const payload = buildAccountSyncPayload({ accountId, records });
-  const response = await fetch("/api/account/sessions/sync", {
-    method: "POST",
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify(payload),
-  });
-  const body = (await response.json()) as {
-    status?: string;
-    error?: string;
-  };
-  if (!response.ok) {
-    throw new Error(
-      typeof body.error === "string" ? body.error : "Account sync failed.",
-    );
-  }
-  return body;
 }
 
 function formatLoadError(error: unknown): SyncMessage {

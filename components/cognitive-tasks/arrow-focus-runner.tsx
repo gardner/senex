@@ -43,6 +43,7 @@ export function ArrowFocusRunner({ onSaved }: { onSaved: () => void }) {
   const [error, setError] = useState<string | null>(null);
   const { readInterruptionCodes, resetInterruptions } = useTaskInterruptions(
     phase === "running",
+    ARROW_FOCUS_TASK.taskId,
   );
 
   const currentTrial = trials[trialIndex] ?? null;

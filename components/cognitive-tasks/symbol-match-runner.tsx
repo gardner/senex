@@ -41,6 +41,7 @@ export function SymbolMatchRunner({ onSaved }: { onSaved: () => void }) {
   const [error, setError] = useState<string | null>(null);
   const { readInterruptionCodes, resetInterruptions } = useTaskInterruptions(
     phase === "running",
+    SYMBOL_MATCH_TASK.taskId,
   );
 
   const currentTrial = trials[trialIndex] ?? null;

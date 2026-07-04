@@ -86,6 +86,9 @@ Telemetry boundaries are covered by `tests/telemetry-boundaries.test.ts`, which
 checks the committed [telemetry.md](telemetry.md) boundary, verifies Cloudflare
 Worker observability is treated as operational logging, and guards Offline Mode
 against browser analytics transports by default.
+`tests/telemetry-events.test.ts` covers the engineering telemetry event
+allowlist, coarse failure classification, sensitive-field rejection, and
+non-blocking sink failures.
 
 `tests/quality-coverage.test.ts` tracks E11 hardening coverage for conservative
 baseline/trend edges, duplicate trial-quality exclusions, even-count task

@@ -43,7 +43,7 @@ Notes:
 
 ## E12-T02 Implement engineering telemetry
 
-Status: Todo
+Status: Done
 
 Scope:
 
@@ -61,6 +61,21 @@ Validation:
 - Unit tests for telemetry payload filtering.
 
 Dependencies: `E12-T01`, `E03-T05`, `E07-T05`.
+
+Notes:
+
+- Added `lib/telemetry.ts` with the `engineering-telemetry-v1` event contract,
+  strict detail allowlisting, coarse failure classification, and non-blocking
+  capture wrapper.
+- Wired capture for app render errors, failed JSON import preview/restore,
+  failed anonymous reporting upload submit, failed account-sync load/submit,
+  hidden-tab task interruptions, local schema migration success/failure, and
+  app/schema version adoption.
+- Added `tests/telemetry-events.test.ts` for payload filtering, sensitive-field
+  rejection, coarse error classification, and non-blocking sink failure
+  behavior.
+- Current telemetry dispatches only a local browser event by default; Offline
+  Mode still emits no analytics network requests.
 
 ## E12-T03 Build internal cognitive data observability
 

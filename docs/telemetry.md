@@ -25,7 +25,7 @@ shortcut around consent. Offline Mode remains private by default.
 
 ## Allowed Engineering Events
 
-Future E12-T02 telemetry may define explicit event types for:
+E12-T02 telemetry defines explicit event types for:
 
 - app error category
 - failed import reason
@@ -88,6 +88,25 @@ schema-filtered, and covered by tests before any request is emitted.
 - Telemetry schemas reject unknown event names and unknown fields.
 - Telemetry failures are non-blocking and visible only as operational status.
 - `tests/telemetry-boundaries.test.ts` passes.
+
+## Current Implementation
+
+`lib/telemetry.ts` defines the `engineering-telemetry-v1` event contract,
+coarse failure classification, strict detail allowlisting, and a non-blocking
+capture wrapper. The default capture path dispatches a local browser event for
+in-app instrumentation and sends nothing over the network.
+
+Current capture points:
+
+- global app render errors through `app/global-error.tsx`
+- failed JSON import preview and restore attempts
+- failed anonymous reporting upload submission
+- failed account-sync local loading and submit attempts
+- hidden-tab task interruptions for interactive tasks
+- local schema migration success/failure and app/schema version adoption
+
+All current events exclude raw payloads, identifiers, questionnaire answers,
+trial data, scores, and free-text notes.
 
 ## References
 

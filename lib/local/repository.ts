@@ -2,7 +2,6 @@ import {
   deleteSenexLocalDatabase,
   getAllRecords,
   getFirstProfile,
-  getMetadataValue,
   getRecord,
   LOCAL_STORES,
   putRecord,
@@ -33,20 +32,6 @@ import {
   assertTrialEventRecord,
 } from "./validators";
 
-export interface LocalStorageSummary {
-  hasLocalHistory: boolean;
-  localProfileId: string | null;
-  lastSavedAt: string | null;
-  schemaVersion: number;
-  storagePersisted: boolean | null;
-}
-
-export interface PersistenceRequestResult {
-  supported: boolean;
-  persisted: boolean;
-  requested: boolean;
-}
-
 type SessionInput = {
   cadence?: LocalCadence;
   contextSnapshot?: JsonObject;
@@ -72,39 +57,6 @@ export {
   runLocalMigrations,
   setLocalSchemaVersionForTests,
 };
-
-export async function readLocalStorageSummary(): Promise<LocalStorageSummary> {
-  await runLocalMigrations();
-  const [profile, lastSavedAt, schemaVersion, storagePersisted] =
-    await Promise.all([
-      getFirstProfile(),
-      getMetadataValue("lastSavedAt"),
-      getMetadataValue("schemaVersion"),
-      readPersistedStatus(),
-    ]);
-  return {
-    hasLocalHistory: Boolean(profile),
-    localProfileId: profile?.profileId ?? null,
-    lastSavedAt: typeof lastSavedAt === "string" ? lastSavedAt : null,
-    schemaVersion:
-      typeof schemaVersion === "number" ? schemaVersion : LOCAL_SCHEMA_VERSION,
-    storagePersisted,
-  };
-}
-
-export async function requestPersistentLocalStorage(): Promise<PersistenceRequestResult> {
-  if (!navigator.storage?.persist) {
-    return { supported: false, persisted: false, requested: false };
-  }
-  const alreadyPersisted = await navigator.storage.persisted?.();
-  if (alreadyPersisted)
-    return { supported: true, persisted: true, requested: false };
-  return {
-    supported: true,
-    persisted: await navigator.storage.persist(),
-    requested: true,
-  };
-}
 
 export async function getOrCreateLocalProfile(): Promise<LocalProfile> {
   const existing = await getFirstProfile();
@@ -292,11 +244,6 @@ export async function listImportAudits(): Promise<ImportAuditRecord[]> {
   );
   for (const record of records) assertImportAuditRecord(record);
   return records.toSorted((a, b) => a.importedAt.localeCompare(b.importedAt));
-}
-
-async function readPersistedStatus(): Promise<boolean | null> {
-  if (!navigator.storage?.persisted) return null;
-  return navigator.storage.persisted();
 }
 
 function withVersion<T extends object>(
