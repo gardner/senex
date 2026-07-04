@@ -207,7 +207,7 @@ Implementation notes:
 
 ## E05-T06 Implement Seven-Day Learning Week
 
-Status: In progress
+Status: Done
 
 Scope:
 
@@ -221,12 +221,18 @@ Acceptance criteria:
 - Missed-day behavior is deterministic and documented.
 - Monthly summary report exists.
 - Export/import preserves repeated-pack continuity.
+- Compact interactive runner repeats one monthly pair pack across seven days.
+- Missed days persist explicitly as null-response trial events.
+- Results persist locally with task version, stimulus seed, repeated pack ID,
+  trial events, and score rows.
 
 Validation:
 
 - Schedule tests.
 - Learning-curve scoring tests.
 - Import/export continuity test.
+- Browser happy path for repeated-pack recall, explicit missed-day capture, and
+  monthly summary on desktop and mobile.
 
 Dependencies: `E05-T05`, `E06-T04`.
 
@@ -236,4 +242,8 @@ Implementation notes:
   learning/retention scoring are implemented in
   `lib/cognitive-tasks/seven-day-learning.ts`.
 - Full demo-battery local persistence and dashboard presentation are
-  implemented. Monthly summary UI and export/import continuity coverage remain.
+  implemented.
+- `components/cognitive-tasks/seven-day-learning-runner.tsx` implements a
+  compact interactive seven-day runner. It repeats the same pack ID across all
+  days, supports explicit missed-day capture, and saves a monthly summary into
+  local task-run and score records.

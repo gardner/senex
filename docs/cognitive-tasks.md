@@ -11,7 +11,8 @@ performance trends over time and must not diagnose or imply clinical certainty.
 ## Current Scope
 
 The first implemented vertical slices are **Reaction Time Sprint**, **Symbol
-Match**, **Arrow Focus**, **Sequence Tap**, and **Pair Learning**.
+Match**, **Arrow Focus**, **Sequence Tap**, **Pair Learning**, and
+**Seven-Day Learning Week**.
 
 Reaction Time Sprint includes:
 
@@ -68,12 +69,16 @@ Pair Learning includes:
   trial events, and score rows
 - browser coverage on desktop and mobile Chromium
 
-The remaining task module currently provides deterministic definitions,
-stimulus generation, scoring foundations, local demo persistence, and dashboard
-presentation:
+Seven-Day Learning Week includes:
 
-- **Seven-Day Learning Week**: repeated pack schedule, missed-day handling, and
-  learning/retention metrics
+- task definition v1
+- deterministic monthly repeated-pack schedule
+- explicit missed-day handling
+- learning-slope and retention scoring
+- compact interactive capture across seven scheduled days
+- local IndexedDB persistence with task version, stimulus seed, repeated pack
+  ID, missed-day trial events, monthly summary metrics, and score rows
+- browser coverage on desktop and mobile Chromium
 
 The task battery panel can save a deterministic full demo battery covering all
 P0 modules. This writes normal `LocalSession`, `TaskRunRecord`,
@@ -81,9 +86,9 @@ P0 modules. This writes normal `LocalSession`, `TaskRunRecord`,
 offline dashboard so processing, working-memory, and learning cards are filled
 from local score history.
 
-Future work should replace compact demo capture with a full timed interactive
-runner for Seven-Day Learning, and validate all task flows before making
-research claims from those modules.
+Future work should replace compact runners with full timed protocol-grade task
+flows, then validate all task flows before making research claims from those
+modules.
 
 ## Research Anchors
 
@@ -99,6 +104,11 @@ families:
 - Sequence Tap follows the Corsi-style span pattern of reproducing a sequence
   and recording the longest reliable span
   ([eCorsi implementation paper](https://pmc.ncbi.nlm.nih.gov/articles/PMC4151195/)).
+- Seven-Day Learning repeats retrieval over scheduled sessions because repeated
+  retrieval practice is associated with better long-term retention
+  ([Karpicke & Roediger 2007](https://learninglab.psych.purdue.edu/downloads/2007/2007_Karpicke_Roediger_JML.pdf))
+  and has been studied across seven-day retention intervals
+  ([Frontiers 2019](https://www.frontiersin.org/journals/psychology/articles/10.3389/fpsyg.2019.02997/full)).
 
 These anchors guide structure only. Senex must validate its own tasks before
 making stronger claims.
@@ -133,5 +143,8 @@ or result states so JSON backup/export remains valid.
 - `tests/browser/cognitive-pair-learning.spec.ts` covers Pair Learning study,
   immediate recall, delayed recall, recognition, and persisted phase/timing
   metadata.
+- `tests/browser/cognitive-seven-day-learning.spec.ts` covers Seven-Day
+  Learning repeated-pack recall, explicit missed-day persistence, and monthly
+  summary scoring.
 - `tests/test-engine-runner-scoring.test.ts` covers the reusable engine scorer,
   including insufficient-data JSON safety.

@@ -61,7 +61,8 @@ full local demo battery and dashboard aggregation. Browser tests cover
 monotonic timing, visibility metadata, Symbol Match keyboard/pointer capture,
 Arrow Focus keyboard/touch capture, Sequence Tap keyboard/touch/missed-response
 capture, Pair Learning study/immediate/delayed/recognition capture, and
-full-battery persistence where feasible.
+Seven-Day Learning repeated-pack/missed-day capture, and full-battery
+persistence where feasible.
 
 To test an already running server or preview URL:
 
