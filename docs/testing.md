@@ -41,6 +41,9 @@ data setup.
 Playwright's `webServer` config, and runs desktop plus mobile Chromium smoke
 tests from `tests/browser/`.
 
+Local IndexedDB repository tests also run through Playwright so the core browser
+storage behavior is exercised in Chromium rather than mocked.
+
 To test an already running server or preview URL:
 
 ```bash

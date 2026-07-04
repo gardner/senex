@@ -23,6 +23,8 @@ sync when framework, runtime, or infrastructure behavior changes.
 - **Tests:** Vitest runs inside real workerd with a real in-memory D1 through
   `@cloudflare/vitest-pool-workers`. Browser smoke tests run through
   Playwright against the local vinext dev server.
+- **Local data:** Offline Mode records use browser IndexedDB through
+  `lib/local/`; see [local-data.md](local-data.md).
 - **Deploys:** GitHub-connected Cloudflare Workers Builds are the intended
   production path. Production deploys run `pnpm run deploy:prod`, which checks
   migrations, applies D1 migrations to `senex-db`, then runs Wrangler deploy.

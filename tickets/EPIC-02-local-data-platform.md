@@ -7,7 +7,7 @@ Source: [PLAN Phase 1](../docs/PLAN.md#4-phase-1--offline-mode-mvp),
 
 ## E02-T01 Decide local DB adapter
 
-Status: Todo
+Status: Done
 
 Scope:
 
@@ -29,7 +29,7 @@ Dependencies: `E01-T03`.
 
 ## E02-T02 Implement local schema v1
 
-Status: Todo
+Status: Done
 
 Scope:
 
@@ -53,7 +53,7 @@ Dependencies: `E02-T01`.
 
 ## E02-T03 Implement local migration runner
 
-Status: Todo
+Status: Done
 
 Scope:
 
@@ -75,7 +75,7 @@ Dependencies: `E02-T02`.
 
 ## E02-T04 Implement local profile and session persistence
 
-Status: Todo
+Status: Done
 
 Scope:
 
@@ -97,7 +97,7 @@ Dependencies: `E02-T03`.
 
 ## E02-T05 Persist task runs, trial events, and scores
 
-Status: Todo
+Status: Done
 
 Scope:
 
@@ -119,7 +119,7 @@ Dependencies: `E02-T04`, `E04-T01`.
 
 ## E02-T06 Add local storage status UI
 
-Status: Todo
+Status: Done
 
 Scope:
 

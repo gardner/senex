@@ -1,0 +1,62 @@
+# Local Data Platform
+
+Senex stores Offline Mode history in browser IndexedDB before any optional
+reporting or account sync. The local data layer lives in `lib/local/`.
+
+## Schema
+
+Current local schema version: `1`.
+
+Durable record types:
+
+- `LocalProfile`
+- `LocalSession`
+- `TaskRunRecord`
+- `TrialEventRecord`
+- `ScoreRecord`
+- `QuestionnaireAnswerRecord`
+- `ConsentRecord`
+- `ImportAuditRecord`
+
+Each durable record includes stable IDs, `schemaVersion`, `appVersion`, and the
+timestamps needed for export/import and audit trails.
+
+## IndexedDB Stores
+
+The `senex-local` database currently has these stores:
+
+- `profiles`
+- `sessions`
+- `taskRuns`
+- `trialEvents`
+- `scores`
+- `questionnaireAnswers`
+- `consentRecords`
+- `importAudits`
+- `metadata`
+
+The metadata store tracks `schemaVersion` and `lastSavedAt`. Future schema
+changes must add explicit migration code and tests.
+
+## Migrations
+
+`runLocalMigrations()` opens the database, creates v1 stores when needed, and
+migrates known older local schema metadata to the current version. If metadata
+claims a future local schema version, the app throws instead of trying to
+downgrade or discard user data.
+
+## Testing
+
+Schema validators are covered by Vitest in `tests/local-schema.test.ts`.
+IndexedDB repository behavior is covered by Playwright in
+`tests/browser/local-data.spec.ts`, which runs in Chromium against the real
+browser IndexedDB implementation.
+
+Browser test screenshots are written under `test-results/`, which is ignored by
+Git.
+
+## UI
+
+`components/local-storage-status.tsx` shows whether local history exists, the
+last local save time, and the current browser persistence state. Persistent
+storage requests are non-blocking because browsers may deny or ignore them.

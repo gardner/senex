@@ -24,6 +24,7 @@ The current product direction and platform documentation are:
 | [docs/stack.md](docs/stack.md)                                 | Runtime, framework, and sharp edges    |
 | [docs/framework-patterns.md](docs/framework-patterns.md)       | Approved vinext/App Router patterns    |
 | [docs/adr/](docs/adr/)                                         | Architecture decision records          |
+| [docs/local-data.md](docs/local-data.md)                       | Browser local storage platform         |
 | [docs/common-commands.md](docs/common-commands.md)             | Day-to-day commands                    |
 | [docs/database.md](docs/database.md)                           | D1 setup and migrations                |
 | [docs/environment-variables.md](docs/environment-variables.md) | Local and Cloudflare env vars          |

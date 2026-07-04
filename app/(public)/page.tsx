@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { LocalStorageStatus } from "@/components/local-storage-status";
 import { buttonVariants } from "@/components/ui/button";
 import {
   Card,
@@ -33,6 +34,10 @@ export default function HomePage() {
             Go to the dashboard
           </Link>
         </div>
+      </section>
+
+      <section className="py-4">
+        <LocalStorageStatus />
       </section>
 
       <section className="grid gap-4 py-8 md:grid-cols-3">

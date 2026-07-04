@@ -59,6 +59,7 @@ pnpm dev                  # http://localhost:3000
 | [stack.md](docs/stack.md)                                 | Runtime, framework, and sharp edges    |
 | [framework-patterns.md](docs/framework-patterns.md)       | Approved vinext/App Router patterns    |
 | [adr/](docs/adr/)                                         | Architecture decision records          |
+| [local-data.md](docs/local-data.md)                       | Browser local storage platform         |
 | [common-commands.md](docs/common-commands.md)             | Day-to-day commands                    |
 | [database.md](docs/database.md)                           | D1 setup, migrations, and admin roles  |
 | [environment-variables.md](docs/environment-variables.md) | Local and production configuration     |
