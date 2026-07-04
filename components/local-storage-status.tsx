@@ -109,8 +109,8 @@ export function LocalStorageStatus() {
         </p>
         <p className="text-muted-foreground">
           Clearing site data, changing browsers, or using another device can
-          remove access to local history. Export backups will be added in the
-          next epic.
+          remove access to local history. Keep a JSON backup before clearing
+          browser data.
         </p>
         {summary?.lastSavedAt && (
           <p className="text-muted-foreground">

@@ -23,6 +23,12 @@ Imports validate the envelope before writing data. Older supported versions are
 migrated through explicit migration functions. Unknown future versions fail
 loudly.
 
+The v1 implementation uses `senex.local-backup` as the envelope format and keeps
+export schema version separate from local IndexedDB schema version. Restore
+writes run in one IndexedDB transaction. Merge upserts by stable IDs; replace
+clears local data stores before writing the imported records. Both modes create
+a local import audit record.
+
 ## Consequences
 
 Export schema changes require review, fixtures, and import tests. The app must

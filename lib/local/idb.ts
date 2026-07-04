@@ -84,9 +84,20 @@ export async function withTransaction<T>(
   const db = await openSenexLocalDatabase();
   try {
     const transaction = db.transaction(storeNames, mode);
-    const result = await callback(transaction);
-    await transactionDone(transaction);
-    return result;
+    const done = transactionDone(transaction);
+    try {
+      const result = await callback(transaction);
+      await done;
+      return result;
+    } catch (error) {
+      try {
+        transaction.abort();
+      } catch {
+        // The transaction may already be finished; preserve the original error.
+      }
+      await done.catch(() => undefined);
+      throw error;
+    }
   } finally {
     db.close();
   }

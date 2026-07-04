@@ -45,6 +45,10 @@ migrates known older local schema metadata to the current version. If metadata
 claims a future local schema version, the app throws instead of trying to
 downgrade or discard user data.
 
+Restore writes use a single IndexedDB transaction across data stores and the
+metadata store. If import validation or a write fails, the transaction aborts
+and previous local history remains intact.
+
 ## Testing
 
 Schema validators are covered by Vitest in `tests/local-schema.test.ts`.
@@ -60,3 +64,7 @@ Git.
 `components/local-storage-status.tsx` shows whether local history exists, the
 last local save time, and the current browser persistence state. Persistent
 storage requests are non-blocking because browsers may deny or ignore them.
+
+`components/backup-restore-panel.tsx` provides JSON backup generation, import
+preview, merge restore, and replace restore. See
+[export-import.md](export-import.md).

@@ -25,6 +25,8 @@ sync when framework, runtime, or infrastructure behavior changes.
   Playwright against the local vinext dev server.
 - **Local data:** Offline Mode records use browser IndexedDB through
   `lib/local/`; see [local-data.md](local-data.md).
+- **Backup/restore:** JSON export/import uses the versioned
+  `senex.local-backup` envelope; see [export-import.md](export-import.md).
 - **Deploys:** GitHub-connected Cloudflare Workers Builds are the intended
   production path. Production deploys run `pnpm run deploy:prod`, which checks
   migrations, applies D1 migrations to `senex-db`, then runs Wrangler deploy.

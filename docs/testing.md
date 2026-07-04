@@ -44,6 +44,9 @@ tests from `tests/browser/`.
 Local IndexedDB repository tests also run through Playwright so the core browser
 storage behavior is exercised in Chromium rather than mocked.
 
+JSON export/import tests cover schema validation in Vitest and browser
+generation, preview, merge, replace, and rollback behavior in Playwright.
+
 To test an already running server or preview URL:
 
 ```bash

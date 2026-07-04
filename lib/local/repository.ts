@@ -13,17 +13,23 @@ import {
 import {
   LOCAL_APP_VERSION,
   LOCAL_SCHEMA_VERSION,
+  type ConsentRecord,
+  type ImportAuditRecord,
   type JsonObject,
   type LocalCadence,
   type LocalProfile,
   type LocalSession,
+  type QuestionnaireAnswerRecord,
   type ScoreRecord,
   type TaskRunRecord,
   type TrialEventRecord,
 } from "./types";
 import {
+  assertConsentRecord,
+  assertImportAuditRecord,
   assertLocalProfile,
   assertLocalSession,
+  assertQuestionnaireAnswerRecord,
   assertScoreRecord,
   assertTaskRunRecord,
   assertTrialEventRecord,
@@ -58,6 +64,11 @@ type CompleteSessionInput = {
 type TaskRunInput = Omit<TaskRunRecord, "schemaVersion" | "appVersion">;
 type TrialEventInput = Omit<TrialEventRecord, "schemaVersion" | "appVersion">;
 type ScoreInput = Omit<ScoreRecord, "schemaVersion" | "appVersion">;
+type QuestionnaireAnswerInput = Omit<
+  QuestionnaireAnswerRecord,
+  "schemaVersion" | "appVersion"
+>;
+type ConsentInput = Omit<ConsentRecord, "schemaVersion" | "appVersion">;
 
 export {
   deleteSenexLocalDatabase,
@@ -159,6 +170,20 @@ export async function getLocalSession(
   return getRecord<LocalSession>(LOCAL_STORES.sessions, sessionId);
 }
 
+export async function saveLocalSessionForTests(
+  input: Omit<LocalSession, "schemaVersion" | "appVersion">,
+): Promise<LocalSession> {
+  const record = withVersion(input);
+  assertLocalSession(record);
+  await putRecord(LOCAL_STORES.sessions, record);
+  return record;
+}
+
+export async function listAllLocalSessionsForTests(): Promise<LocalSession[]> {
+  const records = await getAllRecords<LocalSession>(LOCAL_STORES.sessions);
+  return records.toSorted((a, b) => a.sessionId.localeCompare(b.sessionId));
+}
+
 export async function saveTaskRun(input: TaskRunInput): Promise<TaskRunRecord> {
   const record = withVersion(input);
   assertTaskRunRecord(record);
@@ -217,6 +242,32 @@ export async function listScores(filters: {
       return false;
     return true;
   });
+}
+
+export async function saveQuestionnaireAnswer(
+  input: QuestionnaireAnswerInput,
+): Promise<QuestionnaireAnswerRecord> {
+  const record = withVersion(input);
+  assertQuestionnaireAnswerRecord(record);
+  await putRecord(LOCAL_STORES.questionnaireAnswers, record);
+  return record;
+}
+
+export async function saveConsentRecord(
+  input: ConsentInput,
+): Promise<ConsentRecord> {
+  const record = withVersion(input);
+  assertConsentRecord(record);
+  await putRecord(LOCAL_STORES.consentRecords, record);
+  return record;
+}
+
+export async function listImportAudits(): Promise<ImportAuditRecord[]> {
+  const records = await getAllRecords<ImportAuditRecord>(
+    LOCAL_STORES.importAudits,
+  );
+  for (const record of records) assertImportAuditRecord(record);
+  return records.toSorted((a, b) => a.importedAt.localeCompare(b.importedAt));
 }
 
 async function readPersistedStatus(): Promise<boolean | null> {

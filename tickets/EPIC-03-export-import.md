@@ -7,7 +7,7 @@ Source: [PLAN JSON export/import](../docs/PLAN.md#43-json-exportimport),
 
 ## E03-T01 Define export schema v1
 
-Status: Todo
+Status: Done
 
 Scope:
 
@@ -30,7 +30,7 @@ Dependencies: `E02-T02`.
 
 ## E03-T02 Implement JSON export
 
-Status: Todo
+Status: Done
 
 Scope:
 
@@ -53,7 +53,7 @@ Dependencies: `E03-T01`, `E02-T05`.
 
 ## E03-T03 Implement import preview
 
-Status: Todo
+Status: Done
 
 Scope:
 
@@ -77,7 +77,7 @@ Dependencies: `E03-T01`.
 
 ## E03-T04 Implement merge and replace restore
 
-Status: Todo
+Status: Done
 
 Scope:
 
@@ -102,7 +102,7 @@ Dependencies: `E03-T03`, `E02-T03`.
 
 ## E03-T05 Harden import failure handling
 
-Status: Todo
+Status: Done
 
 Scope:
 
