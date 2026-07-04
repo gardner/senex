@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import {
   CONSENT_CATEGORIES,
@@ -28,16 +28,17 @@ import {
 
 import {
   checkedFromConsent,
-  errorMessage,
   latestSubmittableUpload,
   readReportingSnapshot,
   selectedScope,
   selectIdentity,
+  submitReportingUpload,
   todayString,
   type ReportingSnapshot,
 } from "./anonymous-reporting/panel-model";
 import { AnonymousReportingPanelView } from "./anonymous-reporting/panel-view";
 import type { ReportingScopeType } from "./anonymous-reporting/panel-controls";
+import type { ResearchProfileCompletionState } from "@/lib/questionnaires";
 
 type Status = "idle" | "working" | "error";
 type CheckedCategories = Partial<Record<ConsentCategoryId, boolean>>;
@@ -48,6 +49,8 @@ export function AnonymousReportingPanel() {
   );
   const [consents, setConsents] = useState<ConsentRecord[]>([]);
   const [uploads, setUploads] = useState<ReportingUploadRecord[]>([]);
+  const [profileCompletion, setProfileCompletion] =
+    useState<ResearchProfileCompletionState | null>(null);
   const [checked, setChecked] = useState<CheckedCategories>({});
   const [preview, setPreview] = useState<AnonymousReportingPayload | null>(
     null,
@@ -66,17 +69,18 @@ export function AnonymousReportingPanel() {
   );
   const controlsDisabled = status === "working";
 
-  async function refresh() {
-    applySnapshot(await readReportingSnapshot());
-  }
-
-  function applySnapshot(snapshot: ReportingSnapshot) {
+  const applySnapshot = useCallback((snapshot: ReportingSnapshot) => {
     const nextConsent = deriveActiveConsent(snapshot.consents);
     setIdentity(selectIdentity(snapshot.identities));
     setConsents(snapshot.consents);
     setUploads(snapshot.uploads);
+    setProfileCompletion(snapshot.completion);
     setChecked(checkedFromConsent(nextConsent));
-  }
+  }, []);
+
+  const refresh = useCallback(async () => {
+    applySnapshot(await readReportingSnapshot());
+  }, [applySnapshot]);
 
   async function handleCreateIdentity() {
     await withStatus(async () => {
@@ -152,38 +156,9 @@ export function AnonymousReportingPanel() {
     await withStatus(async () => {
       const upload = latestSubmittableUpload(uploads);
       if (!upload) throw new Error("No queued reporting upload is available.");
-      const submittedAt = new Date().toISOString();
-      const submitting = {
-        ...upload,
-        status: "submitting" as const,
-        submittedAt,
-        lastError: null,
-      };
-      await saveReportingUpload(submitting);
-      try {
-        const response = await fetch("/api/reporting/anonymous/submit", {
-          method: "POST",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify(upload.payload),
-        });
-        const body = await response.json().catch(() => ({}));
-        if (!response.ok) throw new Error(errorMessage(body));
-        await saveReportingUpload({
-          ...submitting,
-          status: "succeeded",
-          completedAt: new Date().toISOString(),
-        });
-        await refresh();
-        setMessage("Upload submitted.");
-      } catch (caught) {
-        await saveReportingUpload({
-          ...submitting,
-          status: "failed",
-          completedAt: new Date().toISOString(),
-          lastError: caught instanceof Error ? caught.message : String(caught),
-        });
-        throw caught;
-      }
+      await submitReportingUpload(upload);
+      await refresh();
+      setMessage("Upload submitted.");
     });
   }
 
@@ -284,13 +259,21 @@ export function AnonymousReportingPanel() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [applySnapshot]);
+
+  useEffect(() => {
+    const listener = () => void refresh();
+    window.addEventListener("senex-questionnaires-updated", listener);
+    return () =>
+      window.removeEventListener("senex-questionnaires-updated", listener);
+  }, [refresh]);
 
   return (
     <AnonymousReportingPanelView
       identity={identity}
       activeConsent={activeConsent}
       uploads={uploads}
+      profileCompletion={profileCompletion}
       checked={checked}
       preview={preview}
       status={status}

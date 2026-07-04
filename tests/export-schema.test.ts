@@ -59,7 +59,23 @@ describe("local export schema", () => {
         ],
         trialEvents: [],
         scores: [],
-        questionnaireAnswers: [],
+        questionnaireAnswers: [
+          {
+            answerId: "answer_1",
+            profileId: "profile_1",
+            sessionId: null,
+            questionnaireId: "demographics_v1",
+            questionnaireVersion: "2026-07-04",
+            questionId: "birth_year",
+            questionVersion: "1",
+            answerValue: "1980",
+            answerStatus: "answered",
+            answeredAt: iso,
+            sourceScreen: "research_questionnaires",
+            schemaVersion: LOCAL_SCHEMA_VERSION,
+            appVersion: LOCAL_APP_VERSION,
+          },
+        ],
         consentRecords: [
           {
             consentRecordId: "consent_1",
@@ -83,6 +99,9 @@ describe("local export schema", () => {
 
     expect(envelope.exportSchemaVersion).toBe(EXPORT_SCHEMA_VERSION);
     expect(envelope.localSchemaVersion).toBe(LOCAL_SCHEMA_VERSION);
+    expect(envelope.data.questionnaireAnswers[0].questionnaireVersion).toBe(
+      "2026-07-04",
+    );
     expect(envelope.data.consentRecords[0].decidedAt).toBe(iso);
     expect(envelope.data.stimulusReferences).toEqual([
       {

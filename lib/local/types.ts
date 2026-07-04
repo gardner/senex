@@ -1,4 +1,4 @@
-export const LOCAL_SCHEMA_VERSION = 2;
+export const LOCAL_SCHEMA_VERSION = 3;
 export const LOCAL_APP_VERSION = "0.1.0";
 
 export type LocalMode = "offline" | "anonymous_reporting" | "signed_in";
@@ -10,6 +10,10 @@ export type ReportingUploadStatus =
   | "submitting"
   | "succeeded"
   | "failed";
+export type QuestionnaireAnswerStatus =
+  | "answered"
+  | "prefer_not_to_say"
+  | "skipped";
 
 export type JsonValue =
   | null
@@ -93,9 +97,13 @@ export interface QuestionnaireAnswerRecord {
   profileId: string;
   sessionId: string | null;
   questionnaireId: string;
+  questionnaireVersion: string;
   questionId: string;
+  questionVersion: string;
   answerValue: JsonValue;
+  answerStatus: QuestionnaireAnswerStatus;
   answeredAt: string;
+  sourceScreen: string;
   schemaVersion: typeof LOCAL_SCHEMA_VERSION;
   appVersion: string;
 }

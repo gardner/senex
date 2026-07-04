@@ -1,6 +1,5 @@
 import {
   CONSENT_CATEGORIES,
-  categoryLabel,
   type ActiveConsentState,
   type AnonymousReportingPayload,
   type ConsentCategoryId,
@@ -9,12 +8,14 @@ import type {
   AnonymousIdentityRecord,
   ReportingUploadRecord,
 } from "@/lib/local";
+import type { ResearchProfileCompletionState } from "@/lib/questionnaires";
 
 import {
   ReportingControls,
   ReportingScopeControls,
   type ReportingScopeType,
 } from "./panel-controls";
+import { PanelMessage, PayloadPreview, StatusBlock } from "./panel-parts";
 import {
   Card,
   CardContent,
@@ -30,6 +31,7 @@ export function AnonymousReportingPanelView({
   identity,
   activeConsent,
   uploads,
+  profileCompletion,
   checked,
   preview,
   status,
@@ -56,6 +58,7 @@ export function AnonymousReportingPanelView({
   identity: AnonymousIdentityRecord | null;
   activeConsent: ActiveConsentState;
   uploads: ReportingUploadRecord[];
+  profileCompletion: ResearchProfileCompletionState | null;
   checked: CheckedCategories;
   preview: AnonymousReportingPayload | null;
   status: Status;
@@ -94,6 +97,7 @@ export function AnonymousReportingPanelView({
           activeConsent={activeConsent}
           uploads={uploads}
           preview={preview}
+          profileCompletion={profileCompletion}
         />
         <StudyIdentity identity={identity} latestUpload={latestUpload} />
         <ReportingScopeControls
@@ -139,11 +143,13 @@ function ReportingStatus({
   activeConsent,
   uploads,
   preview,
+  profileCompletion,
 }: {
   identity: AnonymousIdentityRecord | null;
   activeConsent: ActiveConsentState;
   uploads: ReportingUploadRecord[];
   preview: AnonymousReportingPayload | null;
+  profileCompletion: ResearchProfileCompletionState | null;
 }) {
   const queuedUploads = uploads.filter((upload) => upload.status === "queued");
   return (
@@ -160,7 +166,7 @@ function ReportingStatus({
       />
       <StatusBlock
         label="Demographics"
-        value={demographicsLabel(activeConsent, preview)}
+        value={demographicsLabel(activeConsent, preview, profileCompletion)}
       />
     </div>
   );
@@ -228,22 +234,6 @@ function ConsentChoices({
   );
 }
 
-function PayloadPreview({
-  preview,
-}: {
-  preview: AnonymousReportingPayload | null;
-}) {
-  if (!preview) return null;
-  return (
-    <div className="border-input rounded-md border px-3 py-2">
-      <p>{previewLabel(preview)}</p>
-      <p className="text-muted-foreground">
-        Idempotency key: {preview.idempotencyKey}
-      </p>
-    </div>
-  );
-}
-
 function ConsentHistory({
   activeConsent,
 }: {
@@ -257,48 +247,15 @@ function ConsentHistory({
   );
 }
 
-function PanelMessage({
-  status,
-  message,
-}: {
-  status: Status;
-  message: string | null;
-}) {
-  if (!message) return null;
-  return (
-    <p
-      className={
-        status === "error" ? "text-destructive" : "text-muted-foreground"
-      }
-    >
-      {message}
-    </p>
-  );
-}
-
-function StatusBlock({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="border-input rounded-md border px-3 py-2">
-      <p>
-        {label}: {value}
-      </p>
-    </div>
-  );
-}
-
-function previewLabel(preview: AnonymousReportingPayload) {
-  if (preview.includedCategories.length === 0) {
-    return "Payload includes: no categories";
-  }
-  return `Payload includes: ${preview.includedCategories
-    .map(categoryLabel)
-    .join(", ")}`;
-}
-
 function demographicsLabel(
   activeConsent: ActiveConsentState,
   preview: AnonymousReportingPayload | null,
+  profileCompletion: ResearchProfileCompletionState | null,
 ) {
+  const status =
+    profileCompletion?.sections.demographics_v1?.status.replaceAll("_", " ") ??
+    null;
+  if (status) return status;
   if (activeConsent.decisions.share_demographics !== "granted") {
     return "not shared";
   }

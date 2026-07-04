@@ -289,8 +289,13 @@ function saveAnswer(
     profileId,
     sessionId: null,
     questionnaireId: BASELINE_QUESTIONNAIRE_ID,
+    questionnaireVersion: "2026-07-04",
     questionId,
+    questionVersion: "1",
     answerValue,
     answeredAt,
+    answerStatus:
+      answerValue === "prefer_not_to_answer" ? "prefer_not_to_say" : "answered",
+    sourceScreen: "offline_baseline",
   });
 }

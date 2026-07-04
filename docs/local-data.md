@@ -5,7 +5,7 @@ reporting or account sync. The local data layer lives in `lib/local/`.
 
 ## Schema
 
-Current local schema version: `2`.
+Current local schema version: `3`.
 
 Durable record types:
 
@@ -47,7 +47,8 @@ changes must add explicit migration code and tests.
 `runLocalMigrations()` opens the database, creates stores when needed, and
 migrates known older local schema metadata to the current version. The v2
 migration adds anonymous reporting identity/upload stores and stamps legacy
-records to the current schema version. If metadata claims a future local schema
+records to the current schema version. The v3 migration adds version/status
+metadata to questionnaire answers. If metadata claims a future local schema
 version, the app throws instead of trying to downgrade or discard user data.
 
 Restore writes use a single IndexedDB transaction across data stores and the
@@ -86,3 +87,6 @@ The first-run Offline Mode flow and dashboard are documented in
 
 Anonymous reporting consent, identity, payload, and queue records are documented
 in [anonymous-reporting.md](anonymous-reporting.md).
+
+Questionnaire definitions, versioned answers, and research profile completion
+are documented in [questionnaires.md](questionnaires.md).

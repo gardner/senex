@@ -51,6 +51,10 @@ Anonymous reporting tests cover consent state transitions, category gating,
 idempotent queue records, D1 ingestion idempotency, rejection of unconsented
 payload categories, and the browser reporting dashboard.
 
+Questionnaire tests cover schema validation, prefer-not-to-say handling,
+versioned answer history, research profile completion, session context quality
+flags, and browser rendering/saving on desktop and mobile Chromium.
+
 Test-engine unit tests cover definition validation, state transitions, timing,
 quality flags, scoring, baselines, and trends. Browser tests cover monotonic
 timing and visibility metadata where feasible.

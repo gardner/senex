@@ -8,7 +8,7 @@ Source: [PLAN questionnaires](../docs/PLAN.md#63-research-questionnaires),
 
 ## E08-T01 Define questionnaire schema
 
-Status: Todo
+Status: Done
 
 Scope:
 
@@ -31,7 +31,7 @@ Dependencies: `E02-T02`.
 
 ## E08-T02 Build question renderer
 
-Status: Todo
+Status: Done
 
 Scope:
 
@@ -54,7 +54,7 @@ Dependencies: `E08-T01`.
 
 ## E08-T03 Implement demographics questionnaire
 
-Status: Todo
+Status: Done
 
 Scope:
 
@@ -75,7 +75,7 @@ Dependencies: `E08-T02`, `E07-T01`.
 
 ## E08-T04 Implement session context questionnaire
 
-Status: Todo
+Status: Done
 
 Scope:
 
@@ -96,7 +96,7 @@ Dependencies: `E08-T02`, `E04-T04`.
 
 ## E08-T05 Add research profile completion state
 
-Status: Todo
+Status: Done
 
 Scope:
 

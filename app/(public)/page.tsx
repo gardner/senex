@@ -4,6 +4,7 @@ import { AnonymousReportingPanel } from "@/components/anonymous-reporting-panel"
 import { BackupRestorePanel } from "@/components/backup-restore-panel";
 import { CognitiveTaskPanel } from "@/components/cognitive-task-panel";
 import { OfflineModePanel } from "@/components/offline-mode-panel";
+import { ResearchQuestionnairesPanel } from "@/components/research-questionnaires-panel";
 import { buttonVariants } from "@/components/ui/button";
 import {
   Card,
@@ -49,6 +50,10 @@ export default function HomePage() {
 
       <section className="py-4">
         <CognitiveTaskPanel />
+      </section>
+
+      <section className="py-4">
+        <ResearchQuestionnairesPanel />
       </section>
 
       <section className="py-4">

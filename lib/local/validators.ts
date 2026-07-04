@@ -140,8 +140,21 @@ export function assertQuestionnaireAnswerRecord(
     expectNonEmptyString(record, field, "QuestionnaireAnswerRecord");
   }
   expectStringOrNull(record, "sessionId", "QuestionnaireAnswerRecord");
+  expectNonEmptyString(
+    record,
+    "questionnaireVersion",
+    "QuestionnaireAnswerRecord",
+  );
+  expectNonEmptyString(record, "questionVersion", "QuestionnaireAnswerRecord");
   expectJson(record.answerValue, "QuestionnaireAnswerRecord.answerValue");
+  expectEnum(
+    record,
+    "answerStatus",
+    ["answered", "prefer_not_to_say", "skipped"],
+    "QuestionnaireAnswerRecord",
+  );
   expectIso(record, "answeredAt", "QuestionnaireAnswerRecord");
+  expectNonEmptyString(record, "sourceScreen", "QuestionnaireAnswerRecord");
   expectBase(record, "QuestionnaireAnswerRecord");
 }
 

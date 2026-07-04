@@ -11,8 +11,15 @@ import type {
 import {
   listAnonymousIdentities,
   listConsentRecords,
+  listQuestionnaireAnswers,
   listReportingUploads,
+  saveReportingUpload,
 } from "@/lib/local";
+import {
+  P0_RESEARCH_PROFILE_QUESTIONNAIRES,
+  buildResearchProfileCompletionState,
+  type ResearchProfileCompletionState,
+} from "@/lib/questionnaires";
 
 import type { ReportingScopeType } from "./panel-controls";
 
@@ -20,15 +27,25 @@ export type ReportingSnapshot = {
   identities: AnonymousIdentityRecord[];
   consents: ConsentRecord[];
   uploads: ReportingUploadRecord[];
+  completion: ResearchProfileCompletionState;
 };
 
 export async function readReportingSnapshot(): Promise<ReportingSnapshot> {
-  const [identities, consents, uploads] = await Promise.all([
+  const [identities, consents, uploads, answers] = await Promise.all([
     listAnonymousIdentities(),
     listConsentRecords({ mode: "anonymous_reporting" }),
     listReportingUploads(),
+    listQuestionnaireAnswers({}),
   ]);
-  return { identities, consents, uploads };
+  return {
+    identities,
+    consents,
+    uploads,
+    completion: buildResearchProfileCompletionState({
+      questionnaires: P0_RESEARCH_PROFILE_QUESTIONNAIRES,
+      answers,
+    }),
+  };
 }
 
 export function selectIdentity(identities: AnonymousIdentityRecord[]) {
@@ -72,6 +89,39 @@ export function latestSubmittableUpload(uploads: ReportingUploadRecord[]) {
   return uploads
     .toReversed()
     .find((upload) => upload.status === "queued" || upload.status === "failed");
+}
+
+export async function submitReportingUpload(upload: ReportingUploadRecord) {
+  const submittedAt = new Date().toISOString();
+  const submitting = {
+    ...upload,
+    status: "submitting" as const,
+    submittedAt,
+    lastError: null,
+  };
+  await saveReportingUpload(submitting);
+  try {
+    const response = await fetch("/api/reporting/anonymous/submit", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(upload.payload),
+    });
+    const body = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(errorMessage(body));
+    await saveReportingUpload({
+      ...submitting,
+      status: "succeeded",
+      completedAt: new Date().toISOString(),
+    });
+  } catch (caught) {
+    await saveReportingUpload({
+      ...submitting,
+      status: "failed",
+      completedAt: new Date().toISOString(),
+      lastError: caught instanceof Error ? caught.message : String(caught),
+    });
+    throw caught;
+  }
 }
 
 export function todayString() {

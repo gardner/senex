@@ -3,11 +3,14 @@ import {
   type JsonValue,
   type LocalProfile,
 } from "./types";
-import { queueSchemaVersionTwoMigration } from "./migrations";
+import {
+  queueSchemaVersionThreeMigration,
+  queueSchemaVersionTwoMigration,
+} from "./migrations";
 import { LOCAL_STORES, type StoreName } from "./stores";
 
 export const LOCAL_DATABASE_NAME = "senex-local";
-export const LOCAL_DATABASE_VERSION = 2;
+export const LOCAL_DATABASE_VERSION = 3;
 
 export { LOCAL_STORES };
 type MetadataValue = number | string | null;
@@ -161,6 +164,9 @@ async function openRawDatabase(): Promise<IDBDatabase> {
     createSchema(db, transaction);
     if (event.oldVersion > 0 && event.oldVersion < 2) {
       queueSchemaVersionTwoMigration(transaction);
+    }
+    if (event.oldVersion > 0 && event.oldVersion < 3) {
+      queueSchemaVersionThreeMigration(transaction);
     }
     const metadata = request.transaction?.objectStore(LOCAL_STORES.metadata);
     metadata?.put({
