@@ -105,3 +105,26 @@ pnpm wrangler d1 execute DB --local --command "UPDATE user SET role='admin' WHER
 ```
 
 For production, use `--remote` only when you mean to update the live database.
+
+## Account Sync Schema
+
+Account sync tables are additive and append-oriented. They preserve locally
+generated IDs, original timestamps, source schema/app versions, and a
+`record_hash` for each synced local record. Duplicate uploads use unique
+`user_id + local_*_id + record_hash` indexes, while a same local ID with a
+different hash can be stored for later conflict handling.
+
+The core tables are:
+
+- `account_sync_batches`: one accepted, duplicate, conflict, or rejected upload
+  attempt per user/idempotency key.
+- `account_sync_state`: per-account sync cursor, last batch, and pending
+  conflict count.
+- `account_sync_sessions`, `account_sync_task_runs`,
+  `account_sync_trial_events`, `account_sync_scores`: account-linked copies of
+  local test history.
+- `account_sync_consent_events`: account-linked consent history; consent events
+  stay append-only and separate from account profile state.
+
+Do not treat local deletion as server deletion in these tables. Account data
+removal belongs in the explicit export/deletion-request flow.

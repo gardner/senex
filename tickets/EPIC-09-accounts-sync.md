@@ -46,7 +46,7 @@ Dependencies: none.
 
 ## E09-T02 Define server account sync schema
 
-Status: Todo
+Status: Done
 
 Scope:
 
@@ -63,6 +63,18 @@ Acceptance criteria:
 Validation:
 
 - D1 migration tests.
+
+Implementation notes:
+
+- Added additive D1 migration `0004_account_sync.sql`.
+- Added account sync batch/state tables.
+- Added append-oriented account sync tables for sessions, task runs, trial
+  events, scores, and consent events.
+- Preserved local record IDs, source timestamps, source schema/app versions, and
+  per-record hashes for idempotency/conflict detection.
+- Added D1 schema tests that verify required columns, duplicate rejection for
+  same `user_id + local_id + record_hash`, and preservation of same-local-ID
+  conflicting records.
 
 Dependencies: `E02-T02`.
 
