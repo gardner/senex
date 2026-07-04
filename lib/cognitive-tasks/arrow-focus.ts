@@ -88,5 +88,8 @@ function meanRt(
 
 function median(values: number[]) {
   const sorted = values.toSorted((a, b) => a - b);
-  return sorted[Math.floor(sorted.length / 2)] ?? 0;
+  if (sorted.length === 0) return 0;
+  const middle = Math.floor(sorted.length / 2);
+  if (sorted.length % 2 === 1) return sorted[middle];
+  return (sorted[middle - 1] + sorted[middle]) / 2;
 }

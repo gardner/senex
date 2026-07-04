@@ -64,6 +64,11 @@ capture, Pair Learning study/immediate/delayed/recognition capture, and
 Seven-Day Learning repeated-pack/missed-day capture, and full-battery
 persistence where feasible.
 
+`tests/quality-coverage.test.ts` tracks E11 hardening coverage for conservative
+baseline/trend edges, duplicate trial-quality exclusions, even-count task
+medians, anonymous reporting category declarations, and backup stimulus
+reference integrity.
+
 To test an already running server or preview URL:
 
 ```bash

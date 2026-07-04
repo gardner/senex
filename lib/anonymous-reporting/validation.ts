@@ -30,6 +30,16 @@ export function validateAnonymousReportingPayload(
     throw new Error("includedCategories must be an array");
   }
   rejectUnknownCategories(payload.includedCategories);
+  const missingDeclarations = dataCategoriesPresentInPayload(payload).filter(
+    (category) => !payload.includedCategories.includes(category),
+  );
+  if (missingDeclarations.length > 0) {
+    throw new Error(
+      `includedCategories is missing categories present in data: ${missingDeclarations.join(
+        ", ",
+      )}`,
+    );
+  }
 
   const violations = unconsentedPayloadCategories(payload);
   if (violations.length > 0) {
@@ -61,6 +71,14 @@ export function unconsentedPayloadCategories(
 function categoriesPresentInPayload(payload: AnonymousReportingPayload) {
   const present = new Set<string>();
   for (const category of payload.includedCategories) present.add(category);
+  for (const category of dataCategoriesPresentInPayload(payload)) {
+    present.add(category);
+  }
+  return CONSENT_CATEGORY_IDS.filter((category) => present.has(category));
+}
+
+function dataCategoriesPresentInPayload(payload: AnonymousReportingPayload) {
+  const present = new Set<string>();
   for (const category of CONSENT_CATEGORY_IDS) {
     for (const field of CATEGORY_DATA_FIELDS[category]) {
       const value = payload.data[field];

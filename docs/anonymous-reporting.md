@@ -55,7 +55,9 @@ copied with the consent history.
 `buildAnonymousReportingPayload()` derives the active consent snapshot and only
 adds data for granted categories. Test summaries deliberately exclude raw trial
 events and session context. Trial events, context, demographics, and
-questionnaires each require their own category.
+questionnaires each require their own category. Server validation also requires
+any data-bearing category to appear in `includedCategories`, so accepted payload
+metadata cannot hide a submitted data category.
 
 Queued uploads are stored as `ReportingUploadRecord` entries with the payload,
 consent snapshot, included categories, status, and idempotency key. Uploading is

@@ -17,7 +17,9 @@ The envelope format is `senex.local-backup` and includes:
 - stimulus references derived from task runs
 
 Unknown future export or local schema versions are rejected. Malformed JSON and
-invalid nested local records fail before any local write is attempted.
+invalid nested local records fail before any local write is attempted. Stimulus
+references must exactly match the task runs in the same envelope, preventing a
+backup from importing stale or tampered stimulus metadata.
 
 ## Export
 
@@ -60,5 +62,7 @@ research data.
 
 - `tests/export-schema.test.ts` validates the envelope schema and corrupt/future
   version rejection.
+- `tests/quality-coverage.test.ts` adds tampered stimulus-reference rejection
+  coverage.
 - `tests/browser/export-import.spec.ts` exercises export generation, import
   preview, merge, replace, duplicate merge, and rollback behavior in Chromium.

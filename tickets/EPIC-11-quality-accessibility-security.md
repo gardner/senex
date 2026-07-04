@@ -8,7 +8,7 @@ Source: [PLAN QA](../docs/PLAN.md#15-quality-assurance-plan),
 
 ## E11-T01 Expand unit and integration coverage
 
-Status: Todo
+Status: Done
 
 Scope:
 
@@ -26,6 +26,18 @@ Validation:
 - `pnpm test`
 
 Dependencies: `E04-T06`, `E07-T03`, `E03-T04`.
+
+Notes:
+
+- Added `tests/quality-coverage.test.ts` for deterministic E11 hardening
+  coverage across scoring medians, baseline/trend confidence edges,
+  quality-flag counting, anonymous reporting category declarations, and local
+  backup stimulus-reference integrity.
+- Fixed even-count median scoring for Symbol Match and Arrow Focus.
+- Fixed task-run quality so multiple exclude flags on one trial only invalidate
+  that trial once.
+- Strengthened anonymous reporting and local backup validation for metadata
+  consistency.
 
 ## E11-T02 Add browser coverage for critical flows
 

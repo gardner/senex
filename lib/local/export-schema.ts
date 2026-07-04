@@ -31,6 +31,10 @@ import {
   assertTaskRunRecord,
   assertTrialEventRecord,
 } from "./validators";
+import {
+  assertStimulusReferencesMatchTaskRuns,
+  stimulusReferenceForTask,
+} from "./stimulus-references";
 
 export const EXPORT_SCHEMA_VERSION = 1;
 export const EXPORT_FORMAT = "senex.local-backup";
@@ -201,6 +205,10 @@ function validateExportData(value: unknown) {
     assertStimulusReference,
     "stimulusReferences",
   );
+  assertStimulusReferencesMatchTaskRuns(
+    data.taskRuns as TaskRunRecord[],
+    data.stimulusReferences as StimulusReference[],
+  );
 }
 
 function validateArray<T>(
@@ -222,16 +230,6 @@ function assertStimulusReference(
   expectNonEmptyString(record, "taskVersion", "StimulusReference");
   expectNonEmptyString(record, "stimulusPackId", "StimulusReference");
   expectNonEmptyString(record, "stimulusSeed", "StimulusReference");
-}
-
-function stimulusReferenceForTask(taskRun: TaskRunRecord): StimulusReference {
-  return {
-    taskRunId: taskRun.taskRunId,
-    taskId: taskRun.taskId,
-    taskVersion: taskRun.taskVersion,
-    stimulusPackId: taskRun.stimulusPackId,
-    stimulusSeed: taskRun.stimulusSeed,
-  };
 }
 
 function expectRecord(value: unknown, name: string): Record<string, unknown> {

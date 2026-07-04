@@ -41,17 +41,20 @@ export function evaluateTaskRunQuality(input: {
   trials: TrialResult[];
   interruptions?: QualityFlag[];
 }): QualityFlag[] {
-  const trialFlags = input.trials.flatMap((trial) =>
+  const trialEvaluations = input.trials.map((trial) =>
     evaluateTrialQuality(trial, input.definition),
   );
-  const validCount = input.trials.length - excludedTrialCount(trialFlags);
+  const trialFlags = trialEvaluations.flat();
+  const validTrialCount = trialEvaluations.filter(
+    (flags) => !flags.some((flag) => flag.excludeFromScoring),
+  ).length;
   const lapseRate =
     input.trials.length === 0
       ? 0
       : trialFlags.filter((flag) => flag.code === "lapse").length /
         input.trials.length;
   const flags = [...(input.interruptions ?? [])];
-  if (validCount < input.definition.qualityRules.minValidTrials) {
+  if (validTrialCount < input.definition.qualityRules.minValidTrials) {
     flags.push(
       flag(
         "too_few_valid_trials",
@@ -82,10 +85,4 @@ export function flag(
     message,
     excludeFromScoring: severity === "exclude",
   };
-}
-
-function excludedTrialCount(flags: QualityFlag[]) {
-  return flags.filter(
-    (flag) => flag.level === "trial" && flag.excludeFromScoring,
-  ).length;
 }
